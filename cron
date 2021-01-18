@@ -1,6 +1,6 @@
 */1 * * * * root eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
-*/1 * * * * root eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && sleep 15; python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
-*/1 * * * * root eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && sleep 30; python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
-*/1 * * * * root eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && sleep 45; python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
+*/1 * * * * root sleep 15; eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
+*/1 * * * * root sleep 30; eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
+*/1 * * * * root sleep 45;eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
 
 
