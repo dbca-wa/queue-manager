@@ -1,0 +1,83 @@
+<html>
+<!-- CSS only -->
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+{% block queuecss %}
+<link rel="stylesheet" href="iiiihttps://queue-test.digitalreach.com.au/static/css/django_queue_manager/bootstrap.min.css?ver={{ VERSION_NO }}" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+{% endblock %}
+</head>
+
+<meta http-equiv="refresh" content="300">
+<br><br>
+{% block queuebody %}
+
+<div class='row'>
+<div class='col-sm-1 col-lg-1'>
+&nbsp;
+</div>
+<div class='col-sm-10 col-lg-10 m-1'>
+
+<div class="ijumboitron"     style='    padding: 4rem 2rem; margin-bottom: 2rem; background-color: #e9ecef; border-radius: .3rem;';>
+  <h1 class="display-4">{% block queuetitle %}Waiting Queue{% endblock %}</h1>
+  <p class="lead">
+{% block waitingtext %}
+We are currently experiencing extremely high demand.
+You have currently been placed into a queue.  Please wait while we allocate you a spot in the queue.
+Once a spot has been allocated you will be able to browse the site for 20 minutes providing you
+dont close the site otherwise you will lose your spot in the queue.
+{% endblock %}
+</p>
+
+<div class='text-center'>
+<BR>
+
+</div>
+<div class='text-center'>
+<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_blue_ball.gif'    width=35>
+<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_grey_ball.gif'    width=35>
+<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_green_ball.gif'   width=35>
+<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_red_ball.gif'     width=35>
+<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_yellow_ball.gif'  width=35>
+<BR><BR>
+</div>
+
+{% block queueposition %}
+<div class="text-center" id='queue_position_div' style='display:none'>
+<h4>Queue Position</h4>
+<h4 id='queue_position'>NA</h4>
+</div>
+{% endblock %}
+
+<div class='text-center'>
+<BR><BR>
+</div>
+<div class='text-center' >
+   {% block queuelogo %}
+   {% endblock %}
+</div>
+
+
+</div>
+</div>
+
+<div class='col-sm-1 col-lg-1'>
+&nbsp;
+</div>
+
+</div>
+
+{% endblock %}
+
+<input type='hidden' id='queue' name='queue' value='true'>
+
+<script src="iiihttps://queue-test.digitalreach.com.au/static/js/django_queue_manager/jquery-3.5.1.slim.min.js?ver={{ VERSION_NO }}" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="iiiihttps://queue-test.digitalreach.com.au/static/js/django_queue_manager/jquery-3.5.1.js?ver={{ VERSION_NO }}"></script>
+<script src="iiiihttps://queue-test.digitalreach.com.au/static/js/django_queue_manager/site-queue-manager.js?ver={{ VERSION_NO }}"></script>
+
+{% block queuejs %}
+<script src="iiiihttps://queue-test.digitalreach.com.au/static/js/django_queue_manager/popper.min.js?ver={{ VERSION_NO }}" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="iiihttps://queue-test.digitalreach.com.au//static/js/django_queue_manager/bootstrap.min.js?ver={{ VERSION_NO }}" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+

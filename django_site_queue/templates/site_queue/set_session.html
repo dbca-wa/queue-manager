@@ -1,0 +1,32 @@
+Creating Session
+<script>
+var ss = {
+     getQueryParam: function(param, defaultValue = undefined) {
+         location.search.substr(1)
+             .split("&")
+             .some(function(item) { // returns first occurence and stops
+                 return item.split("=")[0] == param && (defaultValue = item.split("=")[1], true)
+             })
+         return defaultValue
+     },
+     createCookie: function(name, value, days) {
+         var expires;
+
+         if (days) {
+             var date = new Date();
+             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+             expires = "; expires=" + date.toGMTString();
+         } else {
+             expires = "";
+         }
+         document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+     },
+     init: function() {
+          session_key = ss.getQueryParam('session_key');
+          if (session_key != undefined || session_key !=null) {
+              ss.createCookie('session_key',session_key,1)
+          }
+    }
+}
+ss.init();
+</script>
