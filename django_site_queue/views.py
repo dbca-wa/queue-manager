@@ -23,13 +23,14 @@ class QueuePage(TemplateView):
         #context['csrf_token_value'] = get_token(self.request)
         response = HttpResponse(template.render(context))
         response["Access-Control-Allow-Headers"] = "*"
-        response["X-Frame-Options"] = "ALLOW-FROM https://mooring-int.digitalreach.com.au/"
+        #response["X-Frame-Options"] = "ALLOW-FROM https://mooring-uat.dbca.wa.gov.au"
         return response
  
     def get_context_data(self, **kwargs):
         context = super(QueuePage, self).get_context_data(**kwargs)
         print (settings.VERSION_NO)
         context['VERSION_NO'] = settings.VERSION_NO
+        context['QUEUE_URL'] = env('QUEUE_URL','')
         return context
 
 

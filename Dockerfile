@@ -47,6 +47,7 @@ COPY gunicorn.ini manage.py ./
 #COPY ledger ./ledger
 RUN touch /app/.env
 COPY queuemanager ./queuemanager
+COPY django_site_queue ./django_site_queue
 #COPY .git/refs/heads/master /app/git_hash
 RUN mkdir /app/queuemanager/cache/
 RUN chmod 777 /app/queuemanager/cache/

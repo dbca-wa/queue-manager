@@ -226,6 +226,7 @@ def check_create_session(request, *args, **kwargs):
          sitesession.status = 1
     
     CORS_SITES = env('CORS_SITES', None)
+    QUEUE_DOMAIN = env('QUEUE_DOMAIN', '')
 
     if settings.DEBUG is True:    
         print (sitesession)
@@ -236,7 +237,7 @@ def check_create_session(request, *args, **kwargs):
         response["Access-Control-Allow-Headers"] = "*"
         response["X-Frame-Options"] = "allow-from *"
 
-        response.set_cookie('sitequeuesession', session_key, max_age=2592000, samesite=None, domain='digitalreach.com.au')
+        response.set_cookie('sitequeuesession', session_key, max_age=2592000, samesite=None, domain=QUEUE_DOMAIN)
         return response
     else:
         response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'session_key': session_key, 'queue_position' : queue_position}), content_type='application/json')
@@ -245,7 +246,7 @@ def check_create_session(request, *args, **kwargs):
         response["Access-Control-Max-Age"] = "0"
         response["Access-Control-Allow-Headers"] = "*"
         response["X-Frame-Options"] = "allow-from *"
-        response.set_cookie('sitequeuesession', session_key, max_age=2592000, domain='digitalreach.com.au')
+        response.set_cookie('sitequeuesession', session_key, max_age=2592000, domain=QUEUE_DOMAIN)
         return response
 
 def get_client_ip(request):

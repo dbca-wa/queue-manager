@@ -3,7 +3,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 {% block queuecss %}
-<link rel="stylesheet" href="iiiihttps://queue-test.digitalreach.com.au/static/css/django_queue_manager/bootstrap.min.css?ver={{ VERSION_NO }}" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 {% endblock %}
 </head>
 
@@ -33,11 +32,11 @@ dont close the site otherwise you will lose your spot in the queue.
 
 </div>
 <div class='text-center'>
-<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_blue_ball.gif'    width=35>
-<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_grey_ball.gif'    width=35>
-<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_green_ball.gif'   width=35>
-<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_red_ball.gif'     width=35>
-<img src='https://queue-test.digitalreach.com.au/static/img/django_queue_manager/r_yellow_ball.gif'  width=35>
+	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_blue_ball.gif'    width=35>
+	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_grey_ball.gif'    width=35>
+	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_green_ball.gif'   width=35>
+	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_red_ball.gif'     width=35>
+	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_yellow_ball.gif'  width=35>
 <BR><BR>
 </div>
 
@@ -70,14 +69,7 @@ dont close the site otherwise you will lose your spot in the queue.
 
 <input type='hidden' id='queue' name='queue' value='true'>
 
-<script src="iiihttps://queue-test.digitalreach.com.au/static/js/django_queue_manager/jquery-3.5.1.slim.min.js?ver={{ VERSION_NO }}" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="iiiihttps://queue-test.digitalreach.com.au/static/js/django_queue_manager/jquery-3.5.1.js?ver={{ VERSION_NO }}"></script>
-<script src="iiiihttps://queue-test.digitalreach.com.au/static/js/django_queue_manager/site-queue-manager.js?ver={{ VERSION_NO }}"></script>
-
 {% block queuejs %}
-<script src="iiiihttps://queue-test.digitalreach.com.au/static/js/django_queue_manager/popper.min.js?ver={{ VERSION_NO }}" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="iiihttps://queue-test.digitalreach.com.au//static/js/django_queue_manager/bootstrap.min.js?ver={{ VERSION_NO }}" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-
 {% endblock %}
 
 
