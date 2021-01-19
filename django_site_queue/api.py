@@ -206,6 +206,19 @@ def check_create_session(request, *args, **kwargs):
 
         idle_seconds = (datetime.now(timezone.utc)-sitesession.idle).seconds
         expiry_seconds = (sitesession.expiry-datetime.now(timezone.utc)).seconds
+        wait_time = 100 
+        if queue_position > 0:
+           print ("CALCULATE WAIT")
+           # calculate wait time
+           print (int(queue_position))
+           print (int(session_total_limit))
+           print ("----")
+           queue_avg_position = int(queue_position) / int(session_total_limit)
+           print (queue_avg_position)
+           session_limit_minutes = round(session_limit_seconds / 60)
+           print (session_limit_minutes)
+           wait_time = round(queue_avg_position * session_limit_minutes)
+           print (wait_time)
         #if expiry_seconds < 1:
         #      request.session['sitequeuesession'] = None
         #      if total_active_session <= session_total_limit and total_waiting_session == 0:
@@ -230,7 +243,7 @@ def check_create_session(request, *args, **kwargs):
 
     if settings.DEBUG is True:    
         print (sitesession)
-        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': sitesession.expiry.strftime('%d/%m/%Y %H:%M'), 'idle': sitesession.idle.strftime('%d/%m/%Y %H:%M'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False')}), content_type='application/json')
+        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': sitesession.expiry.strftime('%d/%m/%Y %H:%M'), 'idle': sitesession.idle.strftime('%d/%m/%Y %H:%M'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : wait_time ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False')}), content_type='application/json')
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Max-Age"] = "0"
@@ -240,7 +253,7 @@ def check_create_session(request, *args, **kwargs):
         response.set_cookie('sitequeuesession', session_key, max_age=2592000, samesite=None, domain=QUEUE_DOMAIN)
         return response
     else:
-        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'session_key': session_key, 'queue_position' : queue_position}), content_type='application/json')
+        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'session_key': session_key, 'queue_position' : queue_position, 'wait_time' : wait_time}), content_type='application/json')
         response["Access-Control-Allow-Origin"] = "*" 
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Max-Age"] = "0"
