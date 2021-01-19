@@ -32,21 +32,24 @@ dont close the site otherwise you will lose your spot in the queue.
 
 </div>
 <div class='text-center'>
+	<center>
 	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_blue_ball.gif'    width=35>
 	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_grey_ball.gif'    width=35>
 	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_green_ball.gif'   width=35>
 	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_red_ball.gif'     width=35>
 	<img src='{{ QUEUE_URL }}/static/img/django_queue_manager/r_yellow_ball.gif'  width=35>
+	</center>
 <BR><BR>
 </div>
 
 {% block queueposition %}
 <div class="text-center" id='queue_position_div' style='display:none'>
-<h4>Queue Position</h4>
-<h4 id='queue_position'>NA</h4>
-<h4>Wait Time (Approx)</h4>
-<h4 id='wait_time'>NA</h4>
-
+	<center>
+           <h4>Queue Position</h4>
+           <h4 id='queue_position'>NA</h4>
+           <h4>Wait Time (Approx)</h4>
+           <h4 id='wait_time'>NA</h4>
+	</center>
 </div>
 
 {% endblock %}
