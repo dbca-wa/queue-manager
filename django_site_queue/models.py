@@ -24,7 +24,9 @@ class SiteQueueManagerGroup(models.Model):
     waiting_queue_enabled = models.BooleanField(default=False)
     queue_domain = models.CharField(max_length=256)
     queue_url = models.CharField(max_length=256)
-    
+
+    def __str__(self):
+        return self.group_name
 
 #@python_2_unicode_compatible
 class SiteQueueManager(models.Model):

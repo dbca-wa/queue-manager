@@ -12,7 +12,7 @@ class SiteQueueManagerGroupAdmin(admin.ModelAdmin):
 
 @admin.register(models.SiteQueueManager)
 class SiteQueueManagerClassAdmin(admin.ModelAdmin):
-    list_display = ('id','idle','expiry','status','ipaddress','is_staff','created','queue_group_name','session_key','browser_agent',)
+    list_display = ('id','idle','expiry','status','ipaddress','is_staff','created','queue_group','session_key','browser_agent',)
     search_fields = ('ipaddress','session_key',)
-    list_filter = ('ipaddress','status','queue_group_name',)
+    list_filter = ('ipaddress','status','queue_group',)
 
