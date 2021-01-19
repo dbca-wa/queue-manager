@@ -121,10 +121,29 @@ var sitequeuemanager  = {
          }
          document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/; domain=."+sitequeuemanager.var.domain;
      },
-     init: function(queue_domain,queue_url, queue_group) {
+     init: function(queue_domain,queue_url, queue_group, active_hosts="") {
          sitequeuemanager.var.domain = queue_domain;
 	 sitequeuemanager.var.url = queue_url;
          sitequeuemanager.var.queue_group = queue_group;
+         current_host = window.location.host;
+         
+	 var queue_js_active = false;
+	 if (active_hosts == '*') {
+                queue_js_active = true;
+         } else {
+	     ah = active_hosts.split(",")
+	     for (h in ah) {
+                if (current_host == ah[h]) {
+                    queue_js_active = true;
+                }
+             }
+	 }
+
+	 if (queue_js_active == false) {
+            console.log('Url does not match active urls');
+            return;
+         }
+
 
          if (window.jQuery) {
               var smactive = true;
