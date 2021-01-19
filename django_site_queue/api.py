@@ -256,8 +256,12 @@ def check_create_session(request, *args, **kwargs):
         return response
 
 def get_client_ip(request):
+    x_real_ip = request.META.get('HTTP_X_REAL_IP')
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
+
+    if x_real_ip:
+       ip = x_real_ip
+    elif x_forwarded_for:
        ip = x_forwarded_for.split(',')[-1].strip()
     else:
        ip = request.META.get('REMOTE_ADDR')
