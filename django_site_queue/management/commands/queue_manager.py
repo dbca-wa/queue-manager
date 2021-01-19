@@ -13,7 +13,8 @@ class Command(BaseCommand):
         sitesession = None
 
         queue_groups = models.SiteQueueManagerGroup.objects.filter(waiting_queue_enabled=True)
-
+        total_active_session = 0
+        total_waiting_session = 0
         for queue_group in queue_groups:
 
             #session_total_limit = 2
@@ -125,5 +126,5 @@ class Command(BaseCommand):
 
                  sitesession.idle=datetime.now(timezone.utc)	
                  sitesession.save()
-                 print (datetime.now().strftime("%A, %d %b %Y %H:%M")+" : ACTIVE Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
+        print (datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : ACTIVE Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
 
