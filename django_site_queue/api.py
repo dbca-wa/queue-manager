@@ -208,17 +208,10 @@ def check_create_session(request, *args, **kwargs):
         expiry_seconds = (sitesession.expiry-datetime.now(timezone.utc)).seconds
         wait_time = 100 
         if queue_position > 0:
-           print ("CALCULATE WAIT")
            # calculate wait time
-           print (int(queue_position))
-           print (int(session_total_limit))
-           print ("----")
            queue_avg_position = int(queue_position) / int(session_total_limit)
-           print (queue_avg_position)
            session_limit_minutes = round(session_limit_seconds / 60)
-           print (session_limit_minutes)
            wait_time = round(queue_avg_position * session_limit_minutes)
-           print (wait_time)
         #if expiry_seconds < 1:
         #      request.session['sitequeuesession'] = None
         #      if total_active_session <= session_total_limit and total_waiting_session == 0:
