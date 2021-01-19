@@ -10,7 +10,6 @@ var sitequeuemanager  = {
      check_queue: function() {
         sitequeuemanager.var.running = 'true';
         console.log("check queue");
-        console.log(sitequeuemanager.var.url);
 
         $.ajax({
           url: sitequeuemanager.var.url+'/api/check-create-session/?session_key='+sitequeuemanager.var.session_key+'&queue_group='+sitequeuemanager.var.queue_group,
@@ -123,7 +122,6 @@ var sitequeuemanager  = {
          document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/; domain=."+sitequeuemanager.var.domain;
      },
      init: function(queue_domain,queue_url, queue_group) {
-	 console.log(queue_url);
          sitequeuemanager.var.domain = queue_domain;
 	 sitequeuemanager.var.url = queue_url;
          sitequeuemanager.var.queue_group = queue_group;
@@ -160,22 +158,6 @@ var sitequeuemanager  = {
 		          sitequeuemanager.var.session_key = sitequeuemanager.ReadCookie('sitequeuesession');
                        } 
 	          }
-                  //if ("parkstayUrl" in window) {
-	          //      sitequeuemanager.var.url = parkstayUrl;
-	          // }
-
-                  // if (window.jQuery) {
-                  //     // jQuery is loaded
-                  // } else {
-
-                  //       var scriptTag = document.createElement('script');
-                  //       scriptTag.src = sitequeuemanager.var.url+'/static/js/django_queue_manager/jquery-3.5.1.js';
-                  //       //scriptTag.onload = "sitequeuemanager.check_queue();";
-                  //       document.head.appendChild(scriptTag);
-                  //       setTimeout(function() { sitequeuemanager.init();}, 200);
-                  //     // jQuery is not loaded
-                  //  //   alert("Doesn't Work");
-                  // }
 
                   if (window.jQuery) {
                       sitequeuemanager.var.queueurl = 'false';
@@ -201,7 +183,3 @@ var sitequeuemanager  = {
      }
 
 }
-//sitequeuemanager.init();
-//$ (document).resize (function () {
-//console.log($( document ).height());
-//})
