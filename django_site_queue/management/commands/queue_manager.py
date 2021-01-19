@@ -79,8 +79,6 @@ class Command(BaseCommand):
 
             for sitesession in longest_waiting:
                  #sitesession = sitesession_query[0]
-                 print ("IF")
-                 print (sitesession.session_key)
                  ##stl = session_total_limit
 
                  ##sqm = models.SiteQueueManager.objects.filter(status=0, expiry__gte=datetime.now(timezone.utc),queue_group=queue_group).order_by('created')
@@ -108,7 +106,7 @@ class Command(BaseCommand):
                        #if cpu_percentage < cpu_percentage_limit:
                        for lw in longest_waiting:
                            if sitesession.session_key == lw.session_key:
-                               print ("ACTIVATE")
+                               print ("ACTIVATED: "+sitesession.session_key)
                                session_status = 1
                                sitesession.status = session_status
                                sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
@@ -127,4 +125,5 @@ class Command(BaseCommand):
 
                  sitesession.idle=datetime.now(timezone.utc)	
                  sitesession.save()
+                 print (datetime.now().strftime("%A, %d %b %Y %H:%M")+" : ACTIVE Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
 

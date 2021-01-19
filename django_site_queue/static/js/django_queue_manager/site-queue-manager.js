@@ -56,6 +56,7 @@ var sitequeuemanager  = {
 					    if (response['queue_position'] > 0 ) {
 					         $('#queue_position_div').show();
 					         $('#queue_position').html(response['queue_position']);
+						 $('#wait_time').html(response['wait_time']+' minute/s');
 					    }
 
                                  }
@@ -71,6 +72,7 @@ var sitequeuemanager  = {
                   if (response['queue_position'] > 0 ) {
                       $('#queue_position_div').show();
                       $('#queue_position').html(response['queue_position']);
+		      $('#wait_time').html(response['wait_time']+' minute/s');
                   }
 		  if (sitequeuemanager.var.queueurl == 'true') {
                   } else {
