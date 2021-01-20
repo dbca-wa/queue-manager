@@ -48,6 +48,10 @@ def check_create_session(request, *args, **kwargs):
     queue_group_name = 'default'
     queue_domain = ''
     queue_url = ''
+    ping_url_enabled = False
+    ping_url = ''
+    ping_url_limit = 100
+    ping_url_current = 0
 
     if queue_group.count() > 0:
         session_total_limit = queue_group[0].session_total_limit
@@ -59,6 +63,11 @@ def check_create_session(request, *args, **kwargs):
         queue_group_name = queue_group[0].group_unique_key
         queue_domain = queue_group[0].queue_domain
         queue_url = queue_group[0].queue_url
+
+        ping_url_enabled = queue_group[0].ping_url_enabled
+        ping_url = queue_group[0].ping_url
+        ping_url_limit = queue_group[0].ping_url_limit
+        ping_url_current = queue_group[0].ping_url_current
 
     memory_session = {}
 
@@ -139,10 +148,13 @@ def check_create_session(request, *args, **kwargs):
             #if total_active_session >= session_total_limit:
             if total_active_session < session_total_limit and total_waiting_session == 0:
                   session_status = 1
+            if ping_url_current > ping_url_limit:
+                  session_status = 0
             if cpu_percentage > cpu_percentage_limit:
                   session_status = 0
             if staff_loggedin is True:
                   session_status = 1
+
             #if session_key:
             #     pass
             #else: 
