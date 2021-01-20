@@ -3,6 +3,7 @@ from django.utils import timezone
 from django_site_queue import models
 import psutil
 from datetime import timedelta, datetime
+import requests
 
 class Command(BaseCommand):
     help = 'Clear out any expired temporary bookings that have been abandoned by the user'
@@ -37,7 +38,10 @@ class Command(BaseCommand):
             queue_group_name = queue_group.group_unique_key
             queue_domain = queue_group.queue_domain
             queue_url = queue_group.queue_url
-
+            ping_url_enabled = queue_group.ping_url_enabled
+            ping_url = queue_group.ping_url
+            ping_url_limit = queue_group.ping_url_limit
+            ping_url_current = queue_group.ping_url_current 
 
             #session_total_limit = int(env('SESSION_TOTAL_LIMIT', 2))
             #session_limit_seconds = int(env('SESSION_LIMIT_SECONDS', 20))
@@ -108,9 +112,12 @@ class Command(BaseCommand):
                        for lw in longest_waiting:
                            if sitesession.session_key == lw.session_key:
                                print ("ACTIVATED: "+sitesession.session_key)
-                               session_status = 1
-                               sitesession.status = session_status
-                               sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
+                               if ping_url_current > ping_url_limit:
+                                   sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
+                               else:
+                                   session_status = 1
+                                   sitesession.status = session_status
+                                   sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
                            else:
                                sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
                        #else:
