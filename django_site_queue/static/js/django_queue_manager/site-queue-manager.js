@@ -31,7 +31,7 @@ var sitequeuemanager  = {
 			      }
                           if($("#queue-timer" ).length == 0) {
 
-                              $('html').prepend("<div id='queue-timer' style='position: absolute; z-index: 10; width:100%; '><div align='right'><div style='border: 1px solid #000000; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px;     background: rgb(0 0 0 / 50%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 22px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
+                              $('html').prepend("<div id='queue-timer' style='position: absolute; z-index: 10; width:100%; '><div align='right'><div style='border: 1px solid #000000; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px;     background: rgb(0 0 0 / 50%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
 		          }
                           $('#queue-time-left').html(timelimit);
 
