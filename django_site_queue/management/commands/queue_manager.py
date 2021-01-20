@@ -113,6 +113,7 @@ class Command(BaseCommand):
                            if sitesession.session_key == lw.session_key:
                                print ("ACTIVATED: "+sitesession.session_key)
                                if ping_url_current > ping_url_limit:
+                                   print ("Site Load Response Time Limit (waiting for lower response time) = "+str(ping_url_limit)) 
                                    sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
                                else:
                                    session_status = 1
