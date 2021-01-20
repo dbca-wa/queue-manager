@@ -27,6 +27,7 @@ var sitequeuemanager  = {
                                    var expiry_min = response['expiry_seconds'] / 60;
 				   timelimit = parseInt(expiry_min)+" min";
 			      } else {
+				   $('#queue-time-left').fadeOut(2000);$('#queue-time-left').fadeIn(2000);
                                    timelimit = "<1min";
 			      }
                           if($("#queue-timer" ).length == 0) {
