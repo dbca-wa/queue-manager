@@ -25,6 +25,11 @@ class SiteQueueManagerGroup(models.Model):
     queue_domain = models.CharField(max_length=256)
     queue_url = models.CharField(max_length=256)
 
+    ping_url_enabled = models.BooleanField(default=False)
+    ping_url = models.CharField(max_length=1024, default='')
+    ping_url_limit = models.FloatField(default=5)
+    ping_url_current = models.FloatField(default=0, editable=False)
+
     def __str__(self):
         return self.group_name
 

@@ -7,7 +7,7 @@ from django_site_queue import models
 
 @admin.register(models.SiteQueueManagerGroup)
 class SiteQueueManagerGroupAdmin(admin.ModelAdmin):
-    list_display = ('id','group_name','group_unique_key','session_total_limit','session_limit_seconds','cpu_percentage_limit','idle_limit_seconds','active_session_url','waiting_queue_enabled','queue_domain','queue_url')
+    list_display = ('id','group_name','group_unique_key','session_total_limit','session_limit_seconds','cpu_percentage_limit','idle_limit_seconds','active_session_url','waiting_queue_enabled','queue_domain','queue_url','ping_url_enabled','ping_url','ping_url_limit','ping_url_current')
 
 
 @admin.register(models.SiteQueueManager)
