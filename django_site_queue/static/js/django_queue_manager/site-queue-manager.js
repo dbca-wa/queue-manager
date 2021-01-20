@@ -95,7 +95,7 @@ var sitequeuemanager  = {
                   }
 
 	    }
-            setTimeout(function() { sitequeuemanager.check_queue(); },5000);
+            setTimeout(function() { sitequeuemanager.check_queue(); },8000);
           },
           error: function(response) {
              console.log('error connecting to queue system,  will try again soon');
