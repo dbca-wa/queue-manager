@@ -40,5 +40,5 @@ class Command(BaseCommand):
                 queue_group.ping_url_current= ping_url_current
                 queue_group.save()
 
-                print (datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : Site Load Time ("+ping_url+") : ("+str(ping_url_current)+")")
+                print (datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : Site Load Time ("+ping_url+") : ("+str(ping_url_current)+"s)")
 
