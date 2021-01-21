@@ -172,7 +172,7 @@ var sitequeuemanager  = {
          if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
 	       var pageheight = $( document ).height();
 	       if($("#queue-inactivity" ).length == 0) {
-                   $('html').prepend("<div id='queue-inactivity' style='width: 100%; position: absolute; z-index: 10; height: "+pageheight+"px'><div style='width: 100%; height: "+pageheight+"px;  background-image: url("+'"'+sitequeuemanager.var.url+"/static/img/django_queue_manager/bg_tran_black.png"+'"'+"'  ><BR><BR><div class='qm-box'><img src='"+sitequeuemanager.var.url+"static/img/django_queue_manager/exclamation.png'><br><br> We have detected that you have been inactive on our site for a while. <br><br> Are you still browsering the site? <br><br><button class='qm-button qm-blue' onclick='sitequeuemanager.inactivityConfirm();'>Yes, I am</button>&nbsp;<button class='qm-button qm-red' id='qm-countdown'>30</button></div></div></div>");
+                   $('html').prepend("<div id='queue-inactivity' style='width: 100%; position: absolute; z-index: 10; height: "+pageheight+"px'><div style='width: 100%; height: "+pageheight+"px;  background-image: url("+'"'+sitequeuemanager.var.url+"/static/img/django_queue_manager/bg_tran_black.png"+'"'+"'  ><BR><BR><div class='qm-box'><img src='"+sitequeuemanager.var.url+"/static/img/django_queue_manager/exclamation.png'><br><br> We have detected that you have been inactive on our site for a while. <br><br> Are you still browsering the site? <br><br><button class='qm-button qm-blue' onclick='sitequeuemanager.inactivityConfirm();'>Yes, I am</button>&nbsp;<button class='qm-button qm-red' id='qm-countdown'>30</button></div></div></div>");
 		      
 		   sitequeuemanager.var.idleInterval = setInterval(sitequeuemanager.inActivityCountDown, 1000);
 
@@ -258,7 +258,7 @@ var sitequeuemanager  = {
                       if (sitequeuemanager.var.running == 'false' ) {
 			  console.log('loading css');
 			  var cssTag = document.createElement('link');
-			  cssTag.href = sitequeuemanager.var.url+"static/css/django_queue_manager/queue-manager.css";
+			  cssTag.href = sitequeuemanager.var.url+"/static/css/django_queue_manager/queue-manager.css";
                           cssTag.type='text/css';
 			  cssTag.rel='stylesheet';	      
                           document.head.appendChild(cssTag);
