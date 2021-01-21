@@ -169,7 +169,6 @@ var sitequeuemanager  = {
      },	      
      timerIncrement: function() {
          sitequeuemanager.var.browser_inactivity_time = sitequeuemanager.var.browser_inactivity_time + 1;
-         console.log(sitequeuemanager.var.browser_inactivity_time);
          if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
 	       var pageheight = $( document ).height();
 	       if($("#queue-inactivity" ).length == 0) {
