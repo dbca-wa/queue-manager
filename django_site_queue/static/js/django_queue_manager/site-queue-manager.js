@@ -5,7 +5,11 @@ var sitequeuemanager  = {
         'running': 'false',
         'url': '',
         'session_key': '',
-	'domain': ''
+	'domain': '',
+        'browser_inactivity_time': 0,
+	'time_left_enabled': false,
+	'browser_inactivity_timeout': 1000, 
+	'browser_inactivity_redirect': '',
      },
      check_queue: function() {
         sitequeuemanager.var.running = 'true';
@@ -17,11 +21,17 @@ var sitequeuemanager  = {
           data: {},
           cache: false,
           success: function(response) {
+            sitequeuemanager.var.time_left_enabled = response['time_left_enabled'];
+            sitequeuemanager.var.browser_inactivity_timeout = response['browser_inactivity_timeout'];
+            sitequeuemanager.var.browser_inactivity_redirect = response['browser_inactivity_redirect'];
             if (response['session_key'] != sitequeuemanager.var.session_key) {
          	    sitequeuemanager.createCookie('sitequeuesession',response['session_key'],30);
 		    sitequeuemanager.var.session_key = response['session_key'];
             }
+
             if (response.status == "Active") {
+		          // show session timer box on active session
+		          if (sitequeuemanager.var.time_left_enabled == true) {
 			      var timelimit = 'N/A';
                               if (response['expiry_seconds'] > 60) {
                                    var expiry_min = response['expiry_seconds'] / 60;
@@ -31,11 +41,14 @@ var sitequeuemanager  = {
                                    timelimit = "<1min";
 			      }
                           if($("#queue-timer" ).length == 0) {
-
                               $('html').prepend("<div id='queue-timer' style='position: absolute; z-index: 10; width:100%; '><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
 		          }
                           $('#queue-time-left').html(timelimit);
+                          } else {
+                              $("#queue-timer" ).remove();
+		          }
 
+                          // hide and remove waiting screen.
                           $('body').show();
                           if($("#queue-manager").length == 0) {
                           } else {
@@ -54,8 +67,10 @@ var sitequeuemanager  = {
                       //window.location=response.url+"/?session_key="+response['session_key'];
                   }
 	    } else {
+		   
                   if($("#queue-manager" ).length == 0) {
                          $('body').hide();
+			  
 			 $("#queue-timer" ).remove();
                          $.ajax({
                                  url: sitequeuemanager.var.url+'/site-queue/view/',
@@ -75,6 +90,7 @@ var sitequeuemanager  = {
                                  }
                           });
                   } else {
+		       $("#queue-manager" ).show();
                    console.log('already exists');
                   }
                   console.log('STATUS');
@@ -134,6 +150,36 @@ var sitequeuemanager  = {
              expires = "";
          }
          document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/; domain=."+sitequeuemanager.var.domain;
+     }, 
+     inActivityCountDown: function() {
+	    var countdown = $('#qm-countdown').html();
+	    countdown = countdown - 1;
+	    if (countdown < 0) {
+              window.location = sitequeuemanager.var.browser_inactivity_redirect;
+            }
+	    $('#qm-countdown').html(countdown);
+
+     },
+     inactivityConfirm: function() {
+     
+      $('#qm-countdown').html('45');
+      sitequeuemanager.var.browser_inactivity_time = 0;
+      $("#queue-inactivity" ).remove();
+
+     },	      
+     timerIncrement: function() {
+         sitequeuemanager.var.browser_inactivity_time = sitequeuemanager.var.browser_inactivity_time + 1;
+         if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
+	       var pageheight = $( document ).height();
+	       if($("#queue-inactivity" ).length == 0) {
+                   $('html').prepend("<div id='queue-inactivity' style='width: 100%; position: absolute; z-index: 10; height: "+pageheight+"px'><div style='width: 100%; height: "+pageheight+"px;  background-image: url("+'"'+sitequeuemanager.var.url+"/static/img/django_queue_manager/bg_tran_black.png"+'"'+"'  ><BR><BR><div class='qm-box'><img src='"+sitequeuemanager.var.url+"static/img/django_queue_manager/exclamation.png'><br><br> We have detected that you have been inactive on our site for a while. <br><br> Are you still browsering the site? <br><br><button class='qm-button qm-blue' onclick='sitequeuemanager.inactivityConfirm();'>Yes, I am</button>&nbsp;<button class='qm-button qm-red' id='qm-countdown'>30</button></div></div></div>");
+		      
+		   sitequeuemanager.var.idleInterval = setInterval(sitequeuemanager.inActivityCountDown, 1000);
+
+	       }
+	       // var idleInterval = setInterval(sitequeuemanager.timerIncrement, 15000);
+              
+         }
      },
      init: function(queue_domain,queue_url, queue_group, active_hosts="") {
          sitequeuemanager.var.domain = queue_domain;
@@ -158,6 +204,14 @@ var sitequeuemanager  = {
             return;
          }
 
+	 var idleInterval = setInterval(sitequeuemanager.timerIncrement, 1000);
+         $(document).mousemove(function (e) {
+             sitequeuemanager.var.browser_inactivity_time = 0;
+         });
+
+         $(document).keypress(function (e) {
+             sitequeuemanager.var.browser_inactivity_time = 0;
+         });
 
          if (window.jQuery) {
               var smactive = true;
@@ -193,6 +247,7 @@ var sitequeuemanager  = {
 	          }
 
                   if (window.jQuery) {
+		      
                       sitequeuemanager.var.queueurl = 'false';
                       // if ($("#queue").length> 0) {
                       //      var queue = $("#queue").val();
@@ -201,6 +256,13 @@ var sitequeuemanager  = {
                       //      }
                       //}
                       if (sitequeuemanager.var.running == 'false' ) {
+			  console.log('loading css');
+			  var cssTag = document.createElement('link');
+			  cssTag.href = sitequeuemanager.var.url+"static/css/django_queue_manager/queue-manager.css";
+                          cssTag.type='text/css';
+			  cssTag.rel='stylesheet';	      
+                          document.head.appendChild(cssTag);
+
                           sitequeuemanager.check_queue();
                       }
                   }
@@ -213,6 +275,9 @@ var sitequeuemanager  = {
                  setTimeout(function() { sitequeuemanager.init(queue_domain,queue_url);}, 200);
 	  }
 
+
      }
 
 }
+
+
