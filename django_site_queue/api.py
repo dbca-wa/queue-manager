@@ -48,6 +48,7 @@ def check_create_session(request, *args, **kwargs):
     queue_group_name = 'default'
     queue_domain = ''
     queue_url = ''
+    time_left_enabled = False
     ping_url_enabled = False
     ping_url = ''
     ping_url_limit = 100
@@ -63,6 +64,7 @@ def check_create_session(request, *args, **kwargs):
         queue_group_name = queue_group[0].group_unique_key
         queue_domain = queue_group[0].queue_domain
         queue_url = queue_group[0].queue_url
+        time_left_enabled = queue_group[0].time_left_enabled
 
         ping_url_enabled = queue_group[0].ping_url_enabled
         ping_url = queue_group[0].ping_url
@@ -78,7 +80,7 @@ def check_create_session(request, *args, **kwargs):
     staff_loggedin = False
      
     session_key = '' 
-    print (request.COOKIES)
+    #print (request.COOKIES)
     try:
         if 'session_key' in request.GET:
             if len(request.GET['session_key']) > 10: 
@@ -101,10 +103,10 @@ def check_create_session(request, *args, **kwargs):
                  #        memory_session['sitequeuesession_created'] = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
                  #        memory_session['sitequeuesession_agent'] = request.META['HTTP_USER_AGENT']
 
-        if request.GET['session_key'] == "":
-            print ("NEW")
-            print (memory_session)
-            print (request.COOKIES)
+        #if request.GET['session_key'] == "":
+        #    print ("NEW")
+        #    print (memory_session)
+        #    print (request.COOKIES)
 
         if 'sitequeuesession' not in memory_session:
              if 'sitequeuesession' in request.COOKIES:
@@ -248,7 +250,7 @@ def check_create_session(request, *args, **kwargs):
 
     if settings.DEBUG is True:    
         print (sitesession)
-        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': sitesession.expiry.strftime('%d/%m/%Y %H:%M'), 'idle': sitesession.idle.strftime('%d/%m/%Y %H:%M'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : wait_time ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False')}), content_type='application/json')
+        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': sitesession.expiry.strftime('%d/%m/%Y %H:%M'), 'idle': sitesession.idle.strftime('%d/%m/%Y %H:%M'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : wait_time ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled }), content_type='application/json')
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Max-Age"] = "0"
@@ -258,7 +260,7 @@ def check_create_session(request, *args, **kwargs):
         response.set_cookie('sitequeuesession', session_key, max_age=2592000, samesite=None, domain=QUEUE_DOMAIN)
         return response
     else:
-        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'session_key': session_key, 'queue_position' : queue_position, 'wait_time' : wait_time}), content_type='application/json')
+        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'session_key': session_key, 'queue_position' : queue_position, 'wait_time' : wait_time, 'time_left_enabled': time_left_enabled}), content_type='application/json')
         response["Access-Control-Allow-Origin"] = "*" 
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Max-Age"] = "0"

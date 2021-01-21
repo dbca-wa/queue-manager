@@ -5,7 +5,9 @@ var sitequeuemanager  = {
         'running': 'false',
         'url': '',
         'session_key': '',
-	'domain': ''
+	'domain': '',
+        'browser_inactivity_time': 0,
+	'time_left_enabled': false
      },
      check_queue: function() {
         sitequeuemanager.var.running = 'true';
@@ -17,11 +19,16 @@ var sitequeuemanager  = {
           data: {},
           cache: false,
           success: function(response) {
+            sitequeuemanager.var.time_left_enabled = response['time_left_enabled'];
+
             if (response['session_key'] != sitequeuemanager.var.session_key) {
          	    sitequeuemanager.createCookie('sitequeuesession',response['session_key'],30);
 		    sitequeuemanager.var.session_key = response['session_key'];
             }
+
             if (response.status == "Active") {
+		          // show session timer box on active session
+		          if (sitequeuemanager.var.time_left_enabled == true) {
 			      var timelimit = 'N/A';
                               if (response['expiry_seconds'] > 60) {
                                    var expiry_min = response['expiry_seconds'] / 60;
@@ -31,11 +38,14 @@ var sitequeuemanager  = {
                                    timelimit = "<1min";
 			      }
                           if($("#queue-timer" ).length == 0) {
-
                               $('html').prepend("<div id='queue-timer' style='position: absolute; z-index: 10; width:100%; '><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
 		          }
                           $('#queue-time-left').html(timelimit);
+                          } else {
+                              $("#queue-timer" ).remove();
+		          }
 
+                          // hide and remove waiting screen.
                           $('body').show();
                           if($("#queue-manager").length == 0) {
                           } else {
@@ -54,8 +64,10 @@ var sitequeuemanager  = {
                       //window.location=response.url+"/?session_key="+response['session_key'];
                   }
 	    } else {
+		   
                   if($("#queue-manager" ).length == 0) {
                          $('body').hide();
+			  
 			 $("#queue-timer" ).remove();
                          $.ajax({
                                  url: sitequeuemanager.var.url+'/site-queue/view/',
@@ -75,6 +87,7 @@ var sitequeuemanager  = {
                                  }
                           });
                   } else {
+		       $("#queue-manager" ).show();
                    console.log('already exists');
                   }
                   console.log('STATUS');
@@ -135,6 +148,13 @@ var sitequeuemanager  = {
          }
          document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/; domain=."+sitequeuemanager.var.domain;
      },
+     timerIncrement: function() {
+         sitequeuemanager.var.browser_inactivity_time = sitequeuemanager.var.browser_inactivity_time + 15;
+         console.log(sitequeuemanager.var.browser_inactivity_time);
+         if (sitequeuemanager.var.browser_inactivity_time > 60) {
+              window.location.reload();
+         }
+     },
      init: function(queue_domain,queue_url, queue_group, active_hosts="") {
          sitequeuemanager.var.domain = queue_domain;
 	 sitequeuemanager.var.url = queue_url;
@@ -158,6 +178,14 @@ var sitequeuemanager  = {
             return;
          }
 
+	 var idleInterval = setInterval(sitequeuemanager.timerIncrement, 15000);
+         $(document).mousemove(function (e) {
+             sitequeuemanager.var.browser_inactivity_time = 0;
+         });
+
+         $(document).keypress(function (e) {
+             sitequeuemanager.var.browser_inactivity_time = 0;
+         });
 
          if (window.jQuery) {
               var smactive = true;
@@ -216,3 +244,5 @@ var sitequeuemanager  = {
      }
 
 }
+
+
