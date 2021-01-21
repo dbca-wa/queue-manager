@@ -1,0 +1,27 @@
+.qm-button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.qm-box {
+  width: 400px;
+  margin: 0 auto;
+  background: rgba(255,255,255);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  background-clip: padding-box;
+  text-align: center;
+}
+
+.qm-green {background-color: #4CAF50;} /* Green */
+.qm-blue {background-color: #008CBA;} /* Blue */
+.qm-red {background-color: #f44336;} /* Red */
+.qm-gray {background-color: #e7e7e7; color: black;} /* Gray */
+.qm-black {background-color: #555555;} /* Black */

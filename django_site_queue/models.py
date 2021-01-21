@@ -25,6 +25,10 @@ class SiteQueueManagerGroup(models.Model):
     queue_domain = models.CharField(max_length=256)
     queue_url = models.CharField(max_length=256)
     time_left_enabled = models.BooleanField(default=False)
+
+    browser_inactivity_timeout = models.IntegerField(default=60)
+    browser_inactivity_redirect = models.CharField(max_length=1024, default='')
+
     ping_url_enabled = models.BooleanField(default=False)
     ping_url = models.CharField(max_length=1024, default='')
     ping_url_limit = models.FloatField(default=5)

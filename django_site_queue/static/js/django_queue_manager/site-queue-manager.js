@@ -7,7 +7,9 @@ var sitequeuemanager  = {
         'session_key': '',
 	'domain': '',
         'browser_inactivity_time': 0,
-	'time_left_enabled': false
+	'time_left_enabled': false,
+	'browser_inactivity_timeout': 1000, 
+	'browser_inactivity_redirect': '',
      },
      check_queue: function() {
         sitequeuemanager.var.running = 'true';
@@ -20,7 +22,8 @@ var sitequeuemanager  = {
           cache: false,
           success: function(response) {
             sitequeuemanager.var.time_left_enabled = response['time_left_enabled'];
-
+            sitequeuemanager.var.browser_inactivity_timeout = response['browser_inactivity_timeout'];
+            sitequeuemanager.var.browser_inactivity_redirect = response['browser_inactivity_redirect'];
             if (response['session_key'] != sitequeuemanager.var.session_key) {
          	    sitequeuemanager.createCookie('sitequeuesession',response['session_key'],30);
 		    sitequeuemanager.var.session_key = response['session_key'];
@@ -147,12 +150,36 @@ var sitequeuemanager  = {
              expires = "";
          }
          document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/; domain=."+sitequeuemanager.var.domain;
+     }, 
+     inActivityCountDown: function() {
+	    var countdown = $('#qm-countdown').html();
+	    countdown = countdown - 1;
+	    if (countdown < 0) {
+              window.location = sitequeuemanager.var.browser_inactivity_redirect;
+            }
+	    $('#qm-countdown').html(countdown);
+
      },
+     inactivityConfirm: function() {
+     
+      $('#qm-countdown').html('45');
+      sitequeuemanager.var.browser_inactivity_time = 0;
+      $("#queue-inactivity" ).remove();
+
+     },	      
      timerIncrement: function() {
-         sitequeuemanager.var.browser_inactivity_time = sitequeuemanager.var.browser_inactivity_time + 15;
+         sitequeuemanager.var.browser_inactivity_time = sitequeuemanager.var.browser_inactivity_time + 1;
          console.log(sitequeuemanager.var.browser_inactivity_time);
-         if (sitequeuemanager.var.browser_inactivity_time > 60) {
-              window.location.reload();
+         if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
+	       var pageheight = $( document ).height();
+	       if($("#queue-inactivity" ).length == 0) {
+                   $('html').prepend("<div id='queue-inactivity' style='width: 100%; position: absolute; z-index: 10; height: "+pageheight+"px'><div style='width: 100%; height: "+pageheight+"px;  background-image: url("+'"'+sitequeuemanager.var.url+"/static/img/django_queue_manager/bg_tran_black.png"+'"'+"'  ><BR><BR><div class='qm-box'><img src='"+sitequeuemanager.var.url+"static/img/django_queue_manager/exclamation.png'><br><br> We have detected that you have been inactive on our site for a while. <br><br> Are you still browsering the site? <br><br><button class='qm-button qm-blue' onclick='sitequeuemanager.inactivityConfirm();'>Yes, I am</button>&nbsp;<button class='qm-button qm-red' id='qm-countdown'>30</button></div></div></div>");
+		      
+		   sitequeuemanager.var.idleInterval = setInterval(sitequeuemanager.inActivityCountDown, 1000);
+
+	       }
+	       // var idleInterval = setInterval(sitequeuemanager.timerIncrement, 15000);
+              
          }
      },
      init: function(queue_domain,queue_url, queue_group, active_hosts="") {
@@ -178,7 +205,7 @@ var sitequeuemanager  = {
             return;
          }
 
-	 var idleInterval = setInterval(sitequeuemanager.timerIncrement, 15000);
+	 var idleInterval = setInterval(sitequeuemanager.timerIncrement, 1000);
          $(document).mousemove(function (e) {
              sitequeuemanager.var.browser_inactivity_time = 0;
          });
@@ -221,6 +248,7 @@ var sitequeuemanager  = {
 	          }
 
                   if (window.jQuery) {
+		      
                       sitequeuemanager.var.queueurl = 'false';
                       // if ($("#queue").length> 0) {
                       //      var queue = $("#queue").val();
@@ -229,6 +257,13 @@ var sitequeuemanager  = {
                       //      }
                       //}
                       if (sitequeuemanager.var.running == 'false' ) {
+			  console.log('loading css');
+			  var cssTag = document.createElement('link');
+			  cssTag.href = sitequeuemanager.var.url+"static/css/django_queue_manager/queue-manager.css";
+                          cssTag.type='text/css';
+			  cssTag.rel='stylesheet';	      
+                          document.head.appendChild(cssTag);
+
                           sitequeuemanager.check_queue();
                       }
                   }
@@ -240,6 +275,7 @@ var sitequeuemanager  = {
                  document.head.appendChild(scriptTag);
                  setTimeout(function() { sitequeuemanager.init(queue_domain,queue_url);}, 200);
 	  }
+
 
      }
 
