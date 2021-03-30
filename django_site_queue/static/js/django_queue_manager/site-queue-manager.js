@@ -8,7 +8,7 @@ var sitequeuemanager  = {
 	'domain': '',
         'browser_inactivity_time': 0,
 	'time_left_enabled': false,
-	'browser_inactivity_timeout': 1000, 
+	'browser_inactivity_timeout': 60, 
 	'browser_inactivity_redirect': '',
      },
      check_queue: function() {
@@ -169,16 +169,18 @@ var sitequeuemanager  = {
      },	      
      timerIncrement: function() {
          sitequeuemanager.var.browser_inactivity_time = sitequeuemanager.var.browser_inactivity_time + 1;
-         if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
-	       var pageheight = $( document ).height();
-	       if($("#queue-inactivity" ).length == 0) {
-                   $('html').prepend("<div id='queue-inactivity' style='width: 100%; position: absolute; z-index: 10; height: "+pageheight+"px'><div style='width: 100%; height: "+pageheight+"px;  background-image: url("+'"'+sitequeuemanager.var.url+"/static/img/django_queue_manager/bg_tran_black.png"+'"'+"'  ><BR><BR><div class='qm-box'><img src='"+sitequeuemanager.var.url+"/static/img/django_queue_manager/exclamation.png'><br><br> We have detected that you have been inactive on our site for a while. <br><br> Are you still browsering the site? <br><br><button class='qm-button qm-blue' onclick='sitequeuemanager.inactivityConfirm();'>Yes, I am</button>&nbsp;<button class='qm-button qm-red' id='qm-countdown'>30</button></div></div></div>");
-		      
-		   sitequeuemanager.var.idleInterval = setInterval(sitequeuemanager.inActivityCountDown, 1000);
+	 if (sitequeuemanager.var.browser_inactivity_timeout > 0 ) { 
+               if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
+	             var pageheight = $( document ).height();
+	             if($("#queue-inactivity" ).length == 0) {
+                         $('html').prepend("<div id='queue-inactivity' style='width: 100%; position: absolute; z-index: 10; height: "+pageheight+"px'><div style='width: 100%; height: "+pageheight+"px;  background-image: url("+'"'+sitequeuemanager.var.url+"/static/img/django_queue_manager/bg_tran_black.png"+'"'+"'  ><BR><BR><div class='qm-box'><img src='"+sitequeuemanager.var.url+"/static/img/django_queue_manager/exclamation.png'><br><br> We have detected that you have been inactive on our site for a while. <br><br> Are you still browsering the site? <br><br><button class='qm-button qm-blue' onclick='sitequeuemanager.inactivityConfirm();'>Yes, I am</button>&nbsp;<button class='qm-button qm-red' id='qm-countdown'>30</button></div></div></div>");
+	                    
+	                 sitequeuemanager.var.idleInterval = setInterval(sitequeuemanager.inActivityCountDown, 1000);
 
-	       }
-	       // var idleInterval = setInterval(sitequeuemanager.timerIncrement, 15000);
-              
+	             }
+	             // var idleInterval = setInterval(sitequeuemanager.timerIncrement, 15000);
+                    
+               }
          }
      },
      init: function(queue_domain,queue_url, queue_group, active_hosts="") {
