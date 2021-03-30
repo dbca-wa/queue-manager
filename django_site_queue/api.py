@@ -245,6 +245,9 @@ def check_create_session(request, *args, **kwargs):
         print (e)
         pass
     if waiting_queue_enabled == False or waiting_queue_enabled == "False":
+         if sitesession is None:
+             mydict = {'status': 1}
+             sitesession = dotdict(mydict) 
          sitesession.status = 1
     
     CORS_SITES = env('CORS_SITES', None)
@@ -284,6 +287,11 @@ def get_client_ip(request):
     return ip
 
 
+class dotdict(dict):
+    """dot.notation access to dictionary attributes"""
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 #
 #    session_key = models.CharField(max_length=256)
 #    idle = models.DateTimeField(blank=True, null=True)
