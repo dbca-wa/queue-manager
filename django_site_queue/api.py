@@ -54,6 +54,10 @@ def check_create_session(request, *args, **kwargs):
     ping_url_limit = 100
     ping_url_current = 0
 
+    #defaults
+    total_active_session = 0
+    total_waiting_session = 0
+   
     if queue_group.count() > 0:
         session_total_limit = queue_group[0].session_total_limit
         session_limit_seconds = queue_group[0].session_limit_seconds
