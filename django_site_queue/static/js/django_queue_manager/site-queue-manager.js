@@ -10,6 +10,7 @@ var sitequeuemanager  = {
 	'time_left_enabled': false,
 	'browser_inactivity_timeout': 60, 
 	'browser_inactivity_redirect': '',
+	'waiting_queue_enabled': true,
      },
      check_queue: function() {
         sitequeuemanager.var.running = 'true';
@@ -24,6 +25,8 @@ var sitequeuemanager  = {
             sitequeuemanager.var.time_left_enabled = response['time_left_enabled'];
             sitequeuemanager.var.browser_inactivity_timeout = response['browser_inactivity_timeout'];
             sitequeuemanager.var.browser_inactivity_redirect = response['browser_inactivity_redirect'];
+	    sitequeuemanager.var.waiting_queue_enabled = response['waiting_queue_enabled'];
+
             if (response['session_key'] != sitequeuemanager.var.session_key) {
          	    sitequeuemanager.createCookie('sitequeuesession',response['session_key'],30);
 		    sitequeuemanager.var.session_key = response['session_key'];
@@ -169,7 +172,7 @@ var sitequeuemanager  = {
      },	      
      timerIncrement: function() {
          sitequeuemanager.var.browser_inactivity_time = sitequeuemanager.var.browser_inactivity_time + 1;
-	 if (sitequeuemanager.var.browser_inactivity_timeout > 0 ) { 
+	 if (sitequeuemanager.var.waiting_queue_enabled == true ) { 
                if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
 	             var pageheight = $( document ).height();
 	             if($("#queue-inactivity" ).length == 0) {
