@@ -246,9 +246,12 @@ def check_create_session(request, *args, **kwargs):
         pass
     if waiting_queue_enabled == False or waiting_queue_enabled == "False":
          if sitesession is None:
-             mydict = {'status': 1}
+             mydict = {'status': 1, 'idle': None, 'expiry': None}
              sitesession = dotdict(mydict) 
          sitesession.status = 1
+         sitesession.idle = datetime.now(timezone.utc)
+         sitesession.expiry = datetime.now(timezone.utc)+timedelta(hours=10)
+
     
     CORS_SITES = env('CORS_SITES', None)
     QUEUE_DOMAIN = env('QUEUE_DOMAIN', '')
