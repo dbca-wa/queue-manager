@@ -37,7 +37,7 @@ def check_create_session(request, *args, **kwargs):
     sitequeuesession = None
     sitesession = None
 
-    queue_group = models.SiteQueueManagerGroup.objects.filter(waiting_queue_enabled=True, group_unique_key=request.GET['queue_group']) 
+    queue_group = models.SiteQueueManagerGroup.objects.filter(group_unique_key=request.GET['queue_group']) 
 
     session_total_limit = 2
     session_limit_seconds = 20
