@@ -57,7 +57,10 @@ def check_create_session(request, *args, **kwargs):
     #defaults
     total_active_session = 0
     total_waiting_session = 0
-   
+    wait_time = 100
+    browser_inactivity_timeout = 300
+    browser_inactivity_redirect = '/'
+
     if queue_group.count() > 0:
         session_total_limit = queue_group[0].session_total_limit
         session_limit_seconds = queue_group[0].session_limit_seconds
