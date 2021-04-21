@@ -1,0 +1,41 @@
+sudo: false
+language: python
+cache: pip
+dist: trusty
+python:
+    - "3.6"
+addons:
+    postgresql: "9.5"
+    apt:
+        packages:
+            - postgresql-9.5-postgis-2.3
+services:
+    - postgresql
+branches:
+    only:
+        - master
+        - main
+env:
+    global:
+        - ALLOWED_DOMAIN="*"
+        - SECRET_KEY=SecretKeyForTravis
+        - DATABASE_URL="postgis://postgres@localhost:5432/travis_ci_test"
+        - PRODUCTION_EMAIL=False
+        - EMAIL_INSTANCE="TEST"
+        - NON_PROD_EMAIL="travis@dpaw.wa.gov.au"
+        - BPAY_ALLOWED=True
+        - EMAIL_FROM="no-reply@dbca.wa.gov.au"
+        - DEBUG=True
+sudo: true
+install:
+    - pip install pip --upgrade
+    - pip install --upgrade setuptools
+    - pip install six
+    - pip install -r requirements.txt
+before_script:
+    - touch .env
+    - psql -c 'create database travis_ci_test;' -U postgres
+    - psql -U postgres -c "create extension postgis"
+    - python manage.py migrate --noinput
+script:
+    - python manage.py test queue-manager
