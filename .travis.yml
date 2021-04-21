@@ -24,7 +24,7 @@ env:
         - DEBUG=True
 sudo: true
 install:
-    - sqlite3 /app/db/db.sqlite3
+    
     - pip install pip --upgrade
     - pip install --upgrade setuptools
     - pip install six
