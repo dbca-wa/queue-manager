@@ -4,11 +4,6 @@ cache: pip
 dist: trusty
 python:
     - "3.6"
-addons:
-    postgresql: "9.5"
-    apt:
-        packages:
-            - postgresql-9.5-postgis-2.3
 services:
     - postgresql
 branches:
@@ -28,6 +23,7 @@ env:
         - DEBUG=True
 sudo: true
 install:
+    - sqlite /app/db/db.sqlite3
     - pip install pip --upgrade
     - pip install --upgrade setuptools
     - pip install six
