@@ -4,8 +4,10 @@ cache: pip
 dist: trusty
 python:
     - "3.6"
-services:
-    - postgresql
+addons:
+  apt:
+    packages: 
+        - sqlite3
 branches:
     only:
         - main
