@@ -13,6 +13,8 @@ var sitequeuemanager = {
 	'browser_inactivity_enabled': false,
 	'waiting_queue_enabled': true,
 	'custom_message': '',
+	'queue_name' : '',
+        'more_info_link' : ''
      },
      check_queue: function() {
         sitequeuemanager.var.running = 'true';
@@ -30,6 +32,8 @@ var sitequeuemanager = {
 	    sitequeuemanager.var.waiting_queue_enabled = response['waiting_queue_enabled'];
 	    sitequeuemanager.var.browser_inactivity_enabled = response['browser_inactivity_enabled'];
             sitequeuemanager.var.custom_message = response['custom_message'];
+            sitequeuemanager.var.queue_name = response['queue_name'];
+            sitequeuemanager.var.more_info_link = response['more_info_link'];
 
             if (response['session_key'] != sitequeuemanager.var.session_key) {
          	    sitequeuemanager.createCookie('sitequeuesession',response['session_key'],30);
@@ -93,10 +97,20 @@ var sitequeuemanager = {
 					         $('#queue_position').html(response['queue_position']);
 						 $('#wait_time').html(response['wait_time']+' minute/s');
 						 if (sitequeuemanager.var.custom_message.length > 0) {
-						    $("#waitingmessage").html(sitequeuemanager.var.custom_message);
+						     $("#waitingmessage").html(sitequeuemanager.var.custom_message);
 					         }
-					    }
+						 if (sitequeuemanager.var.queue_name.length > 0) {
+                                                     $("#queue-name").html(sitequeuemanager.var.queue_name);
+					         } 
+						 if (sitequeuemanager.var.more_info_link.length > 0) {
+                                                     $("#more_info_link").attr("href", sitequeuemanager.var.more_info_link);
+					             $("#more_info_div").show();
+					         } else {
+                                                     $("#more_info_div").hide();
+					         }
 
+
+					    }
                                  }
                           });
                   } else {
@@ -104,11 +118,6 @@ var sitequeuemanager = {
 		       $("#queue-manager" ).show();
                        console.log('already exists');
                   }
-                  //console.log('STATUS');
-                  //console.log(sitequeuemanager.var.queueurl);
-                  //if (sitequeuemanager.var.queueurl == 'true') {
-                      // sitequeuemanager.var.session_key = response['session_key'];
-		  //console.log(response['queue_position']); 
                   if (response['queue_position'] > 0) {
                       $('#queue_position_div').show();
                       $('#queue_position').html(response['queue_position']);
@@ -117,6 +126,13 @@ var sitequeuemanager = {
 		      if (sitequeuemanager.var.custom_message.length > 0) {
                              $("#waitingmessage").html(sitequeuemanager.var.custom_message);
 		      }
+                      if (sitequeuemanager.var.queue_name.length > 0) {
+                          $("#queue-name").html(sitequeuemanager.var.queue_name);
+                      }
+                      if (sitequeuemanager.var.more_info_link.length > 0) {
+                          $("#more_info_link").html(sitequeuemanager.var.more_info_link);
+                      }
+
                   }
 		  if (sitequeuemanager.var.queueurl == 'true') {
                   } else {
