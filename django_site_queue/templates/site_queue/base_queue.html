@@ -20,10 +20,12 @@
   <h1 class="display-4">{% block queuetitle %}Waiting Queue{% endblock %}</h1>
   <p class="lead">
 {% block waitingtext %}
+<div id="waitingmessage">
 We are currently experiencing extremely high demand.
 You have currently been placed into a queue.  Please wait while we allocate you a spot in the queue.
 Once a spot has been allocated you will be able to browse the site for 20 minutes providing you
 dont close the site otherwise you will lose your spot in the queue.
+</div>
 {% endblock %}
 </p>
 
