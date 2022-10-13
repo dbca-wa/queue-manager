@@ -9,7 +9,6 @@
 <meta http-equiv="refresh" content="300">
 <br><br>
 {% block queuebody %}
-
 <div class='row'>
 <div class='col-sm-1 col-lg-1'>
 &nbsp;
@@ -17,14 +16,18 @@
 <div class='col-sm-10 col-lg-10 m-1'>
 
 <div class="ijumboitron"     style='    padding: 4rem 2rem; margin-bottom: 2rem; background-color: #e9ecef; border-radius: .3rem;';>
-  <h1 class="display-4">{% block queuetitle %}Waiting Queue{% endblock %}</h1>
-  <p class="lead">
+<h1 class="display-4" id='queue-name'>{% block queuetitle %}Waiting Queue{% endblock %}</h1>
+<p class="lead">
 {% block waitingtext %}
 <div id="waitingmessage">
 We are currently experiencing extremely high demand.
 You have currently been placed into a queue.  Please wait while we allocate you a spot in the queue.
 Once a spot has been allocated you will be able to browse the site for 20 minutes providing you
 dont close the site otherwise you will lose your spot in the queue.
+</div>
+<br>
+<div id="more_info_div">
+<a class="queue-button-blue" role="button" id='more_info_link' href="">More Info</a>
 </div>
 {% endblock %}
 </p>
@@ -77,6 +80,49 @@ dont close the site otherwise you will lose your spot in the queue.
 {% endblock %}
 
 <input type='hidden' id='queue' name='queue' value='true'>
+<style>
+.queue-button-blue {
+  appearance: button;
+  background-color: #1652F0;
+  border: 1px solid #1652F0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-family: Graphik,-apple-system,system-ui,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+  font-size: 14px;
+  line-height: 1.15;
+  overflow: visible;
+  padding: 12px 16px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transition: all 80ms ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: fit-content;
+}
+
+.queue-button-blue:disabled {
+  opacity: .5;
+}
+
+.queue-button-blue:focus {
+  outline: 0;
+}
+
+.queue-button-blue:hover {
+  background-color: #0A46E4;
+  border-color: #0A46E4;
+}
+
+.queue-button-blue:active {
+  background-color: #0039D7;
+  border-color: #0039D7;
+}
+</style>
+
 
 {% block queuejs %}
 {% endblock %}

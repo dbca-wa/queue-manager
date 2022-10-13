@@ -28,7 +28,6 @@ class QueuePage(TemplateView):
  
     def get_context_data(self, **kwargs):
         context = super(QueuePage, self).get_context_data(**kwargs)
-        print (settings.VERSION_NO)
         context['VERSION_NO'] = settings.VERSION_NO
         context['QUEUE_URL'] = env('QUEUE_URL','')
         return context
