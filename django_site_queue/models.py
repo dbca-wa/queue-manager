@@ -25,6 +25,7 @@ class SiteQueueManagerGroup(models.Model):
     queue_domain = models.CharField(max_length=256)
     queue_url = models.CharField(max_length=256)
     time_left_enabled = models.BooleanField(default=False)
+    custom_message = models.TextField(blank=True, null=True, max_length=400)
 
     browser_inactivity_enabled = models.BooleanField(default=False)
     browser_inactivity_timeout = models.IntegerField(default=60)

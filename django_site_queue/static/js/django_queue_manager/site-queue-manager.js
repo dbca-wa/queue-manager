@@ -12,6 +12,7 @@ var sitequeuemanager = {
 	'browser_inactivity_redirect': '',
 	'browser_inactivity_enabled': false,
 	'waiting_queue_enabled': true,
+	'custom_message': '',
      },
      check_queue: function() {
         sitequeuemanager.var.running = 'true';
@@ -28,6 +29,7 @@ var sitequeuemanager = {
             sitequeuemanager.var.browser_inactivity_redirect = response['browser_inactivity_redirect'];
 	    sitequeuemanager.var.waiting_queue_enabled = response['waiting_queue_enabled'];
 	    sitequeuemanager.var.browser_inactivity_enabled = response['browser_inactivity_enabled'];
+            sitequeuemanager.var.custom_message = response['custom_message'];
 
             if (response['session_key'] != sitequeuemanager.var.session_key) {
          	    sitequeuemanager.createCookie('sitequeuesession',response['session_key'],30);
@@ -90,13 +92,16 @@ var sitequeuemanager = {
 					         $('#queue_position_div').show();
 					         $('#queue_position').html(response['queue_position']);
 						 $('#wait_time').html(response['wait_time']+' minute/s');
+						 if (sitequeuemanager.var.custom_message.length > 0) {
+						    $("#waitingmessage").html(sitequeuemanager.var.custom_message);
+					         }
 					    }
 
                                  }
                           });
                   } else {
 		       $("#queue-manager" ).show();
-                   console.log('already exists');
+                       console.log('already exists');
                   }
                   //console.log('STATUS');
                   //console.log(sitequeuemanager.var.queueurl);

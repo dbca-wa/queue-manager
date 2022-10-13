@@ -2,10 +2,17 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import confy
 
 
 def main():
     """Run administrative tasks."""
+
+    dot_env = os.path.join(os.getcwd(), '.env')
+    if os.path.exists(dot_env):
+            confy.read_environment_file()
+
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'queuemanager.settings')
     try:
         from django.core.management import execute_from_command_line
