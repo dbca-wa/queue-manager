@@ -33,7 +33,11 @@ var sitequeuemanager = {
 	    sitequeuemanager.var.browser_inactivity_enabled = response['browser_inactivity_enabled'];
             sitequeuemanager.var.custom_message = response['custom_message'];
             sitequeuemanager.var.queue_name = response['queue_name'];
-            sitequeuemanager.var.more_info_link = response['more_info_link'];
+	    if (response['more_info_link'] == null) {
+                sitequeuemanager.var.more_info_link = "";
+            } else {
+                sitequeuemanager.var.more_info_link = response['more_info_link'];
+            }
 
             if (response['session_key'] != sitequeuemanager.var.session_key) {
          	    sitequeuemanager.createCookie('sitequeuesession',response['session_key'],30);
@@ -101,7 +105,8 @@ var sitequeuemanager = {
 					         }
 						 if (sitequeuemanager.var.queue_name.length > 0) {
                                                      $("#queue-name").html(sitequeuemanager.var.queue_name);
-					         } 
+						 }
+						
 						 if (sitequeuemanager.var.more_info_link.length > 0) {
                                                      $("#more_info_link").attr("href", sitequeuemanager.var.more_info_link);
 					             $("#more_info_div").show();
