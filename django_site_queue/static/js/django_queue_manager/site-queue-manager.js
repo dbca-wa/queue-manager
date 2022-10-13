@@ -130,8 +130,12 @@ var sitequeuemanager = {
                           $("#queue-name").html(sitequeuemanager.var.queue_name);
                       }
                       if (sitequeuemanager.var.more_info_link.length > 0) {
-                          $("#more_info_link").html(sitequeuemanager.var.more_info_link);
+                          $("#more_info_link").attr("href", sitequeuemanager.var.more_info_link);
+                          $("#more_info_div").show();
+                      } else {
+                          $("#more_info_div").hide();
                       }
+
 
                   }
 		  if (sitequeuemanager.var.queueurl == 'true') {
