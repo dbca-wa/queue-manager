@@ -100,6 +100,7 @@ var sitequeuemanager = {
                                  }
                           });
                   } else {
+		       
 		       $("#queue-manager" ).show();
                        console.log('already exists');
                   }
@@ -113,6 +114,9 @@ var sitequeuemanager = {
                       $('#queue_position').html(response['queue_position']);
 		      $('#wait_time').html(response['wait_time']+' minute/s');
 		      sitequeuemanager.var.browser_inactivity_time = 0;
+		      if (sitequeuemanager.var.custom_message.length > 0) {
+                             $("#waitingmessage").html(sitequeuemanager.var.custom_message);
+		      }
                   }
 		  if (sitequeuemanager.var.queueurl == 'true') {
                   } else {
