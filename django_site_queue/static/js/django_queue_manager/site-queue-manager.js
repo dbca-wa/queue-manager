@@ -92,14 +92,16 @@ var sitequeuemanager = {
 					         $('#queue_position_div').show();
 					         $('#queue_position').html(response['queue_position']);
 						 $('#wait_time').html(response['wait_time']+' minute/s');
-						 $("#waitingmessage").html(sitequeuemanager.var.custom_message);
+						 if (sitequeuemanager.var.custom_message.length > 0) {
+						    $("#waitingmessage").html(sitequeuemanager.var.custom_message);
+					         }
 					    }
 
                                  }
                           });
                   } else {
 		       $("#queue-manager" ).show();
-                   console.log('already exists');
+                       console.log('already exists');
                   }
                   //console.log('STATUS');
                   //console.log(sitequeuemanager.var.queueurl);
