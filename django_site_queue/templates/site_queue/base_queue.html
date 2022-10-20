@@ -50,10 +50,14 @@ dont close the site otherwise you will lose your spot in the queue.
 {% block queueposition %}
 <div class="text-center" id='queue_position_div' style='display:none'>
 	<center>
+           <div id='queue_postion'>
            <h4>Queue Position</h4>
            <h4 id='queue_position'>NA</h4>
+           </div>
+           <div id='queue_waittime' style='display:none;'>
            <h4>Wait Time (Approx)</h4>
            <h4 id='wait_time'>NA</h4>
+           </div>
 	</center>
 </div>
 
