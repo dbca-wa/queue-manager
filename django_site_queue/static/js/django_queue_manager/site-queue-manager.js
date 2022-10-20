@@ -95,7 +95,7 @@ var sitequeuemanager = {
                                  success: function(htmlresponse) {
                                             var pageheight = $( document ).height();
                                             console.log(pageheight);
-                                            $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 10; width: 100%; height: "+pageheight+"px'><div style='width: 100%; height: "+pageheight+"px;  background-image: url("+'"'+sitequeuemanager.var.url+"/static/img/django_queue_manager/bg_tran_black.png"+'"'+"'  >"+htmlresponse+"</div></div>");
+                                            $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 10; width: 100%; height: "+pageheight+"px'><div style='width: 100%; height: 100%;  background-image: url("+'"'+sitequeuemanager.var.url+"/static/img/django_queue_manager/bg_tran_black.png"+'"'+"'  >"+htmlresponse+"</div></div>");
 					    if (response['queue_position'] > 0 ) {
 					         $('#queue_position_div').show();
 					         $('#queue_position').html(response['queue_position']);
@@ -226,10 +226,12 @@ var sitequeuemanager = {
          }
      },
      init: function(queue_domain,queue_url, queue_group, active_hosts="") {
-         sitequeuemanager.var.domain = queue_domain;
-	 sitequeuemanager.var.url = queue_url;
-         sitequeuemanager.var.queue_group = queue_group;
-         current_host = window.location.host;
+        sitequeuemanager.var.domain = queue_domain;
+	    sitequeuemanager.var.url = queue_url;
+        sitequeuemanager.var.queue_group = queue_group;
+        current_host = window.location.host;
+
+        $( window ).resize(function() { $('#queue-manager').height($( document ).height());});
          
 	 var queue_js_active = false;
 	 if (active_hosts == '*') {
