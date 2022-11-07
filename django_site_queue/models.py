@@ -25,9 +25,12 @@ class SiteQueueManagerGroup(models.Model):
     queue_domain = models.CharField(max_length=256)
     queue_url = models.CharField(max_length=256)
     time_left_enabled = models.BooleanField(default=False)
+    show_queue_position = models.BooleanField(default=False)
+    max_queue_session_limit = models.IntegerField(default=1000)
+    max_queue_url_redirect = models.CharField(max_length=256, default='')
 
     queue_name = models.CharField(max_length=256, help_text="Queue header name to appear on public waiting queue. ", blank=True, null=True)
-    custom_message = models.TextField(blank=True, null=True, max_length=400, help_text="Short message to explain the reason for the waiting queue")
+    custom_message = models.TextField(blank=True, null=True, max_length=650, help_text="Short message to explain the reason for the waiting queue")
     more_info_link = models.CharField(max_length=512, help_text="More info link on public waiting queue", blank=True, null=True)
     browser_inactivity_enabled = models.BooleanField(default=False)
     browser_inactivity_timeout = models.IntegerField(default=60)

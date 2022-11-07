@@ -8,13 +8,16 @@ var sitequeuemanager = {
 	'domain': '',
         'browser_inactivity_time': 0,
 	'time_left_enabled': false,
+	'show_queue_position': false,
 	'browser_inactivity_timeout': 60, 
 	'browser_inactivity_redirect': '',
 	'browser_inactivity_enabled': false,
 	'waiting_queue_enabled': true,
 	'custom_message': '',
 	'queue_name' : '',
-        'more_info_link' : ''
+        'more_info_link' : '',
+	'max_queue_session_limit': '100000',
+	'max_queue_url_redirect': '/'
      },
      check_queue: function() {
         sitequeuemanager.var.running = 'true';
@@ -27,12 +30,16 @@ var sitequeuemanager = {
           cache: false,
           success: function(response) {
             sitequeuemanager.var.time_left_enabled = response['time_left_enabled'];
+            sitequeuemanager.var.show_queue_position = response['show_queue_position'];
             sitequeuemanager.var.browser_inactivity_timeout = response['browser_inactivity_timeout'];
             sitequeuemanager.var.browser_inactivity_redirect = response['browser_inactivity_redirect'];
 	    sitequeuemanager.var.waiting_queue_enabled = response['waiting_queue_enabled'];
 	    sitequeuemanager.var.browser_inactivity_enabled = response['browser_inactivity_enabled'];
             sitequeuemanager.var.custom_message = response['custom_message'];
             sitequeuemanager.var.queue_name = response['queue_name'];
+            sitequeuemanager.var.max_queue_session_limit = response['max_queue_session_limit']
+            sitequeuemanager.var.max_queue_url_redirect = response['max_queue_url_redirect']
+
 	    if (response['more_info_link'] == null) {
                 sitequeuemanager.var.more_info_link = "";
             } else {
@@ -125,6 +132,15 @@ var sitequeuemanager = {
                   }
                   if (response['queue_position'] > 0) {
                       $('#queue_position_div').show();
+                      if (response['queue_position']  > sitequeuemanager.var.max_queue_session_limit) { 
+			      window.location = sitequeuemanager.var.max_queue_url_redirect;
+		      }
+
+		      if (sitequeuemanager.var.show_queue_position == true) { 
+                         $('#div_queue_position').show();
+		      } else {
+                         $('#div_queue_position').hide();
+	              }
                       $('#queue_position').html(response['queue_position']);
 		      $('#wait_time').html(response['wait_time']+' minute/s');
 		      sitequeuemanager.var.browser_inactivity_time = 0;
