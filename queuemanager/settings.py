@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+#    'django.contrib.staticfiles',
     'corsheaders',
     'django_site_queue'
 ]
@@ -54,8 +54,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'dbca_utils.middleware.SSOLoginMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
-
+    'django_site_queue.middleware.CacheControl',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = (
