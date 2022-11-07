@@ -7,4 +7,5 @@ six==1.15.0
 psutil==5.8.0
 django-cors-headers==3.6.0
 gevent==21.1.0
-whitenoise==5.2.0
+whitenoise==5.3.0
+git+https://github.com/dbca-wa/django-media-serv.git#egg=django_media_serv
