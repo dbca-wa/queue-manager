@@ -18,17 +18,6 @@ class Command(BaseCommand):
         total_waiting_session = 0
         for queue_group in queue_groups:
 
-            #session_total_limit = 2
-            #session_limit_seconds = 20
-            #cpu_percentage_limit = 10
-            #idle_limit_seconds = 15
-            #active_session_url = "/"
-            #waiting_queue_enabled = False
-            #queue_group_name = 'default'
-            #queue_domain = ''
-            #queue_url = ''
-
-            #if queue_group.count() > 0:
             session_total_limit = queue_group.session_total_limit
             session_limit_seconds = queue_group.session_limit_seconds
             cpu_percentage_limit = queue_group.cpu_percentage_limit
@@ -43,16 +32,6 @@ class Command(BaseCommand):
             ping_url_limit = queue_group.ping_url_limit
             ping_url_current = queue_group.ping_url_current 
 
-            #session_total_limit = int(env('SESSION_TOTAL_LIMIT', 2))
-            #session_limit_seconds = int(env('SESSION_LIMIT_SECONDS', 20))
-            #cpu_percentage_limit = int(env('CPU_PERCENTAGE_LIMIT', 10))
-            #idle_limit_seconds = int(env('IDLE_LIMIT_SECONDS', 15))
-            #active_session_url = env('ACTIVE_SESSION_URL', "/")
-            #waiting_queue_enabled = env('WAITING_QUEUE_ENABLED','False')
-            #queue_group_name = env('QUEUE_GROUP_NAME','default')
-            #queue_domain = env('QUEUE_DOMAIN','')
-            #queue_url = env ('QUEUE_URL','')
-
             memory_session = {}
 
             idle_seconds = 3000
@@ -62,12 +41,6 @@ class Command(BaseCommand):
             staff_loggedin = False
 
             session_key = ''
-
-            #print (queue_group)
-            #sitesession_query = models.SiteQueueManager.objects.filter(queue_group=queue_group)
-            #print (sitesession_query)
-            #print (sitesession_query.count())
-            #if sitesession_query.count() > 0:
 
             idle_dt_subtract = datetime.now(timezone.utc)-timedelta(seconds=idle_limit_seconds)
             models.SiteQueueManager.objects.filter(expiry__lte=datetime.now(timezone.utc), status=1, queue_group=queue_group).delete()
@@ -83,30 +56,6 @@ class Command(BaseCommand):
             longest_waiting = models.SiteQueueManager.objects.filter(status=0, expiry__gte=datetime.now(timezone.utc),queue_group=queue_group).order_by('created')[:stl]
 
             for sitesession in longest_waiting:
-                 #sitesession = sitesession_query[0]
-                 ##stl = session_total_limit
-
-                 ##sqm = models.SiteQueueManager.objects.filter(status=0, expiry__gte=datetime.now(timezone.utc),queue_group=queue_group).order_by('created')
-                 ##
-
-
-                 ### Clean up stale sessions
-                 ##idle_dt_subtract = datetime.now(timezone.utc)-timedelta(seconds=idle_limit_seconds)
-                 ##models.SiteQueueManager.objects.filter(expiry__lte=datetime.now(timezone.utc), status=1, queue_group=queue_group).delete()
-                 ##models.SiteQueueManager.objects.filter(idle__lte=idle_dt_subtract, queue_group=queue_group).delete()
-
-                 ##total_active_session = models.SiteQueueManager.objects.filter(status=1, expiry__gte=datetime.now(timezone.utc),is_staff=False, queue_group=queue_group).count()
-                 ##total_waiting_session = models.SiteQueueManager.objects.filter(status=0, expiry__gte=datetime.now(timezone.utc), queue_group=queue_group).count()
-                 ##cpu_percentage = psutil.cpu_percent(interval=None)
-
-                 ##session_count = models.SiteQueueManager.objects.filter(session_key=sitequeuesession,expiry__gte=datetime.now(timezone.utc),queue_group=queue_group).count()
-
-
-                 #if session_total_limit > 3:
-                 #     stl = 3
-                 #longest_waiting = models.SiteQueueManager.objects.filter(status=0, expiry__gte=datetime.now(timezone.utc),queue_group=queue_group).order_by('created')[:stl]
-                 #print (longest_waiting)
-                 #print (longest_waiting)
                  if total_active_session < session_total_limit and sitesession.status != 1:
                        #if cpu_percentage < cpu_percentage_limit:
                        for lw in longest_waiting:
