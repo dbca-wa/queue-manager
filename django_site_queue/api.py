@@ -171,8 +171,10 @@ def check_create_session(request, *args, **kwargs):
             print ('CREATION')
             session_status = 0
             #if total_active_session >= session_total_limit:
-            if total_active_session < session_total_limit and total_waiting_session == 0:
-                  session_status = 1
+            # START -- Disabling, will send everyone to queue and the cron job give fairer allocated spots 
+            #if total_active_session < session_total_limit and total_waiting_session == 0:
+            #      session_status = 1
+            # END --
             if ping_url_current > ping_url_limit:
                   session_status = 0
             if cpu_percentage > cpu_percentage_limit:
