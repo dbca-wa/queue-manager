@@ -233,6 +233,7 @@ def check_create_session(request, *args, **kwargs):
                  ##       sitesession.is_staff=staff_loggedin
 
                  sitesession.idle=datetime.now(timezone.utc)
+                 sitesession.expiry=datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds) 
                  sitesession.save()
             else:
                  raise ValidationError("Error no session Found")
