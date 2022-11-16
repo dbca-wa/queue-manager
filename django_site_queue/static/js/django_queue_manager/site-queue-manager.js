@@ -167,11 +167,11 @@ var sitequeuemanager = {
                   }
 
 	    }
-            setTimeout(function() { sitequeuemanager.check_queue(); },8000);
+            setTimeout(function() { sitequeuemanager.check_queue(); },20000);
           },
           error: function(response) {
              console.log('error connecting to queue system,  will try again soon');
-             setTimeout(function() { sitequeuemanager.check_queue(); },20000);
+             setTimeout(function() { sitequeuemanager.check_queue(); },30000);
           }
         });
 
