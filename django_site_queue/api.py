@@ -175,6 +175,10 @@ def check_create_session(request, *args, **kwargs):
             #if total_active_session < session_total_limit and total_waiting_session == 0:
             #      session_status = 1
             # END --
+
+            if total_active_session < session_total_limit and total_waiting_session == 0:
+                  session_status = 1
+
             if ping_url_current > ping_url_limit:
                   session_status = 0
             if cpu_percentage > cpu_percentage_limit:
@@ -188,6 +192,8 @@ def check_create_session(request, *args, **kwargs):
             browser_agent = ''
             if 'HTTP_USER_AGENT' in request.META:
                browser_agent = request.META['HTTP_USER_AGENT']
+
+
 
             session_key = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
             expiry=datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
@@ -253,6 +259,7 @@ def check_create_session(request, *args, **kwargs):
            queue_avg_position = int(queue_position) / int(session_total_limit)
            session_limit_minutes = round(session_limit_seconds / 60)
            wait_time = round(queue_avg_position * session_limit_minutes)
+
         #if expiry_seconds < 1:
         #      request.session['sitequeuesession'] = None
         #      if total_active_session <= session_total_limit and total_waiting_session == 0:
