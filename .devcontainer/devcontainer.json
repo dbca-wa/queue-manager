@@ -10,6 +10,6 @@
 	"runArgs": ["--env-file","${localEnv:HOME}/vscode-env/queue-manager.env",
 		   "--hostname","queuemanager-dev"
 		   ],
-	"forwardPorts": [9131,9132,9133,9134,9135],
+	"forwardPorts": [9166,9167,9168,9169,9170],
 	"initializeCommand" : ""
 }
