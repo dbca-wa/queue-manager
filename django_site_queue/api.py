@@ -199,9 +199,10 @@ def check_create_session(request, *args, **kwargs):
             #else: 
             browser_agent = ''
             if 'HTTP_USER_AGENT' in request.META:
-               browser_agent = request.META['HTTP_USER_AGENT']
-
-
+                browser_agent = request.META['HTTP_USER_AGENT']
+                if 'python' in browser_agent:
+                    response = HttpResponse(json.dumps({"status:": 500, 'message': "Agent Forbidden"}), content_type='application/json', status_code=500)
+                    return response
 
             session_key = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
             expiry=datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
