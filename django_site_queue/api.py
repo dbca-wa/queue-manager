@@ -249,6 +249,9 @@ def check_create_session(request, *args, **kwargs):
                  sitesession.idle=datetime.now(timezone.utc)
                  if sitesession.status == 0:
                      sitesession.expiry=datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds) 
+
+                 sitesession.ipaddress=get_client_ip(request)
+
                  sitesession.save()
             else:
                  raise ValidationError("Error no session Found")
