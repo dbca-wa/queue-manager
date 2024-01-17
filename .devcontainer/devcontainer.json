@@ -1,0 +1,15 @@
+{
+	"name": "Queue Manager",
+	"image": "dbcawa/docker_app_dev:queuemanager_dev_latest",
+	"remoteUser": "container",
+	"workspaceFolder": "/data/data/projects/queue-manager",
+	"mounts": ["type=bind,source=/data/,target=/data/",
+	           "type=bind,source=/data/data/containerhome/,target=/home/container/"
+	          ],	
+	"appPort": [ "7024:8080","9166:9166","9167:9167","9168:9168","9169:9169","9170:9170"],
+	"runArgs": ["--env-file","${localEnv:HOME}/vscode-env/queue-manager.env",
+		   "--hostname","queuemanager-dev"
+		   ],
+	"forwardPorts": [9166,9167,9168,9169,9170],
+	"initializeCommand" : ""
+}

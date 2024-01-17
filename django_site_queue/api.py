@@ -166,7 +166,8 @@ def check_create_session(request, *args, **kwargs):
         #### 
         session_count = models.SiteQueueManager.objects.filter(session_key=sitequeuesession,expiry__gte=datetime.now(timezone.utc),queue_group=queue_group[0]).count()
         #if settings.DEBUG is True:
-
+        #print ("session_count")
+        #print (session_count)
         if sitequeuesession is None or session_count == 0:
             print ('CREATION')
             session_status = 0
@@ -176,8 +177,9 @@ def check_create_session(request, *args, **kwargs):
             #      session_status = 1
             # END --
 
-            if total_active_session < session_total_limit and total_waiting_session == 0:
-                  session_status = 1
+            if total_active_session < session_total_limit:
+                if total_waiting_session == 0:
+                    session_status = 1
 
             if ping_url_current > ping_url_limit:
                   session_status = 0
@@ -185,7 +187,13 @@ def check_create_session(request, *args, **kwargs):
                   session_status = 0
             if staff_loggedin is True:
                   session_status = 1
-
+            # print ("session_status")
+            # print (session_status)
+            # print (session_count)
+            # print (session_total_limit)
+            # print (total_active_session)
+            # print (total_waiting_session)
+            
             #if session_key:
             #     pass
             #else: 
