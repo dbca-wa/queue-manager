@@ -23,10 +23,10 @@
     
 </div>
 
-<script src="http://localhost:9166/static/js/django_queue_manager/site-queue-manager.js?ver=f6fac21e89c7ad373d3413904579a506"></script>
+<script src="{{ DJANGO_SETTINGS.QUEUE_URL }}/static/js/django_queue_manager/site-queue-manager.js?ver=f6fac21e89c7ad373d3413904579a506"></script>
 <script>
      if (typeof sitequeuemanager !== "undefined") {
-         sitequeuemanager.init('localhost','{{ DJANGO_SETTINGS.QUEUE_URL }}','{{ queue_manager_obj.group_unique_key }}','localhost:9166');
+         sitequeuemanager.init({{ DJANGO_SETTINGS.QUEUE_DOMAIN }},'{{ DJANGO_SETTINGS.QUEUE_URL }}','{{ queue_manager_obj.group_unique_key }}','{{ DJANGO_SETTINGS.QUEUE_URL_HOST}}');
      }
 </script>
 </div>

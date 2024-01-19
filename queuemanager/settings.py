@@ -27,6 +27,8 @@ SECRET_KEY = env("SECRET_KEY","")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG', False)
 QUEUE_URL = env('QUEUE_URL', 'https://no.queue.url.configured')
+QUEUE_URL_HOST = env('QUEUE_URL_HOST', 'no.queue.host.url.configured')
+QUEUE_DOMAIN = env('QUEUE_DOMAIN', 'no.queue.domain.configured')
 ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_ALL_ORIGINS=True
