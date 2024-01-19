@@ -20,6 +20,7 @@ class SiteQueueManagerGroup(models.Model):
     session_limit_seconds = models.IntegerField(default=20)
     cpu_percentage_limit = models.IntegerField(default=60)
     idle_limit_seconds = models.IntegerField(default=15)
+    active_session_url_label = models.CharField(max_length=1024, default='This Site')
     active_session_url = models.CharField(max_length=1024)
     waiting_queue_enabled = models.BooleanField(default=False)
     queue_domain = models.CharField(max_length=256)
@@ -34,12 +35,14 @@ class SiteQueueManagerGroup(models.Model):
     more_info_link = models.CharField(max_length=512, help_text="More info link on public waiting queue", blank=True, null=True)
     browser_inactivity_enabled = models.BooleanField(default=False)
     browser_inactivity_timeout = models.IntegerField(default=60)
-    browser_inactivity_redirect = models.CharField(max_length=1024, default='')
+    browser_inactivity_redirect = models.CharField(max_length=1024, default='',null=True, blank=True)
 
     ping_url_enabled = models.BooleanField(default=False)
     ping_url = models.CharField(max_length=1024, default='')
     ping_url_limit = models.FloatField(default=5)
     ping_url_current = models.FloatField(default=0, editable=False)
+
+    template_header_key=models.CharField(max_length=100, default='')
 
     def __str__(self):
         return self.group_name
