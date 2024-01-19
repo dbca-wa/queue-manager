@@ -1,0 +1,28 @@
+{% extends 'site_queue/base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+  
+{% endblock %}
+
+{% block messages %}
+{% endblock %}
+
+{% block content %}
+<div class='container'>
+    <h1 style='color: #003e52; font-size: 48px;'>Oops!</h1>
+    <br>
+    <br>
+    <p>
+        The time allocated to you to choose a campsite has expired, you have been inactive for too long or the queue threshold has been reached.
+        <br><br>
+    </p>
+    <p>
+If you want to try booking again, visit <a href="{{ queue_manager_obj.active_session_url }}" style='color: #00818f;'>{{ queue_manager_obj.active_session_url_label }} <i class="bi bi-box-arrow-up-right"></i>
+</a>. Please note, you will need to start the booking process again and if it is still busy, you will be placed in a queue. 
+    </p>
+</div>
+<br>
+<br>
+{% endblock %}

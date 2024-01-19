@@ -38,8 +38,11 @@ var sitequeuemanager = {
                 sitequeuemanager.var.browser_inactivity_enabled = response['browser_inactivity_enabled'];
                 sitequeuemanager.var.custom_message = response['custom_message'];
                 sitequeuemanager.var.queue_name = response['queue_name'];
-                sitequeuemanager.var.max_queue_session_limit = response['max_queue_session_limit']
-                sitequeuemanager.var.max_queue_url_redirect = response['max_queue_url_redirect']
+                sitequeuemanager.var.max_queue_session_limit = response['max_queue_session_limit'];
+                sitequeuemanager.var.max_queue_url_redirect = response['max_queue_url_redirect'];
+                sitequeuemanager.var.queue_waiting_room_url = response['queue_waiting_room_url'];
+                sitequeuemanager.var.queue_inactivity_url = response['queue_inactivity_url'];
+                sitequeuemanager.var.active_session_url = response['url'];
 
                 if (response['more_info_link'] == null) {
                     sitequeuemanager.var.more_info_link = "";
@@ -85,9 +88,16 @@ var sitequeuemanager = {
                     // sitequeuemanager.var.session_key = response['session_key'];
 
                     if (sitequeuemanager.var.queueurl == 'true') {
-                        console.log("Active Session");
+                        //console.log("Active Session");
                         //$('html').prepend("<div id='queue-manager'> <b>HELLO<b></div>");
                         //window.location=response.url+"/?session_key="+response['session_key'];
+                    }
+
+                    if (sitequeuemanager.var.active_session_url.length > 5) {
+                        
+                        if (window.location.href == sitequeuemanager.var.queue_waiting_room_url ) {
+                            window.location=sitequeuemanager.var.active_session_url;
+                        }
                     }
                 } else {
 
@@ -102,7 +112,7 @@ var sitequeuemanager = {
                             cache: false,
                             success: function (htmlresponse) {
                                 var pageheight = $(document).height();
-                                console.log(pageheight);
+                                
                                 $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 10; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");
                                 if (response['queue_position'] > 0) {
                                     $('#queue_position_div').show();
@@ -129,7 +139,7 @@ var sitequeuemanager = {
                     } else {
 
                         $("#queue-manager").show();
-                        console.log('already exists');
+                       
                     }
                     if (response['queue_position'] > 0) {
                         sitequeuemanager.var.queue_position = response['queue_position'];
@@ -164,34 +174,46 @@ var sitequeuemanager = {
                     }
                     if (sitequeuemanager.var.queueurl == 'true') {
                     } else {
-                        console.log("InActive Session");
+                        // console.log("InActive Session");
                         // $('html').prepend("<div id='queue-manager'> <b>HELLO<b></div>");
                         // window.location=sitequeuemanager.var.url+response.queueurl+"?session_key="+response['session_key'];
                     }
 
-                }
+                    if (sitequeuemanager.var.queue_waiting_room_url.length  > 5) {
 
-                if (sitequeuemanager.var.queue_position < 3 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 500);
-                } else if (sitequeuemanager.var.queue_position < 10 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
-                } else if (sitequeuemanager.var.queue_position < 20 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
-                } else if (sitequeuemanager.var.queue_position < 50 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 10000);
-                } else if (sitequeuemanager.var.queue_position < 100 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 15000);
-                } else if (sitequeuemanager.var.queue_position < 200 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 25000);
-                } else if (sitequeuemanager.var.queue_position < 400 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 30000);
-                } else if (sitequeuemanager.var.queue_position < 800 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 50000);
-                } else if (sitequeuemanager.var.queue_position < 1500 ) { 
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 700000);                    
-                } else {
-                    setTimeout(function () { sitequeuemanager.check_queue(); }, 100000);
+                        if (window.location.href == sitequeuemanager.var.queue_waiting_room_url) {
+
+                        } else {
+                            window.location=sitequeuemanager.var.queue_waiting_room_url;
+                        }
+                    }
+
                 }
+                if (response.status == "Active") {
+                    setTimeout(function () { sitequeuemanager.check_queue(); }, 20000);
+                } else {
+                    if (sitequeuemanager.var.queue_position < 3 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 500);
+                    } else if (sitequeuemanager.var.queue_position < 10 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
+                    } else if (sitequeuemanager.var.queue_position < 20 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
+                    } else if (sitequeuemanager.var.queue_position < 50 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 10000);
+                    } else if (sitequeuemanager.var.queue_position < 100 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 15000);
+                    } else if (sitequeuemanager.var.queue_position < 200 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 25000);
+                    } else if (sitequeuemanager.var.queue_position < 400 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 30000);
+                    } else if (sitequeuemanager.var.queue_position < 800 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 50000);
+                    } else if (sitequeuemanager.var.queue_position < 1500 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 700000);                    
+                    } else {
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 100000);
+                    }
+                }   
             },
             error: function (response) {
                 console.log('error connecting to queue system,  will try again soon');
@@ -235,7 +257,15 @@ var sitequeuemanager = {
         var countdown = $('#qm-countdown').html();
         countdown = countdown - 1;
         if (countdown < 0) {
-            window.location = sitequeuemanager.var.browser_inactivity_redirect;
+            if (sitequeuemanager.var.browser_inactivity_redirect == null) {
+                sitequeuemanager.var.browser_inactivity_redirect = '';
+            }
+            if (sitequeuemanager.var.browser_inactivity_redirect.length == 0) {
+                
+                window.location = sitequeuemanager.var.queue_inactivity_url;
+            } else {
+                window.location = sitequeuemanager.var.browser_inactivity_redirect;
+            }
         }
         $('#qm-countdown').html(countdown);
 
@@ -266,6 +296,7 @@ var sitequeuemanager = {
         }
     },
     init: function (queue_domain, queue_url, queue_group, active_hosts = "") {
+        
         sitequeuemanager.var.domain = queue_domain;
         sitequeuemanager.var.url = queue_url;
         sitequeuemanager.var.queue_group = queue_group;
@@ -323,10 +354,10 @@ var sitequeuemanager = {
                     }
                     // $('#site_queue_frame').html('<iframe src="'+sitequeuemanager.var.url+"/site-queue/set-session/?session_key="+session_key+'" title="Set Session"></iframe>');
                 } else {
-                    console.log('CCOOKE');
-                    console.log(sitequeuemanager.ReadCookie('sitequeuesession'));
-                    console.log(sitequeuemanager.ReadCookie('_ga'));
-                    console.log(document.cookie);
+                    // console.log('CCOOKE');
+                    // console.log(sitequeuemanager.ReadCookie('sitequeuesession'));
+                    // console.log(sitequeuemanager.ReadCookie('_ga'));
+                    // console.log(document.cookie);
                     if (sitequeuemanager.ReadCookie('sitequeuesession')) {
                         sitequeuemanager.var.session_key = sitequeuemanager.ReadCookie('sitequeuesession');
                     }

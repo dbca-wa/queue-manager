@@ -11,4 +11,5 @@ whitenoise==5.3.0
 django-cron==0.5.0
 git+https://github.com/dbca-wa/django-media-serv.git#egg=django_media_serv
 git+https://github.com/dbca-wa/appmonitor_client.git#egg=appmonitor_client
+git+https://github.com/dbca-wa/webtemplate2.git#egg=webtemplate_dbca
 python-decouple==3.8

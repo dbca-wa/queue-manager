@@ -1,0 +1,33 @@
+{% extends 'site_queue/base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+  
+{% endblock %}
+
+{% block messages %}
+{% endblock %}
+
+{% block content %}
+<div class='container'>
+
+    <h1 style='color: #003e52; font-size: 48px;'>Waiting Room</h1>
+    <br>
+    <br>
+    <p>
+        You are currently in a waiting room for Department of Biodiversity Conservation and Attractions Queueing System.
+        <br><br>
+    </p>
+
+    
+</div>
+
+<script src="http://localhost:9166/static/js/django_queue_manager/site-queue-manager.js?ver=f6fac21e89c7ad373d3413904579a506"></script>
+<script>
+     if (typeof sitequeuemanager !== "undefined") {
+         sitequeuemanager.init('localhost','{{ DJANGO_SETTINGS.QUEUE_URL }}','{{ queue_manager_obj.group_unique_key }}','localhost:9166');
+     }
+</script>
+</div>
+{% endblock %}

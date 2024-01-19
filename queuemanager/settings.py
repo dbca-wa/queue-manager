@@ -26,7 +26,7 @@ SECRET_KEY = env("SECRET_KEY","")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG', False)
-
+QUEUE_URL = env('QUEUE_URL', 'https://no.queue.url.configured')
 ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_ALL_ORIGINS=True
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'django_site_queue',
+    'webtemplate_dbca',
     'appmonitor_client'
 ]
 
@@ -76,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_site_queue.context_processors.variables',
             ],
         },
     },
@@ -136,3 +138,6 @@ CRON_CLASSES = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 VERSION_NO = "2.00"
+
+GIT_COMMIT_HASH = os.popen(f"cd {BASE_DIR}; git log -1 --format=%H").read()
+GIT_COMMIT_DATE = os.popen(f"cd {BASE_DIR}; git log -1 --format=%cd").read()
