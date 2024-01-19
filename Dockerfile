@@ -54,7 +54,6 @@ COPY django_site_queue ./django_site_queue
 RUN mkdir /app/queuemanager/cache/
 RUN chmod 777 /app/queuemanager/cache/
 RUN python manage.py collectstatic --noinput
-RUN apt-get install --no-install-recommends -y python-pil
 EXPOSE 8080
 HEALTHCHECK --interval=1m --timeout=5s --start-period=10s --retries=3 CMD ["wget", "-q", "-O", "-", "http://localhost:8080/"]
 CMD ["/startup.sh"]
