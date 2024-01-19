@@ -16,3 +16,4 @@ git+https://github.com/dbca-wa/webtemplate2.git#egg=webtemplate_dbca
 python-decouple==3.8
 setuptools==69.0.3
 wheel==0.42.0
+numpy==1.26.3
