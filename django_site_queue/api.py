@@ -359,3 +359,34 @@ class dotdict(dict):
 #    ipaddress = models.CharField(max_length=100)
 #    created = models.DateTimeField(auto_now_add=True, editable=False)
 #
+
+
+
+def expire_session(request, *args, **kwargs):
+    session_key = request.GET.get('session_key',None)
+    if session_key: 
+        if models.SiteQueueManager.objects.filter(session_key=session_key).count() > 0:             
+            #sqm =  models.SiteQueueManager.objects.filter(session_key=session_key).update(status=2, expiry=datetime.now())
+            sqm =  models.SiteQueueManager.objects.filter(session_key=session_key).delete()
+            print ('SESSION EXPIRED : '+ session_key)
+
+            response = HttpResponse(json.dumps({"status_code": 200,"message": "completed successfully"}), content_type='application/json')
+            response["Access-Control-Allow-Origin"] = "*" 
+            response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+            response["Access-Control-Max-Age"] = "0"
+            response["Access-Control-Allow-Headers"] = "*"
+            response["X-Frame-Options"] = "allow-from *"        
+            return response
+
+
+    response = HttpResponse(json.dumps({"status_code": 401,"message": "Access Forbidden"}), content_type='application/json')
+    response["Access-Control-Allow-Origin"] = "*" 
+    response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    response["Access-Control-Max-Age"] = "0"
+    response["Access-Control-Allow-Headers"] = "*"
+    response["X-Frame-Options"] = "allow-from *"        
+    return response
+
+
+
+

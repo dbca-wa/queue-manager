@@ -257,15 +257,27 @@ var sitequeuemanager = {
         var countdown = $('#qm-countdown').html();
         countdown = countdown - 1;
         if (countdown < 0) {
-            if (sitequeuemanager.var.browser_inactivity_redirect == null) {
-                sitequeuemanager.var.browser_inactivity_redirect = '';
-            }
-            if (sitequeuemanager.var.browser_inactivity_redirect.length == 0) {
-                
-                window.location = sitequeuemanager.var.queue_inactivity_url;
-            } else {
-                window.location = sitequeuemanager.var.browser_inactivity_redirect;
-            }
+            $.ajax({
+                url: sitequeuemanager.var.url + '/api/expire-session/?session_key='+sitequeuemanager.var.session_key,
+                type: 'GET',
+                data: {},
+                cache: false,
+                success: function (htmlresponse) {
+                    if (sitequeuemanager.var.browser_inactivity_redirect == null) {
+                        sitequeuemanager.var.browser_inactivity_redirect = '';
+                    }
+                    if (sitequeuemanager.var.browser_inactivity_redirect.length == 0) {
+                        
+                        window.location = sitequeuemanager.var.queue_inactivity_url;
+                    } else {
+                        window.location = sitequeuemanager.var.browser_inactivity_redirect;
+                    }                    
+                },
+                error: function() { 
+                    console.log("Queue Expiration Error");
+
+                }
+            });
         }
         $('#qm-countdown').html(countdown);
 
