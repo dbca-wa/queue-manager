@@ -55,8 +55,9 @@ class Command(BaseCommand):
 
             longest_waiting = models.SiteQueueManager.objects.filter(status=0, expiry__gte=datetime.now(timezone.utc),queue_group=queue_group).order_by('created')[:stl]
 
+            session_total_limit = session_total_limit = 1
             for sitesession in longest_waiting:
-                 if total_active_session <= session_total_limit and sitesession.status != 1:
+                 if total_active_session < session_total_limit and sitesession.status != 1:
                        #if cpu_percentage < cpu_percentage_limit:
                        for lw in longest_waiting:
                            if sitesession.session_key == lw.session_key:
