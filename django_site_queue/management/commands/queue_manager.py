@@ -55,22 +55,25 @@ class Command(BaseCommand):
 
             longest_waiting = models.SiteQueueManager.objects.filter(status=0, expiry__gte=datetime.now(timezone.utc),queue_group=queue_group).order_by('created')[:stl]
 
+
+            print (datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : ACTIVE Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
             session_total_limit = session_total_limit = 1
             for sitesession in longest_waiting:
+                 total_active_session = models.SiteQueueManager.objects.filter(status=1, expiry__gte=datetime.now(timezone.utc),is_staff=False, queue_group=queue_group).count()                                
                  if total_active_session < session_total_limit and sitesession.status != 1:
                        #if cpu_percentage < cpu_percentage_limit:
-                       for lw in longest_waiting:
-                           if sitesession.session_key == lw.session_key:
-                               if ping_url_current > ping_url_limit:
-                                   print ("Site Load Response Time Limit (waiting for lower response time '"+str(ping_url_current)+"' ) = "+str(ping_url_limit)) 
-                                   sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
-                               else:
-                                   print ("Session Activated: "+sitesession.session_key)
-                                   session_status = 1
-                                   sitesession.status = session_status
-                                   sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
-                           else:
-                               sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
+                        # for lw in longest_waiting:
+                        #     if sitesession.session_key == lw.session_key:
+                    if ping_url_current > ping_url_limit:
+                        print ("Site Load Response Time Limit (waiting for lower response time '"+str(ping_url_current)+"' ) = "+str(ping_url_limit)) 
+                        sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
+                    else:
+                        print ("Session Activated: "+sitesession.session_key)
+                        session_status = 1
+                        sitesession.status = session_status
+                        sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
+                        #    else:
+                        #        sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
                        #else:
                        #    sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
 
@@ -84,5 +87,5 @@ class Command(BaseCommand):
 
                  sitesession.idle=datetime.now(timezone.utc)	
                  sitesession.save()
-        print (datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : ACTIVE Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
+        # print (datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : ACTIVE Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
 
