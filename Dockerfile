@@ -44,6 +44,7 @@ RUN chmod 0644 /etc/cron.d/dockercron
 RUN crontab /etc/cron.d/dockercron
 RUN touch /var/log/cron.log
 RUN service cron start
+COPY .git ./.git
 RUN chmod 755 /startup.sh
 COPY gunicorn.ini manage.py ./
 #COPY ledger ./ledger
