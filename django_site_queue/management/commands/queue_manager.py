@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
 
             print (datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : ACTIVE Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
-            session_total_limit = session_total_limit = 1
+            session_total_limit = session_total_limit + 1
             for sitesession in longest_waiting:
                  total_active_session = models.SiteQueueManager.objects.filter(status=1, expiry__gte=datetime.now(timezone.utc),is_staff=False, queue_group=queue_group).count()                                
                  if total_active_session < session_total_limit and sitesession.status != 1:
