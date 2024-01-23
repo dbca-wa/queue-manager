@@ -192,8 +192,8 @@ var sitequeuemanager = {
                 if (response.status == "Active") {
                     setTimeout(function () { sitequeuemanager.check_queue(); }, 20000);
                 } else {
-                    if (sitequeuemanager.var.queue_position < 3 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 500);
+                    if (sitequeuemanager.var.queue_position < 2 ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 200);
                     } else if (sitequeuemanager.var.queue_position < 10 ) { 
                         setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
                     } else if (sitequeuemanager.var.queue_position < 20 ) { 
