@@ -96,7 +96,7 @@ var sitequeuemanager = {
                     if (sitequeuemanager.var.active_session_url.length > 5) {
                         
                         if (window.location.href == sitequeuemanager.var.queue_waiting_room_url ) {
-                            window.location=sitequeuemanager.var.active_session_url;
+                            window.location=sitequeuemanager.var.active_session_url+"?session_key="+sitequeuemanager.var.session_key;
                         }
                     }
                 } else {
@@ -184,7 +184,7 @@ var sitequeuemanager = {
                         if (window.location.href == sitequeuemanager.var.queue_waiting_room_url) {
 
                         } else {
-                            window.location=sitequeuemanager.var.queue_waiting_room_url;
+                            window.location=sitequeuemanager.var.queue_waiting_room_url+"?session_key="+sitequeuemanager.var.session_key;
                         }
                     }
 
