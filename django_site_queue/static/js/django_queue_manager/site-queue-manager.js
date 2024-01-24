@@ -24,6 +24,17 @@ var sitequeuemanager = {
         sitequeuemanager.var.running = 'true';
         console.log("check queue");
 
+
+        var sitequeuesession_cookie = sitequeuemanager.ReadCookie('sitequeuesession');
+        if (sitequeuesession_cookie.length > 5) {
+            if (sitequeuesession_cookie != sitequeuemanager.var.session_key) {
+
+                url_split = window.location.href.split("?");
+                url_no_params = url_split[0]            
+                window.location=url_no_params;
+                return;
+            }
+        }
         $.ajax({
             url: sitequeuemanager.var.url + '/api/check-create-session/?session_key=' + sitequeuemanager.var.session_key + '&queue_group=' + sitequeuemanager.var.queue_group,
             type: 'GET',
@@ -49,21 +60,25 @@ var sitequeuemanager = {
                 } else {
                     sitequeuemanager.var.more_info_link = response['more_info_link'];
                 }
-
-                if (response['session_key'] != sitequeuemanager.var.session_key) {
+                var sitequeuesession_cookie = sitequeuemanager.ReadCookie('sitequeuesession');
+                if ((response['session_key'] != sitequeuemanager.var.session_key) || (response['session_key'] != sitequeuesession_cookie)) {
                     sitequeuemanager.createCookie('sitequeuesession', response['session_key'], 30);
                     sitequeuemanager.var.session_key = response['session_key'];                    
 
                     url_split = window.location.href.split("?");
                     url_no_params = url_split[0]
           
-                    if (url_no_params == sitequeuemanager.var.queue_waiting_room_url) {                                               
+                    if ( window.location.href == sitequeuemanager.var.queue_waiting_room_url) {  
+                    } else {                                             
                         // Refresh the page and remove the query string paramters from URL
                         window.location=sitequeuemanager.var.queue_waiting_room_url;
                     }
 
 
                 }
+                
+
+                
 
                 if (response.status == "Active") {
                     // show session timer box on active session
@@ -376,13 +391,13 @@ var sitequeuemanager = {
                         // sitequeuemanager.createCookie('session_key',session_key,1)
                         sitequeuemanager.createCookie('sitequeuesession', session_key, 30);
                         sitequeuemanager.var.session_key = session_key;
+                        url_split = window.location.href.split("?");
+                        url_no_params = url_split[0]            
+                        window.location=url_no_params;
+                        
                     }
                     // $('#site_queue_frame').html('<iframe src="'+sitequeuemanager.var.url+"/site-queue/set-session/?session_key="+session_key+'" title="Set Session"></iframe>');
                 } else {
-                    // console.log('CCOOKE');
-                    // console.log(sitequeuemanager.ReadCookie('sitequeuesession'));
-                    // console.log(sitequeuemanager.ReadCookie('_ga'));
-                    // console.log(document.cookie);
                     if (sitequeuemanager.ReadCookie('sitequeuesession')) {
                         sitequeuemanager.var.session_key = sitequeuemanager.ReadCookie('sitequeuesession');
                     }
