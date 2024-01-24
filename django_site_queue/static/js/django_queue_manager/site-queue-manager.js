@@ -26,13 +26,15 @@ var sitequeuemanager = {
 
 
         var sitequeuesession_cookie = sitequeuemanager.ReadCookie('sitequeuesession');
-        if (sitequeuesession_cookie.length > 5) {
-            if (sitequeuesession_cookie != sitequeuemanager.var.session_key) {
+        if (sitequeuesession_cookie != null) {
+            if (sitequeuesession_cookie.length > 5) {
+                if (sitequeuesession_cookie != sitequeuemanager.var.session_key) {
 
-                url_split = window.location.href.split("?");
-                url_no_params = url_split[0]            
-                window.location=url_no_params;
-                return;
+                    url_split = window.location.href.split("?");
+                    url_no_params = url_split[0]            
+                    window.location=url_no_params;
+                    return;
+                }
             }
         }
         $.ajax({
