@@ -52,7 +52,17 @@ var sitequeuemanager = {
 
                 if (response['session_key'] != sitequeuemanager.var.session_key) {
                     sitequeuemanager.createCookie('sitequeuesession', response['session_key'], 30);
-                    sitequeuemanager.var.session_key = response['session_key'];
+                    sitequeuemanager.var.session_key = response['session_key'];                    
+
+                    url_split = window.location.href.split("?");
+                    url_no_params = url_split[0]
+          
+                    if (url_no_params == sitequeuemanager.var.queue_waiting_room_url) {                                               
+                        // Refresh the page and remove the query string paramters from URL
+                        window.location=sitequeuemanager.var.queue_waiting_room_url;
+                    }
+
+
                 }
 
                 if (response.status == "Active") {
