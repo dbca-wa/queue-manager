@@ -307,6 +307,8 @@ var sitequeuemanager = {
 
                 }
             });
+        } else {
+            sitequeuemanager.var.idleInterval = setTimeout(sitequeuemanager.inActivityCountDown, 1000);
         }
         $('#qm-countdown').html(countdown);
 
