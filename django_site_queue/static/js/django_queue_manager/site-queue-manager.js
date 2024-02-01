@@ -283,34 +283,37 @@ var sitequeuemanager = {
         document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/; domain=." + sitequeuemanager.var.domain;
     },
     inActivityCountDown: function () {
-        var countdown = $('#qm-countdown').html();
-        countdown = countdown - 1;
-        if (countdown < 0) {
-            $.ajax({
-                url: sitequeuemanager.var.url + '/api/expire-session/?session_key='+sitequeuemanager.var.session_key,
-                type: 'GET',
-                data: {},
-                cache: false,
-                success: function (htmlresponse) {
-                    if (sitequeuemanager.var.browser_inactivity_redirect == null) {
-                        sitequeuemanager.var.browser_inactivity_redirect = '';
-                    }
-                    if (sitequeuemanager.var.browser_inactivity_redirect.length == 0) {
-                        
-                        window.location = sitequeuemanager.var.queue_inactivity_url;
-                    } else {
-                        window.location = sitequeuemanager.var.browser_inactivity_redirect;
-                    }                    
-                },
-                error: function() { 
-                    console.log("Queue Expiration Error");
-
-                }
-            });
+        if ($("#queue-inactivity").length == 0) {
         } else {
-            sitequeuemanager.var.idleInterval = setTimeout(sitequeuemanager.inActivityCountDown, 1000);
+            var countdown = $('#qm-countdown').html();
+            countdown = countdown - 1;
+            if (countdown < 0) {
+                $.ajax({
+                    url: sitequeuemanager.var.url + '/api/expire-session/?session_key='+sitequeuemanager.var.session_key,
+                    type: 'GET',
+                    data: {},
+                    cache: false,
+                    success: function (htmlresponse) {
+                        if (sitequeuemanager.var.browser_inactivity_redirect == null) {
+                            sitequeuemanager.var.browser_inactivity_redirect = '';
+                        }
+                        if (sitequeuemanager.var.browser_inactivity_redirect.length == 0) {
+                            
+                            window.location = sitequeuemanager.var.queue_inactivity_url;
+                        } else {
+                            window.location = sitequeuemanager.var.browser_inactivity_redirect;
+                        }                    
+                    },
+                    error: function() { 
+                        console.log("Queue Expiration Error");
+
+                    }
+                });
+            } else {
+                sitequeuemanager.var.idleInterval = setTimeout(sitequeuemanager.inActivityCountDown, 1000);
+            }
+            $('#qm-countdown').html(countdown);
         }
-        $('#qm-countdown').html(countdown);
 
     },
     inactivityConfirm: function () {
