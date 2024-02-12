@@ -41,7 +41,6 @@ COPY gunicorn.ini manage.py ./
 RUN touch /app/.env
 COPY queuemanager ./queuemanager
 COPY django_site_queue ./django_site_queue
-COPY .git/refs/heads/master /app/git_hash
 RUN mkdir /app/queuemanager/cache/
 RUN chmod 777 /app/queuemanager/cache/
 RUN python manage.py collectstatic --noinput
