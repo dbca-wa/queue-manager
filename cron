@@ -9,3 +9,6 @@
 */1 * * * * root /bin/bash -c "sleep 1; eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) ;  python3 /app/manage.py ping_url_queue_check  >> /app/logs/ping_url_queue_check.log 2>&1"
 */1 * * * * root /bin/bash -c "sleep 30; eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) ;  python3 /app/manage.py ping_url_queue_check  >> /app/logs/ping_url_queue_check.log 2>&1"
 
+# Run django crons
+*/5 * * * * root /bin/bash -c "eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) ;  python3 /app/manage.py runcrons  >> /app/logs/runcrons.log 2>&1"
+
