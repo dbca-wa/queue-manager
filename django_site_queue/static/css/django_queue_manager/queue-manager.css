@@ -77,3 +77,9 @@
   background-color: #dc3545;
   border-color: #dc3545;
 }
+
+.bsbtn-lg, .btn-group-lg > .bsbtn {
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  border-radius: 0.3rem;
+}
