@@ -1,4 +1,4 @@
-Django==3.2.24
+Django==3.2.25
 dbca-utils==1.1.1
 dj-static==0.0.6
 django-confy==1.0.4
@@ -17,3 +17,5 @@ python-decouple==3.8
 setuptools==69.0.3
 wheel==0.42.0
 numpy==1.26.3
+idna==3.7
+sqlparse==0.5.0
