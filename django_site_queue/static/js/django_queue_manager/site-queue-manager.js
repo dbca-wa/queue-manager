@@ -94,7 +94,7 @@ var sitequeuemanager = {
                             timelimit = "<1min";
                         }
                         if ($("#queue-timer").length == 0) {
-                            $('html').prepend("<div id='queue-timer' style='position: absolute; z-index: 10; width:100%; '><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
+                            $('html').prepend("<div id='queue-timer' style='right: 0px; position: fixed; z-index: 10;'><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
                         }
                         $('#queue-time-left').html(timelimit);
                     } else {
@@ -141,7 +141,7 @@ var sitequeuemanager = {
                             success: function (htmlresponse) {
                                 var pageheight = $(document).height();
                                 
-                                $('html').prepend("<div id='queue-manager' style='right: 0px; position: fixed; z-index: 10; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");
+                                $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 10; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");                    
                                 if (response['queue_position'] > 0) {
                                     $('#queue_position_div').show();
                                     $('#queue_position').html(response['queue_position']);
