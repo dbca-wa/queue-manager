@@ -141,7 +141,7 @@ var sitequeuemanager = {
                             success: function (htmlresponse) {
                                 var pageheight = $(document).height();
                                 
-                                $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 10; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");
+                                $('html').prepend("<div id='queue-manager' style='right: 0px; position: fixed; z-index: 10; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");
                                 if (response['queue_position'] > 0) {
                                     $('#queue_position_div').show();
                                     $('#queue_position').html(response['queue_position']);
