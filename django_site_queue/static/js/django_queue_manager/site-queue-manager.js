@@ -94,7 +94,7 @@ var sitequeuemanager = {
                             timelimit = "<1min";
                         }
                         if ($("#queue-timer").length == 0) {
-                            $('html').prepend("<div id='queue-timer' style='position: absolute; z-index: 10; width:100%; '><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
+                            $('html').prepend("<div id='queue-timer' style='right: 0px; position: fixed; z-index: 1099;'><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
                         }
                         $('#queue-time-left').html(timelimit);
                     } else {
@@ -141,7 +141,7 @@ var sitequeuemanager = {
                             success: function (htmlresponse) {
                                 var pageheight = $(document).height();
                                 
-                                $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 10; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");
+                                $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 1099; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");                    
                                 if (response['queue_position'] > 0) {
                                     $('#queue_position_div').show();
                                     $('#queue_position').html(response['queue_position']);
@@ -330,7 +330,7 @@ var sitequeuemanager = {
                 if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
                     var pageheight = $(document).height();
                     if ($("#queue-inactivity").length == 0) {
-                        $('html').prepend("<div id='queue-inactivity' style='font-family: var(--bs-font-sans-serif); width: 100%; position: absolute; z-index: 10; height: " + pageheight + "px'><div style='width: 100%; height: " + pageheight + "px;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  ><BR><BR><div class='qm-box'><h2>Are you still there?</h2><br>If you don't tap or click 'Yes' before the countdown hits zero you'll have to start over again with a new session.<br><br><br><button class='iqm-button iqm-blue bsbtn bsbtn-primary' onclick='sitequeuemanager.inactivityConfirm();'>Yes</button>&nbsp;<button class='iqm-button iqm-red bsbtn bsbtn-danger ' id='qm-countdown'>30</button></div></div></div>");
+                        $('html').prepend("<div id='queue-inactivity' style='font-family: var(--bs-font-sans-serif); width: 100%; position: absolute; z-index: 1098; height: " + pageheight + "px'><div style='width: 100%; height: " + pageheight + "px;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  ><BR><BR><div class='qm-box'><h2>Are you still there?</h2><br>If you don't tap or click 'Yes' before the countdown hits zero you'll have to start over again with a new session.<br><br><br><button class='iqm-button iqm-blue bsbtn bsbtn-primary' onclick='sitequeuemanager.inactivityConfirm();'>Yes</button>&nbsp;<button class='iqm-button iqm-red bsbtn bsbtn-danger ' id='qm-countdown'>30</button></div></div></div>");
 
                         sitequeuemanager.var.idleInterval = setTimeout(sitequeuemanager.inActivityCountDown, 1000);
                         $("html, body").animate({ scrollTop: 0 }, "slow");
