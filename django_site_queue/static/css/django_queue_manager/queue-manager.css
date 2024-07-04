@@ -29,8 +29,9 @@
   border: 2px solid #fff;
   border-radius: 5px;
   background-clip: padding-box;
-  text-align: center;
-  z-index: 1097;;
+  text-align: center;  
+  position: relative;
+  z-index: 1097;  
   /* font-family: oswald; */
 }
 
