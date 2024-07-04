@@ -94,11 +94,26 @@ var sitequeuemanager = {
                             timelimit = "<1min";
                         }
                         if ($("#queue-timer").length == 0) {
-                            $('html').prepend("<div id='queue-timer' style='right: 0px; position: fixed; z-index: 1099;'><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
+                            $('html').prepend("<div id='queue-timer' style='right: 0px; position: fixed; z-index: 1099;'><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-left: 15px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
+   
+                            $( "#queue-timer" ).on( "click", function() {
+                                var qleft = $("#queue-timer").css('left');
+                                var qright = $("#queue-timer").css('right');
+                                
+                                if (qleft == "0px") { 
+                                    $("#queue-timer").css('left',"");
+                                    $("#queue-timer").css('right',"0px");
+                                }  
+                                if (qright == "0px") { 
+                                    $("#queue-timer").css('right',"");
+                                    $("#queue-timer").css('left',"0px");
+                                }      
+                            });
                         }
                         $('#queue-time-left').html(timelimit);
                     } else {
                         $("#queue-timer").remove();
+                        $('#queue-timer').unbind('click');                        
                     }
 
                     // hide and remove waiting screen.
@@ -141,7 +156,7 @@ var sitequeuemanager = {
                             success: function (htmlresponse) {
                                 var pageheight = $(document).height();
                                 
-                                $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 1099; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");                    
+                                $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 1096; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");                    
                                 if (response['queue_position'] > 0) {
                                     $('#queue_position_div').show();
                                     $('#queue_position').html(response['queue_position']);
