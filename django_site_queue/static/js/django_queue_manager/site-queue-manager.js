@@ -94,7 +94,7 @@ var sitequeuemanager = {
                             timelimit = "<1min";
                         }
                         if ($("#queue-timer").length == 0) {
-                            $('html').prepend("<div id='queue-timer' style='right: 0px; position: fixed; z-index: 1099;'><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-left: 15px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
+                            $('html').prepend("<div id='queue-timer' style='cursor: pointer; right: 0px; position: fixed; z-index: 1099;'><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-left: 15px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
    
                             $( "#queue-timer" ).on( "click", function() {
                                 var qleft = $("#queue-timer").css('left');
