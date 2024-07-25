@@ -389,4 +389,26 @@ def expire_session(request, *args, **kwargs):
 
 
 
+def queue_status(request, *args, **kwargs):
+    
+#group_unique_key=request.GET['queue_group']
+    queue_groups = models.SiteQueueManagerGroup.objects.filter(waiting_queue_enabled=True) 
+    queue_hash = {}
+    for qg in queue_groups:
+        queue_hash[qg.group_unique_key] = {"total_active_session" : 0, "total_waiting_session" : 0, "queue_error": False}
+        total_active_session = models.SiteQueueManager.objects.filter(status=1, expiry__gte=datetime.now(timezone.utc),is_staff=False,queue_group=qg).count()
+        total_waiting_session = models.SiteQueueManager.objects.filter(status=0, expiry__gte=datetime.now(timezone.utc),queue_group=qg).count()
+        queue_hash[qg.group_unique_key]['total_active_session'] = total_active_session
+        queue_hash[qg.group_unique_key]['total_waiting_session'] = total_waiting_session
+        if total_waiting_session > 0:
+            if total_active_session > 0:
+                pass
+            else:
+                queue_hash[qg]['queue_error'] = True
+        
+    response = HttpResponse(json.dumps(queue_hash), content_type='application/json')
+    return response
+
+
+
 
