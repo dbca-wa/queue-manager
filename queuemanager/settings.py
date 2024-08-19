@@ -29,7 +29,12 @@ DEBUG = env('DEBUG', False)
 QUEUE_URL = env('QUEUE_URL', 'https://no.queue.url.configured')
 QUEUE_URL_HOST = env('QUEUE_URL_HOST', 'no.queue.host.url.configured')
 QUEUE_DOMAIN = env('QUEUE_DOMAIN', 'no.queue.domain.configured')
-ALLOWED_HOSTS = ['*']
+
+# SECURITY WARNING: don't run with debug turned on in production!
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = env('ALLOWED_HOSTS', [])
 
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ORIGIN_ALLOW_ALL = True
@@ -144,3 +149,5 @@ VERSION_NO = "2.00"
 
 GIT_COMMIT_HASH = os.popen(f"cd {BASE_DIR}; git log -1 --format=%H").read()
 GIT_COMMIT_DATE = os.popen(f"cd {BASE_DIR}; git log -1 --format=%cd").read()
+CSRF_TRUSTED_ORIGINS_STRING = decouple.config("CSRF_TRUSTED_ORIGINS", default='[]')
+CSRF_TRUSTED_ORIGINS = json.loads(str(CSRF_TRUSTED_ORIGINS_STRING))
