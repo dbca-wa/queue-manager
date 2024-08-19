@@ -13,6 +13,7 @@ from dbca_utils.utils import env
 
 from pathlib import Path
 import os
+import json
 import decouple
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -146,7 +147,7 @@ CRON_CLASSES = [
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-VERSION_NO = "2.00"
+VERSION_NO = "2.02"
 
 GIT_COMMIT_HASH = os.popen(f"cd {BASE_DIR}; git log -1 --format=%H").read()
 GIT_COMMIT_DATE = os.popen(f"cd {BASE_DIR}; git log -1 --format=%cd").read()
