@@ -33,10 +33,13 @@ QUEUE_URL_HOST = env('QUEUE_URL_HOST', 'no.queue.host.url.configured')
 QUEUE_DOMAIN = env('QUEUE_DOMAIN', 'no.queue.domain.configured')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+ALLOWED_HOSTS = []
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = env('ALLOWED_HOSTS', [])
+    # ALLOWED_HOSTS = env('ALLOWED_HOSTS', [])
+    ALLOWED_HOSTS_STRING = decouple.config("ALLOWED_HOSTS", default='[]', )    
+    ALLOWED_HOSTS = json.loads(str(ALLOWED_HOSTS_STRING))
 
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ORIGIN_ALLOW_ALL = True
