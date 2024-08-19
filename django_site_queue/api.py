@@ -12,11 +12,11 @@ from django.conf import settings
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
+# from django.utils import timezone
 from django_site_queue import models
 from django.utils.crypto import get_random_string
-from datetime import datetime, timedelta
-from django.utils import timezone
+from datetime import datetime, timedelta, timezone
+# from django.utils import timezone
 from confy import env
 from django.urls import reverse
 import psutil
@@ -41,8 +41,8 @@ def check_create_session(request, *args, **kwargs):
 
     group_unique_key = 'unknown'
     if queue_group.count() < 1:
-        response = HttpResponse(json.dumps({'status_code': 500, 'message': 'unable to find site queue manager group'}), content_type='application/json', status_code=500)
-        response.set_cookie('sitequeuesession', session_key, max_age=2592000, domain=QUEUE_DOMAIN)
+        response = HttpResponse(json.dumps({'status_code': 500, 'message': 'unable to find site queue manager group'}), content_type='application/json', status=500)
+        # response.set_cookie('sitequeuesession', session_key, max_age=2592000, domain=QUEUE_DOMAIN)
         return response
 
     session_total_limit = 2
@@ -179,6 +179,8 @@ def check_create_session(request, *args, **kwargs):
         #if settings.DEBUG is True:
         #print ("session_count")
         #print (session_count)
+        print ("COUNT ME")
+        print (sitequeuesession)
         if sitequeuesession is None or session_count == 0:
             print ('CREATION')
             session_status = 0
@@ -313,6 +315,7 @@ def check_create_session(request, *args, **kwargs):
 
     if settings.DEBUG is True:    
         print (sitesession)
+        print (memory_session)
         response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': sitesession.expiry.strftime('%d/%m/%Y %H:%M'), 'idle': sitesession.idle.strftime('%d/%m/%Y %H:%M'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : wait_time ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit': max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url }), content_type='application/json')
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
