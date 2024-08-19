@@ -1,5 +1,6 @@
 # Prepare the base environment.
 FROM dbcawa/queuemanager:latest as builder_base_queuemanager_dev
+USER root
 
 RUN apt-get update
 RUN apt-get install --no-install-recommends -y patch
