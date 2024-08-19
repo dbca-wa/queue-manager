@@ -20,5 +20,5 @@ from django_site_queue import urls as dsq_urls
 
 urlpatterns = [
     re_path('admin/', admin.site.urls),
-    path(r'^', include(dsq_urls)),
-]
+    # path(r'^', dsq_urls),
+] + dsq_urls.urlpatterns
