@@ -1,7 +1,7 @@
 import traceback
 import base64
 import json
-from six.moves.urllib.parse import urlparse
+# from six.moves.urllib.parse import urlparse
 from wsgiref.util import FileWrapper
 from django.db import connection, transaction
 from django.db.models import Q, Min
