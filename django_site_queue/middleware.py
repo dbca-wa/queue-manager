@@ -11,7 +11,7 @@ class CacheControl(object):
 
     def __call__(self, request):
        response= self.get_response(request)
-       print ("CACHE")
+     #   print ("CACHE")
        if request.path == '/':
             response['Cache-Control'] = 'public, max-age=60'
        elif request.path[:5] == '/api/':

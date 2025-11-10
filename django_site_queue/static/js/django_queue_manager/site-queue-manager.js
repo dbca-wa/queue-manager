@@ -357,6 +357,22 @@ var sitequeuemanager = {
             }
         }
     },
+    expire_session: function () {
+        $.ajax({
+            url: sitequeuemanager.var.url + '/api/expire-session/?session_key='+sitequeuemanager.var.session_key,
+            type: 'GET',
+            data: {},
+            cache: false,
+            success: function (htmlresponse) {
+                console.log("Queue Expiration Success");        
+            },
+            error: function() { 
+                console.log("Queue Expiration Error");
+
+            }
+        });
+
+    },
     init: function (queue_domain, queue_url, queue_group, active_hosts = "") {
         
         sitequeuemanager.var.domain = queue_domain;
