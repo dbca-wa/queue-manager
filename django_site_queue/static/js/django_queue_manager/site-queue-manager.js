@@ -371,7 +371,6 @@ var sitequeuemanager = {
 
             }
         });
-
     },
     init: function (queue_domain, queue_url, queue_group, active_hosts = "") {
         

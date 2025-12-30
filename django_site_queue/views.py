@@ -68,7 +68,6 @@ class WaitingRoom(TemplateView):
         # Render Template and Return
         return shortcuts.render(request, self.template_name, context)
 
-
 class QueueExpired(TemplateView):
     # preperation to replace old homepage with screen designs..
 
@@ -101,6 +100,70 @@ class QueueExpired(TemplateView):
         # Render Template and Return
         return shortcuts.render(request, self.template_name, context)
 
+class ServiceRestricted(TemplateView):
+    # preperation to replace old homepage with screen designs..
+
+    template_name = 'site_queue/service_restricted.html'
+
+    def get(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> http.HttpResponse:
+        """Provides the GET request endpoint for the HomePage view.
+        Args:
+            request (http.HttpRequest): The incoming HTTP request.
+            *args (Any): Extra positional arguments.
+            **kwargs (Any): Extra keyword arguments.
+        Returns:
+            http.HttpResponse: The rendered template response.
+        """
+        # Construct Context
+        context: dict[str, Any] = {}
+        queue_group_name = kwargs['queue_group_name']
+        
+        template_header_key='dbcablack'
+        context['queue_manager_exist'] = False
+        context['queue_manager_obj'] = {}
+        queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
+        if queue_manager_obj.count() > 0:
+            template_header_key=queue_manager_obj[0].template_header_key
+            context['queue_manager_exist'] = True
+            context['queue_manager_obj'] = queue_manager_obj[0]
+            print (context['queue_manager_obj'])        
+            
+        context['template_group'] = template_header_key
+        # Render Template and Return
+        return shortcuts.render(request, self.template_name, context)
+
+
+class ThresholdReached(TemplateView):
+    # preperation to replace old homepage with screen designs..
+
+    template_name = 'site_queue/threshold_reached.html'
+
+    def get(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> http.HttpResponse:
+        """Provides the GET request endpoint for the HomePage view.
+        Args:
+            request (http.HttpRequest): The incoming HTTP request.
+            *args (Any): Extra positional arguments.
+            **kwargs (Any): Extra keyword arguments.
+        Returns:
+            http.HttpResponse: The rendered template response.
+        """
+        # Construct Context
+        context: dict[str, Any] = {}
+        queue_group_name = kwargs['queue_group_name']
+        
+        template_header_key='dbcablack'
+        context['queue_manager_exist'] = False
+        context['queue_manager_obj'] = {}
+        queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
+        if queue_manager_obj.count() > 0:
+            template_header_key=queue_manager_obj[0].template_header_key
+            context['queue_manager_exist'] = True
+            context['queue_manager_obj'] = queue_manager_obj[0]
+            print (context['queue_manager_obj'])        
+            
+        context['template_group'] = template_header_key
+        # Render Template and Return
+        return shortcuts.render(request, self.template_name, context)
 
 class QueuePage(TemplateView):
     # preperation to replace old homepage with screen designs..

@@ -71,6 +71,7 @@ MIDDLEWARE = [
     'dbca_utils.middleware.SSOLoginMiddleware',
     'django_site_queue.middleware.CacheControl',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'django_site_queue.ipblock_middleware.IPMonitor',
 ]
 
 AUTHENTICATION_BACKENDS = (
