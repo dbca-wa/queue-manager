@@ -1,0 +1,35 @@
+{% extends 'site_queue/base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+  
+{% endblock %}
+
+{% block messages %}
+{% endblock %}
+
+{% block content %}
+<meta http-equiv="refresh" content="300">
+
+<div class='container'>
+
+    <h1 style='color: #003e52; font-size: 48px;'>Service Restricted</h1>
+    <br>
+    <br>
+    <p>
+        You connection has been restricted due to reaching the service limits for Department of Biodiversity Conservation and Attractions Queueing System.  Please try again later.
+        <br><br>
+    </p>
+
+    
+</div>
+
+<script src="{{ DJANGO_SETTINGS.QUEUE_URL }}/static/js/django_queue_manager/site-queue-manager.js?ver={{ GIT_COMMIT_HASH }}"></script>
+<script>
+     if (typeof sitequeuemanager !== "undefined") {
+         sitequeuemanager.init('{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}','{{ DJANGO_SETTINGS.QUEUE_URL }}','{{ queue_manager_obj.group_unique_key }}','{{ DJANGO_SETTINGS.QUEUE_URL_HOST}}');
+     }
+</script>
+</div>
+{% endblock %}

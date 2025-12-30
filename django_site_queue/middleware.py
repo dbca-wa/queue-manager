@@ -22,8 +22,13 @@ class CacheControl(object):
             response['Cache-Control'] = 'public, max-age=3600'
        elif request.path[:17] == '/site-queue/view/':
             response['Cache-Control'] = 'public, max-age=60'
+       elif request.path[:31] == '/site-queue/service-restricted/':
+            response['Cache-Control'] = 'public, max-age=3600'
+       elif request.path[:26] == '/site-queue/max-threshold/':
+            response['Cache-Control'] = 'public, max-age=3600'
        else:
             pass
+
             #response['Cache-Control'] = 'private, no-store'
        return response
 
