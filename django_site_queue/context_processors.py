@@ -27,5 +27,6 @@ def variables(request):
         #"template_group": "parksv2",
         "template_title": "Queue System",
         "GIT_COMMIT_HASH": conf.settings.GIT_COMMIT_HASH,
-        "DJANGO_SETTINGS" : settings
+        "DJANGO_SETTINGS" : settings,
+        "logo_url": "/"
     }

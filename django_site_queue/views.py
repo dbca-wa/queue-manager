@@ -59,12 +59,15 @@ class WaitingRoom(TemplateView):
         queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
         if queue_manager_obj.count() > 0:
             template_header_key=queue_manager_obj[0].template_header_key
+            active_session_url=queue_manager_obj[0].active_session_url
+            context['logo_url'] = active_session_url
             context['queue_manager_exist'] = True
             context['queue_manager_obj'] = queue_manager_obj[0]
             print (context['queue_manager_obj'])
         
             
         context['template_group'] = template_header_key
+        
         # Render Template and Return
         return shortcuts.render(request, self.template_name, context)
 
@@ -92,6 +95,8 @@ class QueueExpired(TemplateView):
         queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
         if queue_manager_obj.count() > 0:
             template_header_key=queue_manager_obj[0].template_header_key
+            active_session_url=queue_manager_obj[0].active_session_url
+            context['logo_url'] = active_session_url            
             context['queue_manager_exist'] = True
             context['queue_manager_obj'] = queue_manager_obj[0]
             print (context['queue_manager_obj'])        
@@ -124,6 +129,8 @@ class ServiceRestricted(TemplateView):
         queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
         if queue_manager_obj.count() > 0:
             template_header_key=queue_manager_obj[0].template_header_key
+            active_session_url=queue_manager_obj[0].active_session_url
+            context['logo_url'] = active_session_url            
             context['queue_manager_exist'] = True
             context['queue_manager_obj'] = queue_manager_obj[0]
             print (context['queue_manager_obj'])        
@@ -157,6 +164,8 @@ class ThresholdReached(TemplateView):
         queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
         if queue_manager_obj.count() > 0:
             template_header_key=queue_manager_obj[0].template_header_key
+            active_session_url=queue_manager_obj[0].active_session_url
+            context['logo_url'] = active_session_url            
             context['queue_manager_exist'] = True
             context['queue_manager_obj'] = queue_manager_obj[0]
             print (context['queue_manager_obj'])        
