@@ -22,16 +22,7 @@
        A queue is in operation but all available positions in the queue are occupied.<br><br>
        Please try again later
         <br><br>
-    </p>
-
-    
+    </p>   
 </div>
-
-<script src="{{ DJANGO_SETTINGS.QUEUE_URL }}/static/js/django_queue_manager/site-queue-manager.js?ver={{ GIT_COMMIT_HASH }}"></script>
-<script>
-     if (typeof sitequeuemanager !== "undefined") {
-         sitequeuemanager.init('{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}','{{ DJANGO_SETTINGS.QUEUE_URL }}','{{ queue_manager_obj.group_unique_key }}','{{ DJANGO_SETTINGS.QUEUE_URL_HOST}}');
-     }
-</script>
 </div>
 {% endblock %}
