@@ -26,6 +26,8 @@ class CacheControl(object):
             response['Cache-Control'] = 'public, max-age=3600'
        elif request.path[:26] == '/site-queue/max-threshold/':
             response['Cache-Control'] = 'public, max-age=3600'
+       elif request.path[:25] == '/site-queue/waiting-room/':
+            response['Cache-Control'] = 'public, max-age=3600'            
        else:
             pass
 
