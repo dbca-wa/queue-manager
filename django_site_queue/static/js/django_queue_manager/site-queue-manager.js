@@ -152,7 +152,7 @@ var sitequeuemanager = {
                             url: sitequeuemanager.var.url + '/site-queue/view/',
                             type: 'GET',
                             data: {},
-                            cache: false,
+                            cache: true,
                             success: function (htmlresponse) {
                                 var pageheight = $(document).height();
                                 
