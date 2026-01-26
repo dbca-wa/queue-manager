@@ -11,11 +11,96 @@ from django import forms
 from django.views.generic.base import View, TemplateView
 from django.template.loader import get_template
 from django.template.loader import render_to_string
-from django_site_queue import models
+# from django_site_queue import models
 from django import shortcuts
 from django import http
 from typing import Any
 from confy import env
+from django_site_queue import  jsondb
+from django.views.generic.edit import FormView
+from django.contrib.auth.forms import AuthenticationForm
+from django.urls import reverse_lazy
+
+from wagov_utils.components.middleware.no_signal_login import login_without_signal
+
+
+# your_app/views.py
+from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+from django.contrib.auth import authenticate
+from django.http import HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
+
+# your_app/views.py
+from django.views import View as DjangoView
+from django.contrib import messages
+from django.contrib.auth import BACKEND_SESSION_KEY, HASH_SESSION_KEY, SESSION_KEY
+
+from wagov_utils.components.middleware.no_signal_login import login_without_signal
+
+class JSONLoginView(FormView):
+    template_name = "registration/login.html"  # your template path
+    form_class = AuthenticationForm
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        username = form.cleaned_data["username"]
+        password = form.cleaned_data["password"]
+
+        user = authenticate(self.request, username=username, password=password)
+        if user is None:
+            form.add_error(None, "Invalid credentials")
+            return self.form_invalid(form)
+
+        if getattr(user, "is_active", True) is False:
+            raise PermissionDenied("User inactive")
+
+        backend_path = getattr(user, "backend", None) or \
+            "ywagov_utils.components.middleware.auth_middleware_backend.JSONFileOnlyBackend"
+
+        login_without_signal(self.request, user, backend_path=backend_path)
+        return HttpResponseRedirect(self.get_success_url())
+
+
+
+
+class JSONLogoutView(View):
+    """
+    DB-free logout. Removes auth keys from session and rotates it,
+    without touching the DB or emitting signals.
+    """
+    success_url = reverse_lazy("login")  # change to your post-logout page
+
+    def _logout(self, request):
+        # Remove the auth keys explicitly (same keys Django uses)
+        request.session.pop(SESSION_KEY, None)           # _auth_user_id
+        request.session.pop(BACKEND_SESSION_KEY, None)   # _auth_user_backend
+        request.session.pop(HASH_SESSION_KEY, None)      # _auth_user_hash
+
+        # Rotate/flush session for security (similar to django.contrib.auth.logout)
+        request.session.flush()
+
+        # Optional: add a user-facing message
+        try:
+            messages.success(request, "You have been logged out.")
+        except Exception:
+            # messages framework may be disabled; ignore
+            pass
+
+    def post(self, request, *args, **kwargs):
+        self._logout(request)
+        return HttpResponseRedirect(self.get_success_url())
+
+    # If you prefer GET to log out directly (like Django's default LogoutView),
+    # leave this as-is. If you want a confirmation page, replace with a template.
+    def get(self, request, *args, **kwargs):
+        self._logout(request)
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return str(self.success_url)
+
 
 class Home(TemplateView):
     # preperation to replace old homepage with screen designs..
@@ -34,6 +119,29 @@ class Home(TemplateView):
     #     context['QUEUE_URL'] = env('QUEUE_URL','')
     #     return context
 
+class Admin(TemplateView):
+     template_name = 'site_queue/admin/home.html'
+
+class AdminActiveSessions(TemplateView):
+    template_name = 'site_queue/admin/active_sessions.html'
+
+    def get(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> http.HttpResponse:
+        context: dict[str, Any] = {}
+        
+        # Render Template and Return
+        return shortcuts.render(request, self.template_name, context)  
+
+class AdminWaitingSessions(TemplateView):
+    template_name = 'site_queue/admin/waiting_sessions.html'
+
+    def get(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> http.HttpResponse:
+        context: dict[str, Any] = {}
+        
+        # Render Template and Return
+        return shortcuts.render(request, self.template_name, context)  
+
+
+
 class WaitingRoom(TemplateView):
     # preperation to replace old homepage with screen designs..
 
@@ -47,7 +155,7 @@ class WaitingRoom(TemplateView):
             **kwargs (Any): Extra keyword arguments.
         Returns:
             http.HttpResponse: The rendered template response.
-        """
+        """        
         # Construct Context
         context: dict[str, Any] = {}
         queue_group_name = kwargs['queue_group_name']
@@ -55,15 +163,17 @@ class WaitingRoom(TemplateView):
         template_header_key='dbcablack'
         context['queue_manager_exist'] = False
         context['queue_manager_obj'] = {}
-        
-        queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
-        if queue_manager_obj.count() > 0:
-            template_header_key=queue_manager_obj[0].template_header_key
-            active_session_url=queue_manager_obj[0].active_session_url
-            context['logo_url'] = active_session_url
+        queue_manager_obj = jsondb.get_queue_group(queue_group_name)
+        # print (queue_manager_obj )
+        # queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
+        if queue_manager_obj:
+            template_header_key=queue_manager_obj["template_header_key"]
+            active_session_url=queue_manager_obj["active_session_url"]
+            context['logo_url'] = queue_manager_obj["active_session_url"]
             context['queue_manager_exist'] = True
-            context['queue_manager_obj'] = queue_manager_obj[0]
-            print (context['queue_manager_obj'])
+            context['queue_manager_obj'] = queue_manager_obj
+            # print (context['queue_manager_obj'])
+            print (template_header_key)
         
             
         context['template_group'] = template_header_key
@@ -92,14 +202,23 @@ class QueueExpired(TemplateView):
         template_header_key='dbcablack'
         context['queue_manager_exist'] = False
         context['queue_manager_obj'] = {}
-        queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
-        if queue_manager_obj.count() > 0:
-            template_header_key=queue_manager_obj[0].template_header_key
-            active_session_url=queue_manager_obj[0].active_session_url
-            context['logo_url'] = active_session_url            
+
+        queue_manager_obj = jsondb.get_queue_group(queue_group_name)
+        if queue_manager_obj:
+            template_header_key=queue_manager_obj["template_header_key"]
+            active_session_url=queue_manager_obj["active_session_url"]
+            context['logo_url'] = queue_manager_obj["active_session_url"]
             context['queue_manager_exist'] = True
-            context['queue_manager_obj'] = queue_manager_obj[0]
-            print (context['queue_manager_obj'])        
+            context['queue_manager_obj'] = queue_manager_obj
+
+        # queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
+        # if queue_manager_obj.count() > 0:
+        #     template_header_key=queue_manager_obj[0].template_header_key
+        #     active_session_url=queue_manager_obj[0].active_session_url
+        #     context['logo_url'] = active_session_url            
+        #     context['queue_manager_exist'] = True
+        #     context['queue_manager_obj'] = queue_manager_obj[0]
+        #     print (context['queue_manager_obj'])        
             
         context['template_group'] = template_header_key
         # Render Template and Return
@@ -126,14 +245,24 @@ class ServiceRestricted(TemplateView):
         template_header_key='dbcablack'
         context['queue_manager_exist'] = False
         context['queue_manager_obj'] = {}
-        queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
-        if queue_manager_obj.count() > 0:
-            template_header_key=queue_manager_obj[0].template_header_key
-            active_session_url=queue_manager_obj[0].active_session_url
-            context['logo_url'] = active_session_url            
+
+        # queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
+        # if queue_manager_obj.count() > 0:
+        #     template_header_key=queue_manager_obj[0].template_header_key
+        #     active_session_url=queue_manager_obj[0].active_session_url
+        #     context['logo_url'] = active_session_url            
+        #     context['queue_manager_exist'] = True
+        #     context['queue_manager_obj'] = queue_manager_obj[0]
+        #     print (context['queue_manager_obj'])        
+
+        queue_manager_obj = jsondb.get_queue_group(queue_group_name)
+        if queue_manager_obj:
+            template_header_key=queue_manager_obj["template_header_key"]
+            active_session_url=queue_manager_obj["active_session_url"]
+            context['logo_url'] = queue_manager_obj["active_session_url"]
             context['queue_manager_exist'] = True
-            context['queue_manager_obj'] = queue_manager_obj[0]
-            print (context['queue_manager_obj'])        
+            context['queue_manager_obj'] = queue_manager_obj
+
             
         context['template_group'] = template_header_key
         # Render Template and Return
@@ -161,14 +290,22 @@ class ThresholdReached(TemplateView):
         template_header_key='dbcablack'
         context['queue_manager_exist'] = False
         context['queue_manager_obj'] = {}
-        queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
-        if queue_manager_obj.count() > 0:
-            template_header_key=queue_manager_obj[0].template_header_key
-            active_session_url=queue_manager_obj[0].active_session_url
-            context['logo_url'] = active_session_url            
+        # queue_manager_obj = models.SiteQueueManagerGroup.objects.filter(group_unique_key=queue_group_name)
+        # if queue_manager_obj.count() > 0:
+        #     template_header_key=queue_manager_obj[0].template_header_key
+        #     active_session_url=queue_manager_obj[0].active_session_url
+        #     context['logo_url'] = active_session_url            
+        #     context['queue_manager_exist'] = True
+        #     context['queue_manager_obj'] = queue_manager_obj[0]
+        #     print (context['queue_manager_obj'])       
+
+        queue_manager_obj = jsondb.get_queue_group(queue_group_name)
+        if queue_manager_obj:
+            template_header_key=queue_manager_obj["template_header_key"]
+            active_session_url=queue_manager_obj["active_session_url"]
+            context['logo_url'] = queue_manager_obj["active_session_url"]
             context['queue_manager_exist'] = True
-            context['queue_manager_obj'] = queue_manager_obj[0]
-            print (context['queue_manager_obj'])        
+            context['queue_manager_obj'] = queue_manager_obj             
             
         context['template_group'] = template_header_key
         # Render Template and Return

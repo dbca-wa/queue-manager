@@ -53,10 +53,10 @@ MENU 2
 
 {% block menu_items2_right %}
 
- {% if request.user.is_authenticated %}
+ {% comment %} {% if request.user.is_authenticated %}
 
  {% else %}
- {% endif %}
+ {% endif %} {% endcomment %}
 {% endblock %}
 
 

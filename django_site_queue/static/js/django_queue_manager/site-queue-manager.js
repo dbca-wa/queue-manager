@@ -18,7 +18,8 @@ var sitequeuemanager = {
         'more_info_link': '',
         'max_queue_session_limit': '100000',
         'max_queue_url_redirect': '/',
-        'queue_position': 0
+        'queue_position': 0,
+        'queue_status': "Waiting"
     },
     check_queue: function () {
         sitequeuemanager.var.running = 'true';
@@ -56,6 +57,7 @@ var sitequeuemanager = {
                 sitequeuemanager.var.queue_waiting_room_url = response['queue_waiting_room_url'];
                 sitequeuemanager.var.queue_inactivity_url = response['queue_inactivity_url'];
                 sitequeuemanager.var.active_session_url = response['url'];
+                sitequeuemanager.var.queue_status = response['status']
 
                 if (response['more_info_link'] == null) {
                     sitequeuemanager.var.more_info_link = "";
@@ -304,7 +306,7 @@ var sitequeuemanager = {
             countdown = countdown - 1;
             if (countdown < 0) {
                 $.ajax({
-                    url: sitequeuemanager.var.url + '/api/expire-session/?session_key='+sitequeuemanager.var.session_key,
+                    url: sitequeuemanager.var.url + '/api/expire-session/?session_key='+sitequeuemanager.var.session_key+ '&queue_group=' + sitequeuemanager.var.queue_group,
                     type: 'GET',
                     data: {},
                     cache: false,
@@ -340,26 +342,28 @@ var sitequeuemanager = {
     },
     timerIncrement: function () {
         sitequeuemanager.var.browser_inactivity_time = sitequeuemanager.var.browser_inactivity_time + 1;
-        if (sitequeuemanager.var.waiting_queue_enabled == true) {
+        if (sitequeuemanager.var.waiting_queue_enabled == true) {            
             if (sitequeuemanager.var.browser_inactivity_enabled == true) {
-                if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
-                    var pageheight = $(document).height();
-                    if ($("#queue-inactivity").length == 0) {
-                        $('html').prepend("<div id='queue-inactivity' style='font-family: var(--bs-font-sans-serif); width: 100%; position: absolute; z-index: 1098; height: " + pageheight + "px'><div style='width: 100%;text-align: center;position: fixed;z-index: 1097;''><div style='width: 100%; height: " + pageheight + "px;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  ><BR><BR><div class='qm-box'><h2>Are you still there?</h2><br>If you don't tap or click 'Yes' before the countdown hits zero you'll have to start over again with a new session.<br><br><br><button class='iqm-button iqm-blue bsbtn bsbtn-primary' onclick='sitequeuemanager.inactivityConfirm();'>Yes</button>&nbsp;<button class='iqm-button iqm-red bsbtn bsbtn-danger ' id='qm-countdown'>30</button></div></div></div></div>");
+                if (sitequeuemanager.var.queue_status == 'Active') {
+                    if (sitequeuemanager.var.browser_inactivity_time > sitequeuemanager.var.browser_inactivity_timeout) {
+                        var pageheight = $(document).height();
+                        if ($("#queue-inactivity").length == 0) {
+                            $('html').prepend("<div id='queue-inactivity' style='font-family: var(--bs-font-sans-serif); width: 100%; position: absolute; z-index: 1098; height: " + pageheight + "px'><div style='width: 100%;text-align: center;position: fixed;z-index: 1097;''><div style='width: 100%; height: " + pageheight + "px;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  ><BR><BR><div class='qm-box'><h2>Are you still there?</h2><br>If you don't tap or click 'Yes' before the countdown hits zero you'll have to start over again with a new session.<br><br><br><button class='iqm-button iqm-blue bsbtn bsbtn-primary' onclick='sitequeuemanager.inactivityConfirm();'>Yes</button>&nbsp;<button class='iqm-button iqm-red bsbtn bsbtn-danger ' id='qm-countdown'>30</button></div></div></div></div>");
 
-                        sitequeuemanager.var.idleInterval = setTimeout(sitequeuemanager.inActivityCountDown, 1000);
-                        // $("html, body").animate({ scrollTop: 0 }, "slow");
+                            sitequeuemanager.var.idleInterval = setTimeout(sitequeuemanager.inActivityCountDown, 1000);
+                            // $("html, body").animate({ scrollTop: 0 }, "slow");
+
+                        }
+                        // var idleInterval = setInterval(sitequeuemanager.timerIncrement, 15000);
 
                     }
-                    // var idleInterval = setInterval(sitequeuemanager.timerIncrement, 15000);
-
                 }
             }
         }
     },
     expire_session: function () {
         $.ajax({
-            url: sitequeuemanager.var.url + '/api/expire-session/?session_key='+sitequeuemanager.var.session_key,
+            url: sitequeuemanager.var.url + '/api/expire-session/?session_key='+sitequeuemanager.var.session_key+ '&queue_group=' + sitequeuemanager.var.queue_group,
             type: 'GET',
             data: {},
             cache: false,

@@ -1,0 +1,4 @@
+{% if request.user.is_authenticated %}
+      <li class="nav-item"><a class="nav-link " href="/admin/active-sessions/">Active Sessions</a></li>
+      <li class="nav-item"><a class="nav-link " href="/admin/active-sessions/">Waiting Sessions</a></li>
+{% endif %}
