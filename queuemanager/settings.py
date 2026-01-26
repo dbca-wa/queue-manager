@@ -9,8 +9,6 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-from dbca_utils.utils import env
-
 from pathlib import Path
 import os
 import json
@@ -24,13 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY","")
+SECRET_KEY = decouple.config('SECRET_KEY', default='')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG', False)
-QUEUE_URL = env('QUEUE_URL', 'https://no.queue.url.configured')
-QUEUE_URL_HOST = env('QUEUE_URL_HOST', 'no.queue.host.url.configured')
-QUEUE_DOMAIN = env('QUEUE_DOMAIN', 'no.queue.domain.configured')
+DEBUG = decouple.config("DEBUG", default=False, cast=bool)
+QUEUE_URL = decouple.config('QUEUE_URL', default='https://no.queue.url.configured')
+QUEUE_URL_HOST = decouple.config('QUEUE_URL_HOST', default='no.queue.host.url.configured')
+QUEUE_DOMAIN = decouple.config('QUEUE_DOMAIN', default='no.queue.domain.configured')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = []
@@ -72,13 +70,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'dbca_utils.middleware.SSOLoginMiddleware',
     'django_site_queue.middleware.CacheControl',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'wagov_utils.components.middleware.no_signal_login_middleware.JSONAuthMiddleware',
     'wagov_utils.components.json_auth.auth2_sso_middleware.SSOLoginMiddleware',
     # 'django_site_queue.ipblock_middleware.IPMonitor',
 ]
+
+
 
 AUTHENTICATION_BACKENDS = (
             # 'django.contrib.auth.backends.ModelBackend',
