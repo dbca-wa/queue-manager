@@ -1,5 +1,4 @@
 Django~=5.2
-dbca-utils==2.1.0
 dj-static==0.0.6
 django-confy==1.0.4
 psycopg2-binary>=2.9.4
