@@ -434,8 +434,11 @@ def check_create_session(request, *args, **kwargs):
 def get_client_ip(request):
     x_real_ip = request.META.get('HTTP_X_REAL_IP')
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_orignal_forwarded_for =  request.META.get('HTTP_X_ORIGINAL_FORWARDED_FOR')
 
-    if x_real_ip:
+    if x_orignal_forwarded_for:
+       ip = x_forwarded_for.split(',')[-1].strip()
+    elif x_real_ip:
        ip = x_real_ip
     elif x_forwarded_for:
        ip = x_forwarded_for.split(',')[-1].strip()
