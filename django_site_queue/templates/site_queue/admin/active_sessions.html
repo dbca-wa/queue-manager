@@ -12,6 +12,7 @@
 {% block content %}
 <div class='container'>
     {% if request.user.is_authenticated %}
+    
     {% if "Admin" in json_user.groups %}
 
 <head>
@@ -232,6 +233,6 @@
     {% else %}
     <div class="alert alert-danger">Access Denied</div>        
     {% endif %}
-    You have accessed the homepage for the Department of Biodiversity Conservation and Attractions Queueing System.
+   
 </div>
 {% endblock %}

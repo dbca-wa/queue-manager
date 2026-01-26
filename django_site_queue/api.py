@@ -518,24 +518,26 @@ def get_active_sessions(request, *args, **kwargs):
             a = _JSONAuthStore()
             u = a.get_user_record(request.user.email)
             
-            if "Admin" in u["groups"]:
+            if u: 
+                if u["groups"]:
+                    if "Admin" in u["groups"]:
 
-                start = request.GET.get("start",0)
-                length = request.GET.get("length",10)
-                draw = request.GET.get("draw",0)
-                search = request.GET.get("search",0)
-                queue_group = request.GET.get("queue_group",None)
-                
-                total_active_session = jsondb.get_active_sessions_total(queue_group)
-                active_sessions_json = jsondb.get_active_sessions(queue_group, int(start), int(length), search)
-                
-                json_resp = {
-                    "draw": draw,
-                    "recordsTotal": total_active_session,
-                    "recordsFiltered": active_sessions_json["recordsFiltered"],
-                    "data": active_sessions_json["data"]
+                        start = request.GET.get("start",0)
+                        length = request.GET.get("length",10)
+                        draw = request.GET.get("draw",0)
+                        search = request.GET.get("search",0)
+                        queue_group = request.GET.get("queue_group",None)
+                        
+                        total_active_session = jsondb.get_active_sessions_total(queue_group)
+                        active_sessions_json = jsondb.get_active_sessions(queue_group, int(start), int(length), search)
+                        
+                        json_resp = {
+                            "draw": draw,
+                            "recordsTotal": total_active_session,
+                            "recordsFiltered": active_sessions_json["recordsFiltered"],
+                            "data": active_sessions_json["data"]
 
-                }
+                        }
 
     response = HttpResponse(json.dumps(json_resp), content_type='application/json')
     return response
