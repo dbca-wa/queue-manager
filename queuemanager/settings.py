@@ -72,13 +72,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'dbca_utils.middleware.SSOLoginMiddleware',
     'django_site_queue.middleware.CacheControl',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'wagov_utils.components.middleware.no_signal_login_middleware.JSONAuthMiddleware',
     'wagov_utils.components.json_auth.auth2_sso_middleware.SSOLoginMiddleware',
     # 'django_site_queue.ipblock_middleware.IPMonitor',
 ]
+
+
 
 AUTHENTICATION_BACKENDS = (
             # 'django.contrib.auth.backends.ModelBackend',
