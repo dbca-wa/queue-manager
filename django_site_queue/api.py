@@ -437,7 +437,7 @@ def get_client_ip(request):
     x_orignal_forwarded_for =  request.META.get('HTTP_X_ORIGINAL_FORWARDED_FOR')
 
     if x_orignal_forwarded_for:
-       ip = x_forwarded_for.split(',')[-1].strip()
+       ip = x_orignal_forwarded_for.split(',')[-1].strip()
     elif x_real_ip:
        ip = x_real_ip
     elif x_forwarded_for:
