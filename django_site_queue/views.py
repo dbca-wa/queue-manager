@@ -21,7 +21,7 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse_lazy
 
-from wagov_utils.components.middleware.no_signal_login import login_without_signal
+from wagov_utils.components.json_auth.no_signal_login import login_without_signal
 
 
 # your_app/views.py
@@ -37,7 +37,7 @@ from django.views import View as DjangoView
 from django.contrib import messages
 from django.contrib.auth import BACKEND_SESSION_KEY, HASH_SESSION_KEY, SESSION_KEY
 
-from wagov_utils.components.middleware.no_signal_login import login_without_signal
+from wagov_utils.components.json_auth.no_signal_login import login_without_signal
 
 class JSONLoginView(FormView):
     template_name = "registration/login.html"  # your template path
