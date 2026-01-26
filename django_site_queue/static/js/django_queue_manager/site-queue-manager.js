@@ -239,7 +239,7 @@ var sitequeuemanager = {
                     setTimeout(function () { sitequeuemanager.check_queue(); }, 20000);
                 } else {
                     if (sitequeuemanager.var.queue_position < 2 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 200);
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 400);
                     } else if (sitequeuemanager.var.queue_position < 10 ) { 
                         setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
                     } else if (sitequeuemanager.var.queue_position < 20 ) { 
@@ -253,11 +253,11 @@ var sitequeuemanager = {
                     } else if (sitequeuemanager.var.queue_position < 400 ) { 
                         setTimeout(function () { sitequeuemanager.check_queue(); }, 30000);
                     } else if (sitequeuemanager.var.queue_position < 800 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 50000);
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 35000);
                     } else if (sitequeuemanager.var.queue_position < 1500 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 700000);                    
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 40000);                    
                     } else {
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 100000);
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 50000);
                     }
                 }   
             },

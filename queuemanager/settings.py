@@ -75,14 +75,15 @@ MIDDLEWARE = [
     'dbca_utils.middleware.SSOLoginMiddleware',
     'django_site_queue.middleware.CacheControl',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    # 'wagov_utils.components.middleware.no_signal_login_middleware.JSONAuthMiddleware',
-    # 'django_site_queue.test_middleware_login.SSOLoginMiddleware',
+    'wagov_utils.components.middleware.no_signal_login_middleware.JSONAuthMiddleware',
+    'wagov_utils.components.json_auth.auth2_sso_middleware.SSOLoginMiddleware',
     # 'django_site_queue.ipblock_middleware.IPMonitor',
 ]
 
 AUTHENTICATION_BACKENDS = (
             # 'django.contrib.auth.backends.ModelBackend',
-            # 'wagov_utils.components.middleware.auth_middleware_backend.JSONFileOnlyBackend',
+            #'wagov_utils.components.json_auth.json_auth_backend.JSONAuthBackend',
+            'wagov_utils.components.json_auth.auth_middleware_backend.JSONFileOnlyBackend',
 )
 
 ROOT_URLCONF = 'queuemanager.urls'
@@ -175,7 +176,7 @@ CSRF_TRUSTED_ORIGINS_STRING = decouple.config("CSRF_TRUSTED_ORIGINS", default='[
 CSRF_TRUSTED_ORIGINS = json.loads(str(CSRF_TRUSTED_ORIGINS_STRING))
 
 JSON_AUTH_FILE = BASE_DIR / "secrets" / "users.json"
-JSON_AUTH_USERNAME_FIELD = "username"  # optional
+JSON_AUTH_USERNAME_FIELD = "email"  # optional
 
 # --- Sessions: use signed cookies (no DB tables required) ---
 # SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -184,7 +185,11 @@ AUTH_DB_FREE = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 SESSION_FILE_PATH = decouple.config('SESSION_FILE_PATH', default='./session_store/')
 DIRECTORY_SESSION_LIMIT = decouple.config("DIRECTORY_SESSION_LIMIT", default=100)
-DIRECTORY_FOLDER_LIMIT = decouple.config("DIRECTORY_FOLDER_LIMIT", default=100)
+DIRECTORY_FOLDER_LIMIT = decouple.config("DIRECTORY_FOLDER_LIMIT", default=200)
 
 SCRIPT_EXEMPT_KEY = decouple.config('SCRIPT_EXEMPT_KEY', default=None)
 QUEUE_STORE_DB = decouple.config('QUEUE_STORE_DB', default='./db/json/')
+JSON_AUTH_STORE_DB = decouple.config('JSON_AUTH_STORE_DB', default='./db/json/')
+SESSION_EXPIRY_SSO = 3600
+
+ENABLE_DJANGO_LOGIN=decouple.config("ENABLE_DJANGO_LOGIN", default=False, cast=bool)

@@ -38,6 +38,7 @@ from django.contrib import messages
 from django.contrib.auth import BACKEND_SESSION_KEY, HASH_SESSION_KEY, SESSION_KEY
 
 from wagov_utils.components.json_auth.no_signal_login import login_without_signal
+from wagov_utils.components.json_auth.auth_middleware_backend import _JSONAuthStore
 
 class JSONLoginView(FormView):
     template_name = "registration/login.html"  # your template path
@@ -57,7 +58,7 @@ class JSONLoginView(FormView):
             raise PermissionDenied("User inactive")
 
         backend_path = getattr(user, "backend", None) or \
-            "ywagov_utils.components.middleware.auth_middleware_backend.JSONFileOnlyBackend"
+            "ywagov_utils.components.json_auth.auth_middleware_backend.JSONFileOnlyBackend"
 
         login_without_signal(self.request, user, backend_path=backend_path)
         return HttpResponseRedirect(self.get_success_url())
@@ -99,7 +100,7 @@ class JSONLogoutView(View):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return str(self.success_url)
+        return str("/")
 
 
 class Home(TemplateView):
@@ -120,14 +121,38 @@ class Home(TemplateView):
     #     return context
 
 class Admin(TemplateView):
-     template_name = 'site_queue/admin/home.html'
+    template_name = 'site_queue/admin/home.html'
+    def get(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> http.HttpResponse:
+        context: dict[str, Any] = {}
+        if request.user.is_authenticated:
+            a = _JSONAuthStore()
+            u = a.get_user_record(request.user.email)
+            context["json_user"] = u
+            if "Admin" in u["groups"]:
+                queue_groups = jsondb.get_queue_groups()
+                context['queue_groups'] = queue_groups  
+                for i in queue_groups:                
+                    i["total_active_session"] = jsondb.get_active_sessions_total(i["group_unique_key"])
+                    i["total_waiting_session"] = jsondb.get_waiting_session_total(i["group_unique_key"]) 
+                 
+        # Render Template and Return
+        return shortcuts.render(request, self.template_name, context)  
+
 
 class AdminActiveSessions(TemplateView):
     template_name = 'site_queue/admin/active_sessions.html'
 
     def get(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> http.HttpResponse:
         context: dict[str, Any] = {}
-        
+        queue_group_name = kwargs['queue_group_name']
+        context['queue_group_name'] = queue_group_name        
+        if request.user.is_authenticated:
+            a = _JSONAuthStore()
+            u = a.get_user_record(request.user.email)
+            context["json_user"] = u
+            if "Admin" in u["groups"]:
+                pass
+                        
         # Render Template and Return
         return shortcuts.render(request, self.template_name, context)  
 
@@ -136,7 +161,14 @@ class AdminWaitingSessions(TemplateView):
 
     def get(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> http.HttpResponse:
         context: dict[str, Any] = {}
-        
+        queue_group_name = kwargs['queue_group_name']
+        context['queue_group_name'] = queue_group_name
+        if request.user.is_authenticated:
+            a = _JSONAuthStore()
+            u = a.get_user_record(request.user.email)
+            context["json_user"] = u
+            if "Admin" in u["groups"]:
+                pass        
         # Render Template and Return
         return shortcuts.render(request, self.template_name, context)  
 

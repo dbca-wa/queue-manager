@@ -23,6 +23,8 @@ from django.urls import reverse
 from django.utils import timezone as dj_tz
 import psutil
 import time
+from wagov_utils.components.json_auth.auth_middleware_backend import _JSONAuthStore
+
 PLUS_8 = timezone(timedelta(hours=8))
 # NOTE
 # Add Internal User login check and ignore staff membbers from queue checks - DONE
@@ -512,46 +514,63 @@ def queue_status(request, *args, **kwargs):
 
 
 def get_active_sessions(request, *args, **kwargs):
-    start = request.GET.get("start",0)
-    length = request.GET.get("length",10)
-    draw = request.GET.get("draw",0)
-    search = request.GET.get("search",0)
-    
-    total_active_session = jsondb.get_active_sessions_total("parkstayv2")
-    active_sessions_json = jsondb.get_active_sessions("parkstayv2", int(start), int(length), search)
-    
-    json_resp = {
-        "draw": draw,
-        "recordsTotal": total_active_session,
-        "recordsFiltered": active_sessions_json["recordsFiltered"],
-        "data": active_sessions_json["data"]
 
-    }
+    json_resp = {"status": 401, "message": "Access Denied"}
+    if request.user.is_authenticated:
+            a = _JSONAuthStore()
+            u = a.get_user_record(request.user.email)
+            
+            if "Admin" in u["groups"]:
+
+                start = request.GET.get("start",0)
+                length = request.GET.get("length",10)
+                draw = request.GET.get("draw",0)
+                search = request.GET.get("search",0)
+                queue_group = request.GET.get("queue_group",None)
+                
+                total_active_session = jsondb.get_active_sessions_total(queue_group)
+                active_sessions_json = jsondb.get_active_sessions(queue_group, int(start), int(length), search)
+                
+                json_resp = {
+                    "draw": draw,
+                    "recordsTotal": total_active_session,
+                    "recordsFiltered": active_sessions_json["recordsFiltered"],
+                    "data": active_sessions_json["data"]
+
+                }
 
     response = HttpResponse(json.dumps(json_resp), content_type='application/json')
     return response
 
 
 def get_waiting_sessions(request, *args, **kwargs):
+
+
+    json_resp = {"status": 401, "message": "Access Denied"}
     if request.user.is_authenticated:
-        start = request.GET.get("start",0)
-        length = request.GET.get("length",10)
-        draw = request.GET.get("draw",0)
-        search = request.GET.get("search",0)
+        a = _JSONAuthStore()
+        u = a.get_user_record(request.user.email)
         
-        total_active_session = jsondb.get_waiting_session_total("parkstayv2")
-        active_sessions_json = jsondb.get_waiting_sessions("parkstayv2", int(start), int(length), search)
-        
-        json_resp = {
-            "draw": draw,
-            "recordsTotal": total_active_session,
-            "recordsFiltered": active_sessions_json["recordsFiltered"],
-            "data": active_sessions_json["data"]
+        if "Admin" in u["groups"]:
 
-        }
+            start = request.GET.get("start",0)
+            length = request.GET.get("length",10)
+            draw = request.GET.get("draw",0)
+            search = request.GET.get("search",0)
+            queue_group = request.GET.get("queue_group",None)
+            total_active_session = jsondb.get_waiting_session_total(queue_group)
+            active_sessions_json = jsondb.get_waiting_sessions(queue_group, int(start), int(length), search)
+            
+            json_resp = {
+                "draw": draw,
+                "recordsTotal": total_active_session,
+                "recordsFiltered": active_sessions_json["recordsFiltered"],
+                "data": active_sessions_json["data"]
 
-        response = HttpResponse(json.dumps(json_resp), content_type='application/json')
-        return response
+            }
+
+            response = HttpResponse(json.dumps(json_resp), content_type='application/json')
+            return response
     else:
-        response = HttpResponse(json.dumps({"statys:" : 401, "message": "Access Denied"}), content_type='application/json')
+        response = HttpResponse(json.dumps({"status:" : 401, "message": "Access Denied"}), content_type='application/json')
         return response        
