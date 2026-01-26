@@ -18,13 +18,13 @@ from django.urls import include, re_path, path
 from django_site_queue import urls as dsq_urls
 from django.contrib.auth.views import LogoutView, LoginView
 from django_site_queue import views
+from django.conf import settings
 # from django.conf.urls import url
 
 urlpatterns = [
-    #re_path('admin/', admin.site.urls),
-    # re_path(r'^login/', LoginView.as_view(),name='login'),
-    path("login/", views.JSONLoginView.as_view(), name="login"),
     path("logout/", views.JSONLogoutView.as_view(), name="logout")
-    
-    # path(r'^', dsq_urls),
 ] + dsq_urls.urlpatterns
+
+if settings.ENABLE_DJANGO_LOGIN is True:
+    urlpatterns.append(path("login/", views.JSONLoginView.as_view(), name="login"))
+  

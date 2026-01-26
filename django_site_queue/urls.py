@@ -7,13 +7,14 @@ from django.urls import path, re_path, include
 urlpatterns = [
     path('', views.Home.as_view(), name='home'),
     path('admin/', views.Admin.as_view(), name='admin'),
-    path('admin/active-sessions/', views.AdminActiveSessions.as_view(), name='admin-active-sessions'),
-    path('admin/waiting-sessions/', views.AdminWaitingSessions.as_view(), name='admin-active-sessions'),
-    re_path(r'^api/active-sessions/$', api.get_active_sessions, name='get-active-sessions'),
-    re_path(r'^api/waiting-sessions/$', api.get_waiting_sessions, name='get-waiting-sessions'),
+    re_path(r'^admin/active-sessions/(?P<queue_group_name>[A-Za-z0-9\-\_]+)/$', views.AdminActiveSessions.as_view(), name='admin-active-sessions'),
+    re_path(r'^admin/waiting-sessions/(?P<queue_group_name>[A-Za-z0-9\-\_]+)/$', views.AdminWaitingSessions.as_view(), name='admin-waiting-sessions'),
+
     re_path(r'^api/check-create-session/$', api.check_create_session, name='check-create-session'),
     re_path(r'^api/expire-session/$', api.expire_session, name='expire-session'),
     re_path(r'^api/status/$', api.queue_status, name='expire-session'),
+    re_path(r'^api/active-sessions/$', api.get_active_sessions, name='get-active-sessions'),
+    re_path(r'^api/waiting-sessions/$', api.get_waiting_sessions, name='get-waiting-sessions'),    
     re_path(r'^site-queue/view/$', views.QueuePage.as_view(), name='site-queue-page'),
     re_path(r'^site-queue/waiting-room/(?P<queue_group_name>[A-Za-z0-9\-\_]+)/$', views.WaitingRoom.as_view(), name='site-waiting-room'),
     re_path(r'^site-queue/queue-expired/(?P<queue_group_name>[A-Za-z0-9\-\_]+)/$', views.QueueExpired.as_view(), name='site-queue-expired'),

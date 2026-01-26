@@ -220,17 +220,15 @@ def delete_active_expiry_idle_sessions(group_key):
                     expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
                     # expiry_dt = expiry_dt.replace(tzinfo=timezone.utc)
                     if expiry_dt < now_dt:
-                        print ("DELETE EXPIRED SESSION")
                         if file_path.exists():                            
                             os.remove(file_path)
-                            print ("FILE DELETED")
+                            print ("Session Expired, File Deleted: "+str(file_path))      
                     
                     idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
-                    if idle_dt < idle_dt_subtract:
-                        print ("DELETE IDLE SESSION")                        
+                    if idle_dt < idle_dt_subtract:                                              
                         if file_path.exists():                            
                             os.remove(file_path)
-                            print ("FILE DELETED")                        
+                            print ("Session Expired, File Deleted: "+str(file_path))                          
                     
                   
     # files = [f for f in directory.iterdir() if f.is_file()]
@@ -257,14 +255,10 @@ def delete_waiting_expiry_idle_sessions(group_key):
                         idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
                         idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)         
                         idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
-                        if idle_dt < idle_dt_subtract:
-                            print ("DELETE IDLE SESSION")                                                                            
+                        if idle_dt < idle_dt_subtract:                                                                                     
                             os.remove(f)
-                            print ("FILE DELETED")  
+                            print ("Idle Session Expired, File Deleted: "+str(f))      
         i += 1                                  
-
-
-
 
 def get_active_sessions_total(group_key):    
     os.makedirs(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key), exist_ok=True)
