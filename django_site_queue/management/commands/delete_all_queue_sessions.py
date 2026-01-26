@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from django_site_queue import models
+# from django_site_queue import models
 import psutil
 from datetime import timedelta, datetime
 import requests

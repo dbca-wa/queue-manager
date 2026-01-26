@@ -6,6 +6,11 @@ from django.urls import path, re_path, include
 
 urlpatterns = [
     path('', views.Home.as_view(), name='home'),
+    path('admin/', views.Admin.as_view(), name='admin'),
+    path('admin/active-sessions/', views.AdminActiveSessions.as_view(), name='admin-active-sessions'),
+    path('admin/waiting-sessions/', views.AdminWaitingSessions.as_view(), name='admin-active-sessions'),
+    re_path(r'^api/active-sessions/$', api.get_active_sessions, name='get-active-sessions'),
+    re_path(r'^api/waiting-sessions/$', api.get_waiting_sessions, name='get-waiting-sessions'),
     re_path(r'^api/check-create-session/$', api.check_create_session, name='check-create-session'),
     re_path(r'^api/expire-session/$', api.expire_session, name='expire-session'),
     re_path(r'^api/status/$', api.queue_status, name='expire-session'),

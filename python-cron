@@ -1,16 +1,22 @@
 
 # Rotate active session with waiting sessions
-*/1 * * * * sleep 1; python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
-*/1 * * * * sleep 15; python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
-*/1 * * * * sleep 30; python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
-*/1 * * * * sleep 45; python3 /app/manage.py queue_manager  >> /app/logs/queue_manager.log 2>&1
+*/1 * * * * sleep 1; python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
+*/1 * * * * sleep 15; python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
+*/1 * * * * sleep 30; python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
+*/1 * * * * sleep 45; python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
+
+# Purge idle sessions
+*/1 * * * * python /app/manage.py queue_manager_delete_idle_sessions  >> /app/logs/queue_manager_delete_idle_sessions.log 2>&1
 
 # Ping Url and Check load time.
-*/1 * * * * sleep 1; python3 /app/manage.py ping_url_queue_check  >> /app/logs/ping_url_queue_check.log 2>&1
-*/1 * * * * sleep 30; python3 /app/manage.py ping_url_queue_check  >> /app/logs/ping_url_queue_check.log 2>&1
+*/1 * * * * sleep 1; python /app/manage.py ping_url_queue_check  >> /app/logs/ping_url_queue_check.log 2>&1
+*/1 * * * * sleep 30; python /app/manage.py ping_url_queue_check  >> /app/logs/ping_url_queue_check.log 2>&1
 
 # Run django crons
 */5 * * * * python3 /app/manage.py runcrons  >> /app/logs/runcrons.log 2>&1
 
 # Log Rotate
 1 0 * * *  /bin/log_rotate.sh  >> /app/logs/log_rotate.log 2>&1
+
+# App Monitor Update
+01 09 * * * python /app/manage.py appmonitor_check >> /app/logs/appmonitor_check.log 2>&1

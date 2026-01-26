@@ -46,6 +46,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 INSTALLED_APPS = [
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,10 +54,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'django_cron',
+    # 'django_cron',
+    'django_extensions',
     'django_site_queue',
     'webtemplate_dbca',
+    'wagov_utils',
     'appmonitor_client'
+
 ]
 
 MIDDLEWARE = [
@@ -71,11 +75,14 @@ MIDDLEWARE = [
     'dbca_utils.middleware.SSOLoginMiddleware',
     'django_site_queue.middleware.CacheControl',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'wagov_utils.components.middleware.no_signal_login_middleware.JSONAuthMiddleware',
+    # 'django_site_queue.test_middleware_login.SSOLoginMiddleware',
     # 'django_site_queue.ipblock_middleware.IPMonitor',
 ]
 
 AUTHENTICATION_BACKENDS = (
-            'django.contrib.auth.backends.ModelBackend',
+            # 'django.contrib.auth.backends.ModelBackend',
+            # 'wagov_utils.components.middleware.auth_middleware_backend.JSONFileOnlyBackend',
 )
 
 ROOT_URLCONF = 'queuemanager.urls'
@@ -99,16 +106,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'queuemanager.wsgi.application'
 
+# JSON_AUTH_FILE="./secrets/users.json"
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db/db.sqlite3',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db/db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.dummy"  # raises error if ORM is used
     }
 }
+
 
 
 # Password validation
@@ -157,3 +173,18 @@ GIT_COMMIT_HASH = os.popen(f"cd {BASE_DIR}; git log -1 --format=%H").read()
 GIT_COMMIT_DATE = os.popen(f"cd {BASE_DIR}; git log -1 --format=%cd").read()
 CSRF_TRUSTED_ORIGINS_STRING = decouple.config("CSRF_TRUSTED_ORIGINS", default='[]')
 CSRF_TRUSTED_ORIGINS = json.loads(str(CSRF_TRUSTED_ORIGINS_STRING))
+
+JSON_AUTH_FILE = BASE_DIR / "secrets" / "users.json"
+JSON_AUTH_USERNAME_FIELD = "username"  # optional
+
+# --- Sessions: use signed cookies (no DB tables required) ---
+# SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+AUTH_DB_FREE = True
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+SESSION_FILE_PATH = decouple.config('SESSION_FILE_PATH', default='./session_store/')
+DIRECTORY_SESSION_LIMIT = decouple.config("DIRECTORY_SESSION_LIMIT", default=100)
+DIRECTORY_FOLDER_LIMIT = decouple.config("DIRECTORY_FOLDER_LIMIT", default=100)
+
+SCRIPT_EXEMPT_KEY = decouple.config('SCRIPT_EXEMPT_KEY', default=None)
+QUEUE_STORE_DB = decouple.config('QUEUE_STORE_DB', default='./db/json/')
