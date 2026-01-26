@@ -14,6 +14,8 @@
 <div class='container'>
 
     {% if request.user.is_authenticated %}
+    {% if "Admin" in json_user.groups %}
+
     <h2>Queue Groups</h2>
         <table width="100%"  class="table table-striped table-hover">
         <tr>
@@ -45,7 +47,12 @@
         <br>
 
         <br>
+    {% else %}
+    <div class="alert alert-danger">Access Denied</div>      
+    {% endif %}     
+    {% else %}
+    <div class="alert alert-danger">Access Denied</div>        
     {% endif %}
-    You have accessed the homepage for the Department of Biodiversity Conservation and Attractions Queueing System.
+
 </div>
 {% endblock %}

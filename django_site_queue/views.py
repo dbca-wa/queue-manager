@@ -128,12 +128,15 @@ class Admin(TemplateView):
             a = _JSONAuthStore()
             u = a.get_user_record(request.user.email)
             context["json_user"] = u
-            if "Admin" in u["groups"]:
-                queue_groups = jsondb.get_queue_groups()
-                context['queue_groups'] = queue_groups  
-                for i in queue_groups:                
-                    i["total_active_session"] = jsondb.get_active_sessions_total(i["group_unique_key"])
-                    i["total_waiting_session"] = jsondb.get_waiting_session_total(i["group_unique_key"]) 
+            
+            if u: 
+                if u["groups"]:            
+                    if "Admin" in u["groups"]:
+                        queue_groups = jsondb.get_queue_groups()
+                        context['queue_groups'] = queue_groups  
+                        for i in queue_groups:                
+                            i["total_active_session"] = jsondb.get_active_sessions_total(i["group_unique_key"])
+                            i["total_waiting_session"] = jsondb.get_waiting_session_total(i["group_unique_key"]) 
                  
         # Render Template and Return
         return shortcuts.render(request, self.template_name, context)  
@@ -150,8 +153,10 @@ class AdminActiveSessions(TemplateView):
             a = _JSONAuthStore()
             u = a.get_user_record(request.user.email)
             context["json_user"] = u
-            if "Admin" in u["groups"]:
-                pass
+            if u: 
+                if u["groups"]:             
+                    if "Admin" in u["groups"]:
+                        pass
                         
         # Render Template and Return
         return shortcuts.render(request, self.template_name, context)  
@@ -167,8 +172,10 @@ class AdminWaitingSessions(TemplateView):
             a = _JSONAuthStore()
             u = a.get_user_record(request.user.email)
             context["json_user"] = u
-            if "Admin" in u["groups"]:
-                pass        
+            if u: 
+                if u["groups"]:             
+                    if "Admin" in u["groups"]:
+                        pass        
         # Render Template and Return
         return shortcuts.render(request, self.template_name, context)  
 
