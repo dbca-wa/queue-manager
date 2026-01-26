@@ -236,8 +236,6 @@ def check_create_session(request, *args, **kwargs):
                     pass
                 else:
                     if 'python' in browser_agent:
-                        print (browser_agent)
-                        print ("THIS RESPONSE 2")
                         response = HttpResponse(json.dumps({"status:": 500, 'message': "Agent Forbidden"}), content_type='application/json', status=500)
                         return response
             
