@@ -198,7 +198,7 @@ def check_create_session(request, *args, **kwargs):
             session_count = 1
         
           
-        sitequeuesession = None
+        # sitequeuesession = None
         if sitequeuesession is None or session_count == 0:
             session_status = "Waiting"
             #if total_active_session >= session_total_limit:
