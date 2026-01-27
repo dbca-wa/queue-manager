@@ -70,7 +70,7 @@ def save_queue_session(file,data):
         with lock:
             json_text = json.dumps(data, ensure_ascii=False, indent=2)
             with open(file, "w") as f:
-                f.write(json_text)
+                f.write(json_text)        
         os.remove(LOCK_PATH)
     except Exception as e:
         print ("Error Saving File:"+file)
@@ -191,7 +191,8 @@ def delete_session(group_key,session_id):
     return status
 
 def get_queue_position_by_id(group_key,session_id):
-              
+    if session_id is None:
+        return None
     directory = settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}".format(group_key)
     directory_list = os.listdir(directory)
     position_count = 0
