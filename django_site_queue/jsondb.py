@@ -207,6 +207,8 @@ def get_queue_position_by_id(group_key,session_id):
     directory = settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}".format(group_key)
     directory_list = os.listdir(directory)
     position_count = 0
+    directory_list = sorted(directory_list, key=int)
+    
     for dir in directory_list:
         sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,dir))
         files = [f for f in sub_directory.iterdir() if f.is_file()]
@@ -220,7 +222,7 @@ def get_queue_position_by_id(group_key,session_id):
                 session_filename_split = session_filename.split("_session_")
                 session_id_val = session_filename_split[1]                   
                 if session_id_val == session_id+".json":
-                    # print ("FOUND POISTION 2 {}".format(position_count))
+                    print ("FOUND POISTION 2 {}".format(position_count))
                     return position_count  
     return None                   
         
@@ -347,8 +349,8 @@ def get_longest_waiting(group_key, stl):
     directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
     file_count = 0
     directory_list = os.listdir(directory)
-    directory_list = sorted(directory_list)
-
+    directory_list = sorted(directory_list, key=int)
+    # directory_list = sorted(directory_list)
     file_count = 0
     for dir in directory_list:
         sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,dir))

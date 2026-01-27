@@ -125,6 +125,7 @@ def check_create_session(request, *args, **kwargs):
             print ("PING Response error")
             print (e)
 
+        
     memory_session = {}
 
     idle_seconds = 3000
