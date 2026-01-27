@@ -59,6 +59,15 @@ var sitequeuemanager = {
                 sitequeuemanager.var.queue_inactivity_url = response['queue_inactivity_url'];
                 sitequeuemanager.var.active_session_url = response['url'];
                 sitequeuemanager.var.queue_status = response['status']
+
+
+                if (response.status != "Active") {
+                    if (response['queue_position'] > sitequeuemanager.var.max_queue_session_limit) {
+                        console.log("QUEUE MAX REDIRECT")
+                        window.location = sitequeuemanager.var.max_queue_url_redirect;
+                    }                
+                }
+
                 if (response['refresh_page'] == true) {
                     window.location.reload();
                 }
@@ -81,10 +90,7 @@ var sitequeuemanager = {
                         window.location=sitequeuemanager.var.queue_waiting_room_url;
                     }
 
-
                 }
-                
-
                 
 
                 if (response.status == "Active") {
@@ -180,22 +186,18 @@ var sitequeuemanager = {
                                         $("#more_info_div").hide();
                                     }
 
-
                                 }
                             }
                         });
                     } else {
-
-                        $("#queue-manager").show();
-                       
+                        $("#queue-manager").show();                       
                     }
+
                     if (response['queue_position'] > 0) {
                         sitequeuemanager.var.queue_position = response['queue_position'];
 
                         $('#queue_position_div').show();
-                        if (response['queue_position'] > sitequeuemanager.var.max_queue_session_limit) {
-                            window.location = sitequeuemanager.var.max_queue_url_redirect;
-                        }
+
 
                         if (sitequeuemanager.var.show_queue_position == true) {
                             $('#div_queue_position').show();
@@ -253,11 +255,11 @@ var sitequeuemanager = {
                         } else if (sitequeuemanager.var.queue_position < 20 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
                         } else if (sitequeuemanager.var.queue_position < 50 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 12000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 10000);
                         } else if (sitequeuemanager.var.queue_position < 100 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 13000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 11000);
                         } else if (sitequeuemanager.var.queue_position < 200 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 15000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 12000);
                         } else if (sitequeuemanager.var.queue_position < 400 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 17000);
                         } else if (sitequeuemanager.var.queue_position < 800 ) { 

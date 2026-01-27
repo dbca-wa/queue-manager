@@ -200,6 +200,13 @@ def check_create_session(request, *args, **kwargs):
           
         # sitequeuesession = None
         if sitequeuesession is None or session_count == 0:
+
+            if total_waiting_session >= max_queue_session_limit:
+                print ("QUEUE FULL Redirecting")
+                queue_position = max_queue_session_limit + 1
+                response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False  }), content_type='application/json')
+                return response
+
             session_status = "Waiting"
             #if total_active_session >= session_total_limit:
             # START -- Disabling, will send everyone to queue and the cron job give fairer allocated spots 
@@ -297,8 +304,8 @@ def check_create_session(request, *args, **kwargs):
                 # sitesession.save()
             else:
                 raise ValidationError("Error no session Found")
-
-        queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)
+                    
+        queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)        
 
         #queue_position =0
         # if models.SiteQueueManager.objects.filter(session_key=session_key).count() > 0:
