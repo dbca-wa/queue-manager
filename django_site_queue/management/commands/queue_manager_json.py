@@ -96,6 +96,7 @@ class Command(BaseCommand):
                                                 
                     sitesession['idle']=(datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
                     jsondb.save_queue_session(sitesession_file,sitesession)
+                    sitesession = jsondb.get_queue_session(sitesession_file)
                     print (sitesession_file)
                     if sitesession["status"]  == "Active":
                         print ("Migrate to Active folder")
