@@ -167,8 +167,11 @@ def check_create_session(request, *args, **kwargs):
                    #staff_loggedin = True
 
         total_active_session = jsondb.get_active_sessions_total(queue_group_name)
-        total_waiting_session = jsondb.get_waiting_session_total(queue_group_name)
-        
+        total_waiting_session_obj = jsondb.get_queue_waiting_total_cached(queue_group_name)
+        if total_waiting_session_obj:
+            if "total_waiting_session" in total_waiting_session_obj:
+                total_waiting_session = total_waiting_session_obj["total_waiting_session"]
+            
         if 'sitequeuesession' in memory_session:
              sitequeuesession = memory_session['sitequeuesession']
         else:
