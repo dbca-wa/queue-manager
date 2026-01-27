@@ -45,7 +45,13 @@ def get_queue_session(file):
         if file_path.exists():
             # Load JSON file into a variable
             with file_path.open("r", encoding="utf-8") as f:
-                data = json.load(f)            
+                try: 
+                    data = json.load(f)            
+                except Exception as e:
+                    print ("ERROR Opening {}".format(file_path))
+                    print (e)
+                    os.remove(file_path)
+                    return None
             return data
     except Exception as e:
         print (e)
@@ -146,7 +152,7 @@ def get_session_by_id(group_key,session_id):
             session_filename = os.path.basename(f)
             session_filename_split = session_filename.split("_session_")
             session_id_val = session_filename_split[1]            
-            if session_id_val == session_id+".json":                
+            if session_id_val == session_id+".json":                                                          
                 return (f)
                 
 
@@ -162,7 +168,7 @@ def get_session_by_id(group_key,session_id):
                 session_filename = os.path.basename(f)
                 session_filename_split = session_filename.split("_session_")
                 session_id_val = session_filename_split[1]                              
-                if session_id_val == session_id+".json":                    
+                if session_id_val == session_id+".json":                                                                   
                     return (f)    
     return None
 

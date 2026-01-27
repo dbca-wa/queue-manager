@@ -41,6 +41,7 @@ def check_create_session(request, *args, **kwargs):
     
     sitequeuesession = None
     sitesession = None
+    refresh_page = False
     QUEUE_URL_ENV = settings.QUEUE_URL
     queue_group_name = request.GET['queue_group']
     script_exempt_key = request.GET.get('script_exempt_key',None)
@@ -189,8 +190,11 @@ def check_create_session(request, *args, **kwargs):
         
         
         session_count = 0
-        if session_file_id is not None:        
+        if session_file_id is not None:
+                  
             session_data = jsondb.get_queue_session(session_file_id)
+            if session_data is None:
+                refresh_page = True  
             now_dt = datetime.now().astimezone(PLUS_8)
             expiry_dt = datetime.strptime(session_data["expiry"], "%Y-%m-%d %H:%M:%S") 
             expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
@@ -411,7 +415,7 @@ def check_create_session(request, *args, **kwargs):
         # print (max_queue_url_redirect)
         # print (queue_inactivity_url)
         # print (queue_waiting_room_url)
-        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': site_session_expiry, 'idle': site_session_idle,'status': site_session_status,'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : wait_time ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit': max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url }), content_type='application/json')
+        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': site_session_expiry, 'idle': site_session_idle,'status': site_session_status,'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : wait_time ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit': max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : refresh_page }), content_type='application/json')
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Max-Age"] = "0"
@@ -422,7 +426,7 @@ def check_create_session(request, *args, **kwargs):
         return response
     else:
         #response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'session_key': session_key, 'queue_position' : queue_position, 'wait_time' : wait_time, 'time_left_enabled': time_left_enabled,'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect,  'waiting_queue_enabled': waiting_queue_enabled, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message, 'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link  }), content_type='application/json')        
-        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': site_session_expiry, 'idle': site_session_idle,'status': site_session_status,'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : wait_time ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url  }), content_type='application/json')
+        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': site_session_expiry, 'idle': site_session_idle,'status': site_session_status,'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : wait_time ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : refresh_page  }), content_type='application/json')
         response["Access-Control-Allow-Origin"] = "*" 
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Max-Age"] = "0"
