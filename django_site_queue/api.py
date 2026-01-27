@@ -325,7 +325,10 @@ def check_create_session(request, *args, **kwargs):
         if queue_position:
             if queue_position > 0:
                 # calculate wait time
-                queue_avg_position = int(queue_position) / int(session_total_limit)
+                if session_total_limit == 0:
+                    queue_avg_position = 0
+                else:                    
+                    queue_avg_position = int(queue_position) / int(session_total_limit)
                 session_limit_minutes = round(session_limit_seconds / 60)
                 wait_time = round(queue_avg_position * session_limit_minutes)      
         #if expiry_seconds < 1:
