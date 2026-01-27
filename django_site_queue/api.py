@@ -197,13 +197,14 @@ def check_create_session(request, *args, **kwargs):
             print ("LOG7.2")
             if session_data is None:
                 refresh_page = True  
-            now_dt = datetime.now().astimezone(PLUS_8)
-            expiry_dt = datetime.strptime(session_data["expiry"], "%Y-%m-%d %H:%M:%S") 
-            expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
-            if expiry_dt < now_dt:
-                print ("SESSION EXPIRED")
+            else:
+                now_dt = datetime.now().astimezone(PLUS_8)
+                expiry_dt = datetime.strptime(session_data["expiry"], "%Y-%m-%d %H:%M:%S") 
+                expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
+                if expiry_dt < now_dt:
+                    print ("SESSION EXPIRED")
         
-            session_count = 1
+                session_count = 1
         print ("LOG8")
           
         # sitequeuesession = None

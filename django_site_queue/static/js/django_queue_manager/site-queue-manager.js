@@ -19,7 +19,8 @@ var sitequeuemanager = {
         'max_queue_session_limit': '100000',
         'max_queue_url_redirect': '/',
         'queue_position': 0,
-        'queue_status': "Waiting"
+        'queue_status': "Waiting",
+        'first_load': true,
     },
     check_queue: function () {
         sitequeuemanager.var.running = 'true';
@@ -240,26 +241,32 @@ var sitequeuemanager = {
                 if (response.status == "Active") {
                     setTimeout(function () { sitequeuemanager.check_queue(); }, 20000);
                 } else {
-                    if (sitequeuemanager.var.queue_position < 2 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 400);
-                    } else if (sitequeuemanager.var.queue_position < 10 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
-                    } else if (sitequeuemanager.var.queue_position < 20 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
-                    } else if (sitequeuemanager.var.queue_position < 50 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 10000);
-                    } else if (sitequeuemanager.var.queue_position < 100 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 15000);
-                    } else if (sitequeuemanager.var.queue_position < 200 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 25000);
-                    } else if (sitequeuemanager.var.queue_position < 400 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 30000);
-                    } else if (sitequeuemanager.var.queue_position < 800 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 35000);
-                    } else if (sitequeuemanager.var.queue_position < 1500 ) { 
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 40000);                    
+                    if (sitequeuemanager.var.first_load == true ) { 
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 2000);
+                        sitequeuemanager.var.first_load = false 
                     } else {
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 50000);
+
+                        if (sitequeuemanager.var.queue_position < 2 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 400);
+                        } else if (sitequeuemanager.var.queue_position < 10 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
+                        } else if (sitequeuemanager.var.queue_position < 20 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
+                        } else if (sitequeuemanager.var.queue_position < 50 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 10000);
+                        } else if (sitequeuemanager.var.queue_position < 100 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 15000);
+                        } else if (sitequeuemanager.var.queue_position < 200 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 25000);
+                        } else if (sitequeuemanager.var.queue_position < 400 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 30000);
+                        } else if (sitequeuemanager.var.queue_position < 800 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 35000);
+                        } else if (sitequeuemanager.var.queue_position < 1500 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 40000);                    
+                        } else {
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 50000);
+                        }
                     }
                 }   
             },
