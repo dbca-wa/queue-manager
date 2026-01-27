@@ -51,10 +51,11 @@ def get_queue_session(file):
                 except Exception as e:
                     print ("ERROR Opening {}".format(file_path))
                     print (e)
-                    try:
-                        os.remove(file_path)
+                    try:                        
+                        # os.remove(file_path) JASON
+                        print ("----- >Removing file (get_queue_session)"+str(file_path))
                     except Exception as d:
-                        print ("Error removing "+str(d))
+                        print ("Error removing (get_queue_session):"+str(d))
                         print (d)
                     return None
             return data
@@ -115,35 +116,54 @@ def get_queue_ping(group_key):
     return None
 
 
-def new_queue_session(session_key,data, group_key):
+def new_queue_session(session_key,data, group_key):    
     epoch_ms = int(time.time() * 1000)
     epoch_ms_str = str(epoch_ms)  
     os.makedirs(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key), exist_ok=True)  
-    if data["status"] == "Active":
+    if data["status"] == "Active":        
         directory = settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key)
-        session_file = directory+"/"+epoch_ms_str+"_session_"+session_key+".json"
+        session_file = directory+"/"+epoch_ms_str+"_session_"+session_key+".json"        
     else:
-
         directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
         directory_list = os.listdir(directory)
         directory_session_limit = settings.DIRECTORY_SESSION_LIMIT
         session_file = None
-        i = 1
-        while i <= settings.DIRECTORY_FOLDER_LIMIT:       
-            sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,i))
-            if os.path.isdir(sub_directory):            
-                files = [f for f in sub_directory.iterdir() if f.is_file()]            
-                file_count = len(files)
-                if file_count < directory_session_limit:
-                    session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
-                    break
-                
+        i = settings.DIRECTORY_FOLDER_LIMIT
+        
+        while i != 0:                           
+            sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_sessions/waiting/{}/{}".format(group_key,i))            
+            if os.path.isdir(sub_directory):
+                pass
             else:
-                os.mkdir(sub_directory)
-                session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
-                break
-            i += 1
+                os.mkdir(sub_directory)            
+                      
+            files = [f for f in sub_directory.iterdir() if f.is_file()]            
+            file_count = len(files)
+            
+            if file_count == 0:
+                insert_sub_directory = i
 
+            if file_count < directory_session_limit and file_count != 0:
+                insert_sub_directory = i
+                break
+
+            if file_count >= directory_session_limit:
+                insert_sub_directory = i + 1
+                break
+
+            # if file_count < directory_session_limit:                    
+            #     session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
+                    # break
+                
+            
+                #session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
+                # break
+            i -= 1        
+
+
+        sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_sessions/waiting/{}/{}".format(group_key,insert_sub_directory))
+        session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
+    
     if session_file:       
         try:                  
             json_text = json.dumps(data, ensure_ascii=False, indent=2)
@@ -152,7 +172,8 @@ def new_queue_session(session_key,data, group_key):
         except Exception as e:
             print ("Error Saving File:"+session_file)
             print (e)
-            return None    
+            return None 
+    
     return session_file
 
 def get_session_by_id(group_key,session_id):
@@ -191,7 +212,9 @@ def delete_session(group_key,session_id):
     try: 
         session_file = get_session_by_id(group_key,session_id)
         try:
+            
             os.remove(session_file)
+            print ("Removing file "+str(session_file))
         except Exception as k:
             print ("Error removing "+str(session_file))
             print (k)
@@ -210,13 +233,14 @@ def get_queue_position_by_id(group_key,session_id):
     directory_list = sorted(directory_list, key=int)
     
     for dir in directory_list:
-        sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,dir))
+        sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,dir))        
         files = [f for f in sub_directory.iterdir() if f.is_file()]
         # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
         files.sort()
-
         for f in files:
             if f.is_file():  
+                if ".lock" in str(f):
+                    continue
                 position_count = position_count + 1                
                 session_filename = os.path.basename(f)
                 session_filename_split = session_filename.split("_session_")
@@ -255,7 +279,8 @@ def delete_active_expiry_idle_sessions(group_key):
                             if file_path.exists():  
                                 try:                          
                                     os.remove(file_path)                                
-                                    print ("Session Expired, File Deleted: "+str(file_path))      
+                                    print ("Session Expired, File Deleted: "+str(file_path)+":"+str(expiry_dt)+":"+str(now_dt))     
+                                     
                                 except Exception as y:
                                     print ("Error removing "+str(file_path))
                                     print (y)
@@ -265,17 +290,19 @@ def delete_active_expiry_idle_sessions(group_key):
                             if file_path.exists():                            
                                 try:                          
                                     os.remove(file_path)                                
-                                    print ("Session Expired, File Deleted: "+str(file_path))      
+                                    print ("Idle Session Expired, File Deleted: "+str(file_path)+":"+str(expiry_dt)+":"+str(now_dt))      
                                 except Exception as y:
                                     print ("Error removing "+str(file_path))
                                     print (y)                   
                     except Exception as e:
+                        print ("DELETE EXCEPTION IDLE EXPIRED")
                         print (e)
-                        try:
-                            os.remove(file_path)
-                        except Exception as d:
-                            print ("Issue removing "+str(file_path))
-                            print (d)
+                        # try:
+                        #     os.remove(file_path)
+                        #     print ("Removing file "+str(file_path))
+                        # except Exception as d:
+                        #     print ("Issue removing "+str(file_path))
+                        #     print (d)
                         
                         
                     
@@ -309,9 +336,7 @@ def delete_waiting_expiry_idle_sessions(group_key):
                             idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
                             idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)         
                             idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
-                            if idle_dt < idle_dt_subtract:                                                                                     
-                                os.remove(f)
-                                     
+                            if idle_dt < idle_dt_subtract:                                                                   
                                 try:                          
                                     os.remove(f)                                
                                     print ("Idle Session Expired, File Deleted: "+str(f))      
@@ -322,6 +347,7 @@ def delete_waiting_expiry_idle_sessions(group_key):
                             print (e)
                             try:
                                 os.remove(f)
+                                print ("Removing file "+str(f))
                             except Exception as d:
                                 print ("Issue removing "+str(f))
                                 print (d)
@@ -359,6 +385,8 @@ def get_longest_waiting(group_key, stl):
         files.sort()
         for f in files:
             if f.is_file():  
+                if ".lock" in str(f):
+                    continue                
                 longest_waiting.append(f)
                 file_count = file_count + 1
                 if file_count >= stl:                    
@@ -389,11 +417,12 @@ def wait_queue_rotate(group_key):
                         if f.is_file():          
                             session_filename = os.path.basename(f)  
                             previous_path = Path(str(previous_sub_directory)+"/"+session_filename)
-                            print (previous_path)
+                            
                             
                             try: 
                                 shutil.copyfile(f, previous_path)
                                 os.remove(f)
+                                print ("Removing file "+str(f))
                             except Exception as e:
                                 print ("Error removing "+str(f))
                                 print (e)

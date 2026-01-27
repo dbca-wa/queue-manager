@@ -111,6 +111,7 @@ class Command(BaseCommand):
                                 shutil.copyfile(sitesession_file, active_sitesession_file)  
                                 time.sleep(.1)
                                 os.remove(sitesession_file)   
+                                print ("Removing file "+str(sitesession_file))
                             try:       
                                 os.remove(LOCK_PATH)
                             except Exception as k:
