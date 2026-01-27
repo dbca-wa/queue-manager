@@ -66,10 +66,9 @@ def get_queue_session(file):
 
 def save_queue_session(file,data):    
     # Path to the JSON file
-
-    LOCK_PATH = str(file)+".lock" 
     
     try:
+        LOCK_PATH = str(file)+".lock" 
         lock = FileLock(LOCK_PATH)
         with lock:
             json_text = json.dumps(data, ensure_ascii=False, indent=2)
@@ -81,7 +80,7 @@ def save_queue_session(file,data):
             print ("Error Removing "+str(LOCK_PATH))
             print (k)
     except Exception as e:
-        print ("Error Saving File:"+file)
+        print ("Error Saving File:"+str(file))
         print (e)
 
     return None
@@ -96,7 +95,7 @@ def save_queue_ping(data,group_key):
         with open(file, "w") as f:
             f.write(json_text)
     except Exception as e:
-        print ("Error Saving File:"+file)
+        print ("Error Saving File:"+str(file))
         print (e)
     return None
 
