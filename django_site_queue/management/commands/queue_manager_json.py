@@ -98,7 +98,7 @@ class Command(BaseCommand):
                     jsondb.save_queue_session(sitesession_file,sitesession)
                     print (sitesession_file)
                     if sitesession["status"]  == "Active":
-                        
+                        print ("Migrate to Active folder")
                         session_filename = os.path.basename(sitesession_file)
 
                         active_sitesession_file = "db/json/queue_sessions/active/{}/{}".format(queue_group_name,session_filename)

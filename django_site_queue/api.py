@@ -38,7 +38,7 @@ PLUS_8 = timezone(timedelta(hours=8))
 # Improve queue algorithm - more work on queue order
 
 def check_create_session(request, *args, **kwargs):
-    
+    print ("LOG1")
     sitequeuesession = None
     sitesession = None
     refresh_page = False
@@ -48,7 +48,7 @@ def check_create_session(request, *args, **kwargs):
     # queue_group = models.SiteQueueManagerGroup.objects.filter(group_unique_key=request.GET['queue_group']) 
 
     queue_group = jsondb.get_queue_group(queue_group_name)
-
+    print ("LOG2")
     group_unique_key = 'unknown'
     if queue_group is None:
         print ("THIS RESPONSE 1")
@@ -86,6 +86,7 @@ def check_create_session(request, *args, **kwargs):
     more_info_link =''
     queue_inactivity_url =''
     queue_waiting_room_url = ''
+    print ("LOG3")
     if queue_group:
         group_unique_key = queue_group["group_unique_key"]
         queue_inactivity_url = QUEUE_URL_ENV+'/site-queue/queue-expired/'+group_unique_key+'/'
@@ -127,7 +128,7 @@ def check_create_session(request, *args, **kwargs):
             print ("PING Response error")
             print (e)
 
-
+    print ("LOG4")
     memory_session = {}
 
     idle_seconds = 3000
@@ -137,7 +138,7 @@ def check_create_session(request, *args, **kwargs):
     staff_loggedin = False
      
     session_key = '' 
-
+    print ("LOG5")
     try:
         
         if 'session_key' in request.GET:
@@ -177,7 +178,7 @@ def check_create_session(request, *args, **kwargs):
         else:
              memory_session['sitequeuesession']  = None 
 
-
+        print ("LOG6")
         session_file_id =  None
         if sitequeuesession is not None:           
             session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)            
@@ -188,11 +189,12 @@ def check_create_session(request, *args, **kwargs):
                 time.sleep(1)
                 session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)
         
-        
+        print ("LOG7")
         session_count = 0
         if session_file_id is not None:
-                  
+            print ("LOG7.1")      
             session_data = jsondb.get_queue_session(session_file_id)
+            print ("LOG7.2")
             if session_data is None:
                 refresh_page = True  
             now_dt = datetime.now().astimezone(PLUS_8)
@@ -202,10 +204,11 @@ def check_create_session(request, *args, **kwargs):
                 print ("SESSION EXPIRED")
         
             session_count = 1
-        
+        print ("LOG8")
           
         # sitequeuesession = None
         if sitequeuesession is None or session_count == 0:
+            print ("LOG9")
             session_status = "Waiting"
             #if total_active_session >= session_total_limit:
             # START -- Disabling, will send everyone to queue and the cron job give fairer allocated spots 
@@ -233,6 +236,7 @@ def check_create_session(request, *args, **kwargs):
             #if session_key:
             #     pass
             #else: 
+            print ("LOG10")
             browser_agent = ''
             if 'HTTP_USER_AGENT' in request.META:
                 browser_agent = request.META['HTTP_USER_AGENT']
@@ -247,18 +251,24 @@ def check_create_session(request, *args, **kwargs):
             expiry=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
             sitesession = {"session_key":session_key,"idle":datetime.now().astimezone(PLUS_8).strftime("%Y-%m-%d %H:%M:%S"), "expiry": expiry,"status": session_status,"ipaddress" : get_client_ip(request), "is_staff": staff_loggedin,"queue_group" : group_unique_key, "browser_agent" : browser_agent}
             # sitesession = models.SiteQueueManager.objects.create(session_key=session_key,idle=datetime.now(timezone.utc), expiry=expiry,status=session_status,ipaddress=get_client_ip(request), is_staff=staff_loggedin,queue_group=queue_group[0], browser_agent=browser_agent)
+            print ("LOG10.1")
             jsondb.new_queue_session(session_key,sitesession,group_unique_key)
-
+            print ("LOG10.2")
             memory_session['sitequeuesession'] = session_key
             memory_session['sitequeuesession_ipaddress'] = get_client_ip(request) 
             memory_session['sitequeuesession_created'] = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
             memory_session['sitequeuesession_getcreated'] = 'no'
             request.COOKIES['sitequeuesession'] = session_key
             memory_session['sitequeuesession_agent'] = request.META['HTTP_USER_AGENT']
+            print ("LOG11")
         else:
+            print ("LOG12")
             session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)            
+            print ("LOG12.1")
             if session_file_id is not None:                
+                print ("LOG12.3")
                 sitesession = jsondb.get_queue_session(session_file_id)
+                print ("LOG12.4")
 
             # if models.SiteQueueManager.objects.filter(session_key=sitequeuesession).count() > 0:
                 #  sitesession_query = models.SiteQueueManager.objects.filter(session_key=sitequeuesession,queue_group=queue_group[0])
@@ -291,19 +301,21 @@ def check_create_session(request, *args, **kwargs):
                  ##       sitesession.status = session_status
                  ##       sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
                  ##       sitesession.is_staff=staff_loggedin
-                
+                print ("LOG13")
                 sitesession['idle']=(datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
                 if sitesession["status"] == "Waiting":
                     sitesession["expiry"]=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
                     
-
+                print ("LOG15")
                 sitesession["ipaddress"]=get_client_ip(request)
                 jsondb.save_queue_session(session_file_id,sitesession)
                 # sitesession.save()
+                print ("LOG16")
             else:
+                print ("LOG17")
                 raise ValidationError("Error no session Found")
 
-
+        print ("LOG18")
         queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)
 
         #queue_position =0
@@ -311,14 +323,14 @@ def check_create_session(request, *args, **kwargs):
         #      sqm =  models.SiteQueueManager.objects.filter(session_key=session_key)[0]
         #      queue_position = models.SiteQueueManager.objects.filter(id__lte=sqm.id, status=0, expiry__gt=datetime.now(timezone.utc),queue_group=queue_group[0]).order_by('id').count()
 
-
+        print ("LOG19")
         sitesession["idle"] 
         now_dt = datetime.now().astimezone(PLUS_8)
         idle_dt = datetime.strptime(sitesession["idle"], "%Y-%m-%d %H:%M:%S") 
         idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
         expiry_dt = datetime.strptime(sitesession["expiry"], "%Y-%m-%d %H:%M:%S") 
         expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)        
-
+        print ("LOG20")
         idle_seconds = (now_dt-idle_dt).seconds
         expiry_seconds = (expiry_dt-now_dt).seconds
         wait_time = 100 
@@ -330,7 +342,9 @@ def check_create_session(request, *args, **kwargs):
                 else:                    
                     queue_avg_position = int(queue_position) / int(session_total_limit)
                 session_limit_minutes = round(session_limit_seconds / 60)
-                wait_time = round(queue_avg_position * session_limit_minutes)      
+                wait_time = round(queue_avg_position * session_limit_minutes)     
+                print ("LOG21") 
+        print ("LOG22")
         #if expiry_seconds < 1:
         #      request.session['sitequeuesession'] = None
         #      if total_active_session <= session_total_limit and total_waiting_session == 0:
