@@ -51,7 +51,11 @@ def get_queue_session(file):
                 except Exception as e:
                     print ("ERROR Opening {}".format(file_path))
                     print (e)
-                    os.remove(file_path)
+                    try:
+                        os.remove(file_path)
+                    except Exception as d:
+                        print ("Error removing "+str(d))
+                        print (d)
                     return None
             return data
     except Exception as e:
@@ -70,8 +74,12 @@ def save_queue_session(file,data):
         with lock:
             json_text = json.dumps(data, ensure_ascii=False, indent=2)
             with open(file, "w") as f:
-                f.write(json_text)        
-        os.remove(LOCK_PATH)
+                f.write(json_text)
+        try:       
+            os.remove(LOCK_PATH)
+        except Exception as k:
+            print ("Error Removing "+str(LOCK_PATH))
+            print (k)
     except Exception as e:
         print ("Error Saving File:"+file)
         print (e)
@@ -183,7 +191,11 @@ def delete_session(group_key,session_id):
     status = None
     try: 
         session_file = get_session_by_id(group_key,session_id)
-        os.remove(session_file)
+        try:
+            os.remove(session_file)
+        except Exception as k:
+            print ("Error removing "+str(session_file))
+            print (k)
         status = True
     except Exception as e:
         print (e)
@@ -239,15 +251,23 @@ def delete_active_expiry_idle_sessions(group_key):
                         expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
                         # expiry_dt = expiry_dt.replace(tzinfo=timezone.utc)
                         if expiry_dt < now_dt:
-                            if file_path.exists():                            
-                                os.remove(file_path)
-                                print ("Session Expired, File Deleted: "+str(file_path))      
+                            if file_path.exists():  
+                                try:                          
+                                    os.remove(file_path)                                
+                                    print ("Session Expired, File Deleted: "+str(file_path))      
+                                except Exception as y:
+                                    print ("Error removing "+str(file_path))
+                                    print (y)
                         
                         idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
                         if idle_dt < idle_dt_subtract:                                              
                             if file_path.exists():                            
-                                os.remove(file_path)
-                                print ("Session Expired, File Deleted: "+str(file_path))                          
+                                try:                          
+                                    os.remove(file_path)                                
+                                    print ("Session Expired, File Deleted: "+str(file_path))      
+                                except Exception as y:
+                                    print ("Error removing "+str(file_path))
+                                    print (y)                   
                     except Exception as e:
                         print (e)
                         try:
@@ -290,13 +310,19 @@ def delete_waiting_expiry_idle_sessions(group_key):
                             idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
                             if idle_dt < idle_dt_subtract:                                                                                     
                                 os.remove(f)
-                                print ("Idle Session Expired, File Deleted: "+str(f))      
+                                     
+                                try:                          
+                                    os.remove(f)                                
+                                    print ("Idle Session Expired, File Deleted: "+str(f))      
+                                except Exception as y:
+                                    print ("Error removing "+str(f))
+                                    print (y)                                
                         except Exception as e:
                             print (e)
                             try:
-                                os.remove(file_path)
+                                os.remove(f)
                             except Exception as d:
-                                print ("Issue removing "+str(file_path))
+                                print ("Issue removing "+str(f))
                                 print (d)
         i += 1                                  
 
@@ -364,7 +390,11 @@ def wait_queue_rotate(group_key):
                             previous_path = Path(str(previous_sub_directory)+"/"+session_filename)
                             print (previous_path)
                             shutil.copyfile(f, previous_path)
-                            os.remove(f)
+                            try: 
+                                os.remove(f)
+                            except Exception as e:
+                                print ("Error removing "+str(f))
+                                print (e)
 
             previous_sub_directory = sub_directory  
             previous_file_count = file_count
