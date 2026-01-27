@@ -222,27 +222,41 @@ def delete_active_expiry_idle_sessions(group_key):
 
     for f in directory.iterdir(): 
         if f.is_file():            
+            file_path_lock = Path(str(f)+".lock")
+            if file_path_lock.exists():
+                print ("Lock file exists"+str(file_path_lock))
+                continue
             file_path = Path(f)
             if file_path.exists():
                 # Load JSON file into a variable
                 with file_path.open("r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    now_dt = datetime.now().astimezone(PLUS_8)
-                    idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
-                    idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
-                    expiry_dt = datetime.strptime(data["expiry"], "%Y-%m-%d %H:%M:%S") 
-                    expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
-                    # expiry_dt = expiry_dt.replace(tzinfo=timezone.utc)
-                    if expiry_dt < now_dt:
-                        if file_path.exists():                            
+                    try:
+                        data = json.load(f)
+                        now_dt = datetime.now().astimezone(PLUS_8)
+                        idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
+                        idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
+                        expiry_dt = datetime.strptime(data["expiry"], "%Y-%m-%d %H:%M:%S") 
+                        expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
+                        # expiry_dt = expiry_dt.replace(tzinfo=timezone.utc)
+                        if expiry_dt < now_dt:
+                            if file_path.exists():                            
+                                os.remove(file_path)
+                                print ("Session Expired, File Deleted: "+str(file_path))      
+                        
+                        idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
+                        if idle_dt < idle_dt_subtract:                                              
+                            if file_path.exists():                            
+                                os.remove(file_path)
+                                print ("Session Expired, File Deleted: "+str(file_path))                          
+                    except Exception as e:
+                        print (e)
+                        try:
                             os.remove(file_path)
-                            print ("Session Expired, File Deleted: "+str(file_path))      
-                    
-                    idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
-                    if idle_dt < idle_dt_subtract:                                              
-                        if file_path.exists():                            
-                            os.remove(file_path)
-                            print ("Session Expired, File Deleted: "+str(file_path))                          
+                        except Exception as d:
+                            print ("Issue removing "+str(file_path))
+                            print (d)
+                        
+                        
                     
                   
     # files = [f for f in directory.iterdir() if f.is_file()]
@@ -262,16 +276,28 @@ def delete_waiting_expiry_idle_sessions(group_key):
         if os.path.isdir(sub_directory):            
             files = [f for f in sub_directory.iterdir() if f.is_file()]     
             for f in files:
+                file_path_lock = Path(str(f)+".lock")
+                if file_path_lock.exists():
+                    print ("Lock file exists"+str(file_path_lock))
+                    continue                
                 if f.is_file():
                     with f.open("r", encoding="utf-8") as fe:
-                        data = json.load(fe)
-                        now_dt = datetime.now().astimezone(PLUS_8)
-                        idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
-                        idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)         
-                        idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
-                        if idle_dt < idle_dt_subtract:                                                                                     
-                            os.remove(f)
-                            print ("Idle Session Expired, File Deleted: "+str(f))      
+                        try:
+                            data = json.load(fe)
+                            now_dt = datetime.now().astimezone(PLUS_8)
+                            idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
+                            idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)         
+                            idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
+                            if idle_dt < idle_dt_subtract:                                                                                     
+                                os.remove(f)
+                                print ("Idle Session Expired, File Deleted: "+str(f))      
+                        except Exception as e:
+                            print (e)
+                            try:
+                                os.remove(file_path)
+                            except Exception as d:
+                                print ("Issue removing "+str(file_path))
+                                print (d)
         i += 1                                  
 
 def get_active_sessions_total(group_key):    
