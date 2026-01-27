@@ -8,7 +8,7 @@ from django_site_queue import  jsondb
 from django.utils import timezone as dj_tz
 import shutil
 import os
-
+import time
 PLUS_8 = timezone(timedelta(hours=8))
 
 class Command(BaseCommand):
@@ -103,4 +103,5 @@ class Command(BaseCommand):
 
                         active_sitesession_file = "db/json/queue_sessions/active/{}/{}".format(queue_group_name,session_filename)
                         shutil.copyfile(sitesession_file, active_sitesession_file)  
+                        time.sleep(.1)
                         os.remove(sitesession_file)   

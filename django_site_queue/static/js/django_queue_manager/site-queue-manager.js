@@ -253,19 +253,19 @@ var sitequeuemanager = {
                         } else if (sitequeuemanager.var.queue_position < 20 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
                         } else if (sitequeuemanager.var.queue_position < 50 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 10000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 12000);
                         } else if (sitequeuemanager.var.queue_position < 100 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 15000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 13000);
                         } else if (sitequeuemanager.var.queue_position < 200 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 25000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 15000);
                         } else if (sitequeuemanager.var.queue_position < 400 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 30000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 17000);
                         } else if (sitequeuemanager.var.queue_position < 800 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 35000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 18000);
                         } else if (sitequeuemanager.var.queue_position < 1500 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 40000);                    
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 20000);                    
                         } else {
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 50000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 22000);
                         }
                     }
                 }   
