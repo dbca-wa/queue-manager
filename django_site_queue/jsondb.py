@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import timedelta, datetime, timezone
 from django.utils import timezone as dj_tz
 from django.conf import settings
+from filelock import FileLock
 import json
 import os
 import shutil
@@ -62,13 +63,19 @@ def get_queue_session(file):
 def save_queue_session(file,data):    
     # Path to the JSON file
 
+    LOCK_PATH = str(file)+".lock" 
+    
     try:
-        json_text = json.dumps(data, ensure_ascii=False, indent=2)
-        with open(file, "w") as f:
-            f.write(json_text)
+        lock = FileLock(LOCK_PATH)
+        with lock:
+            json_text = json.dumps(data, ensure_ascii=False, indent=2)
+            with open(file, "w") as f:
+                f.write(json_text)
+        os.remove(LOCK_PATH)
     except Exception as e:
         print ("Error Saving File:"+file)
         print (e)
+
     return None
 
 def save_queue_ping(data,group_key):    

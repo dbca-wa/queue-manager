@@ -23,3 +23,4 @@ urllib3~=2.6.0
 python-decouple==3.8
 django-extensions==4.1
 git+https://github.com/dbca-wa/wagov_utils
+filelock==3.20.3
