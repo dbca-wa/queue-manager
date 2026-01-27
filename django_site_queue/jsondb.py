@@ -389,8 +389,9 @@ def wait_queue_rotate(group_key):
                             session_filename = os.path.basename(f)  
                             previous_path = Path(str(previous_sub_directory)+"/"+session_filename)
                             print (previous_path)
-                            shutil.copyfile(f, previous_path)
+                            
                             try: 
+                                shutil.copyfile(f, previous_path)
                                 os.remove(f)
                             except Exception as e:
                                 print ("Error removing "+str(f))
