@@ -68,6 +68,8 @@ class Command(BaseCommand):
             total_active_session = jsondb.get_active_sessions_total(queue_group_name)
             total_waiting_session = jsondb.get_waiting_session_total(queue_group_name)                                                
             stl = session_total_limit
+            data = {"total_waiting_session": total_waiting_session}
+            jsondb.save_queue_waiting_total(data,queue_group_name)
             # stl = 2
             longest_waiting = jsondb.get_longest_waiting(queue_group_name, stl)
             

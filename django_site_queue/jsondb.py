@@ -100,6 +100,36 @@ def save_queue_ping(data,group_key):
         print (e)
     return None
 
+def save_queue_waiting_total(data,group_key):    
+    # Path to the JSON file
+    os.makedirs(settings.QUEUE_STORE_DB+"/waiting_total/", exist_ok=True)
+    try:      
+
+        file = settings.QUEUE_STORE_DB+"/waiting_total/{}.json".format(group_key)        
+        json_text = json.dumps(data, ensure_ascii=False, indent=2)
+        with open(file, "w") as f:
+            f.write(json_text)
+    except Exception as e:
+        print ("Error Saving File:"+str(file))
+        print (e)
+    return None
+
+def get_queue_waiting_total_cached(group_key):    
+    # Path to the JSON file
+    file = Path(settings.QUEUE_STORE_DB+"/waiting_total/{}.json".format(group_key))    
+    try:        
+        file_path = file
+        if os.path.exists(file_path):
+            # Load JSON file into a variable
+            with file_path.open("r", encoding="utf-8") as f:
+                data = json.load(f)            
+            return data
+    except Exception as e:
+        print (e)
+
+    return None
+
+
 def get_queue_ping(group_key):    
     # Path to the JSON file
     file = Path(settings.QUEUE_STORE_DB+"/ping_status/{}.json".format(group_key))    
