@@ -58,7 +58,9 @@ var sitequeuemanager = {
                 sitequeuemanager.var.queue_inactivity_url = response['queue_inactivity_url'];
                 sitequeuemanager.var.active_session_url = response['url'];
                 sitequeuemanager.var.queue_status = response['status']
-
+                if (response['refresh_page'] == true) {
+                    window.location.reload();
+                }
                 if (response['more_info_link'] == null) {
                     sitequeuemanager.var.more_info_link = "";
                 } else {
