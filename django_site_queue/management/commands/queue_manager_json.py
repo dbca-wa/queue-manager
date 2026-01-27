@@ -6,6 +6,7 @@ from datetime import timedelta, datetime, timezone
 import requests
 from django_site_queue import  jsondb
 from django.utils import timezone as dj_tz
+from filelock import FileLock
 import shutil
 import os
 import time
@@ -100,9 +101,22 @@ class Command(BaseCommand):
                     print (sitesession_file)
                     if sitesession["status"]  == "Active":
                         print ("Migrate to Active folder")
-                        session_filename = os.path.basename(sitesession_file)
+                        try:
+                            LOCK_PATH = str(sitesession_file)+".lock" 
+                            lock = FileLock(LOCK_PATH)
+                            with lock:
+                                session_filename = os.path.basename(sitesession_file)
 
-                        active_sitesession_file = "db/json/queue_sessions/active/{}/{}".format(queue_group_name,session_filename)
-                        shutil.copyfile(sitesession_file, active_sitesession_file)  
-                        time.sleep(.1)
-                        os.remove(sitesession_file)   
+                                active_sitesession_file = "db/json/queue_sessions/active/{}/{}".format(queue_group_name,session_filename)
+                                shutil.copyfile(sitesession_file, active_sitesession_file)  
+                                time.sleep(.1)
+                                os.remove(sitesession_file)   
+                            try:       
+                                os.remove(LOCK_PATH)
+                            except Exception as k:
+                                print ("Error Removing "+str(LOCK_PATH))
+                                print (k)
+
+                        except Exception as e:
+                            print ("Error Saving File:"+str(sitesession_file))
+                            print (e)                                
