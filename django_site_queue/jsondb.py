@@ -206,16 +206,13 @@ def new_queue_session(session_key,data, group_key):
     
     return session_file
 
-def get_session_by_id(group_key,session_id):
-    print ("B:1")
-    print (session_id)
-    directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key))
-    print ("B:2")
-    files = [f for f in directory.iterdir() if f.is_file()]
-    print ("B:3")
+def get_session_by_id(group_key,session_id):    
+    
+    directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key))    
+    files = [f for f in directory.iterdir() if f.is_file()]    
     # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
     files.sort()
-    print ("B:4")
+    
     for f in files:
         # print (f)
         # if f.is_file():  
@@ -225,8 +222,7 @@ def get_session_by_id(group_key,session_id):
         #print ("IDVAL"+session_id_val)        
         if session_id_val == session_id+".json":  
             #print ("FDDD")                                                        
-            return (f)
-    print ("B:5")
+            return (f)    
 
     directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
     directory_list = os.listdir(directory)
@@ -241,8 +237,7 @@ def get_session_by_id(group_key,session_id):
             session_filename_split = session_filename.split("_session_")
             session_id_val = session_filename_split[1]                              
             if session_id_val == session_id+".json":                                                                   
-                return (f)    
-    print ("B:6")
+                return (f)        
     return None
 
 def delete_session(group_key,session_id):
