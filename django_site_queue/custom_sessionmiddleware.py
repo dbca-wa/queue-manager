@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.cache import patch_vary_headers
 
 class DisableSessionMiddleware:
     def __init__(self, get_response):
@@ -20,8 +21,8 @@ class DisableSessionMiddleware:
             )
             if 'sessionid' in response.cookies:
                 del response.cookies['sessionid']
-       
-            response.cookies['Vary'] = "Origin"
-
+                            
+            if 'Vary' in response.headers:
+                response.headers['Vary'] = "Origin"
         return response
    
