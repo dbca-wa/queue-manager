@@ -12,7 +12,7 @@ urlpatterns = [
 
     re_path(r'^api/check-create-session/$', api.check_create_session, name='check-create-session'),
     re_path(r'^api/expire-session/$', api.expire_session, name='expire-session'),
-    re_path(r'^api/status/$', api.queue_status, name='expire-session'),
+    re_path(r'^api/status/$', api.queue_status, name='status-session'),
     re_path(r'^api/active-sessions/$', api.get_active_sessions, name='get-active-sessions'),
     re_path(r'^api/waiting-sessions/$', api.get_waiting_sessions, name='get-waiting-sessions'),    
     re_path(r'^site-queue/view/$', views.QueuePage.as_view(), name='site-queue-page'),
