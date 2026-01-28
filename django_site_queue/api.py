@@ -37,8 +37,7 @@ PLUS_8 = timezone(timedelta(hours=8))
 
 # Improve queue algorithm - more work on queue order
 
-def check_create_session(request, *args, **kwargs):
-    print ("S:1")
+def check_create_session(request, *args, **kwargs):    
     sitequeuesession = None
     sitesession = None
     refresh_page = False
@@ -134,7 +133,7 @@ def check_create_session(request, *args, **kwargs):
     queue_position = 1000
     session_count = 0
     staff_loggedin = False
-    print ("S:2")
+    
     session_key = '' 
     try:
         
@@ -166,24 +165,26 @@ def check_create_session(request, *args, **kwargs):
              if request.user.is_staff is True:
                    pass
                    #staff_loggedin = True
-        print ("S:2.1")
+        
         total_active_session = jsondb.get_active_sessions_total(queue_group_name)
         total_waiting_session_obj = jsondb.get_queue_waiting_total_cached(queue_group_name)
         if total_waiting_session_obj:
             if "total_waiting_session" in total_waiting_session_obj:
                 total_waiting_session = total_waiting_session_obj["total_waiting_session"]
-        print ("S:2.2")
+        
         if 'sitequeuesession' in memory_session:
              sitequeuesession = memory_session['sitequeuesession']
         else:
              memory_session['sitequeuesession']  = None 
-        print ("S:2.3")
+        
         session_file_id =  None
+        session_count = 0
         if sitequeuesession is not None:       
             print (sitequeuesession)    
             session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession) 
             print ('FOUND')
-            print (session_file_id)           
+            print (session_file_id)   
+            session_count = 1        
             # if session_file_id is None:
             #     time.sleep(2)
             #     session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)
@@ -192,8 +193,8 @@ def check_create_session(request, *args, **kwargs):
             #     time.sleep(1)
             #     print (session_file_id)
             #     session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)
-        print ("S:2.4")
-        session_count = 0
+        
+        
         if session_file_id is not None:    
             session_data = jsondb.get_queue_session(session_file_id)
             if session_data is None:
@@ -206,12 +207,12 @@ def check_create_session(request, *args, **kwargs):
                     print ("SESSION EXPIRED")
         
                 session_count = 1
-        print ("S:3") 
+        
         # sitequeuesession = None
         if sitequeuesession is None or session_count == 0:
 
             if total_waiting_session >= max_queue_session_limit:
-                print ("QUEUE FULL Redirecting")
+                print ("QUEUE FULL Redirecting {} : {}".format(sitequeuesession,session_count, ))
                 queue_position = max_queue_session_limit + 1
                 response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False  }), content_type='application/json')
                 return response
@@ -261,7 +262,7 @@ def check_create_session(request, *args, **kwargs):
             session_file_id = jsondb.get_session_by_id(queue_group_name,session_key) 
             if session_file_id is not None:                
                 sitesession = jsondb.get_queue_session(session_file_id)            
-                
+
             memory_session['sitequeuesession'] = session_key
             memory_session['sitequeuesession_ipaddress'] = get_client_ip(request) 
             memory_session['sitequeuesession_created'] = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
@@ -319,7 +320,7 @@ def check_create_session(request, *args, **kwargs):
                 raise ValidationError("Error no session Found")
                     
         queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)        
-        print ("S:4")
+        
         #queue_position =0
         # if models.SiteQueueManager.objects.filter(session_key=session_key).count() > 0:
         #      sqm =  models.SiteQueueManager.objects.filter(session_key=session_key)[0]
@@ -335,7 +336,7 @@ def check_create_session(request, *args, **kwargs):
         idle_seconds = (now_dt-idle_dt).seconds
         expiry_seconds = (expiry_dt-now_dt).seconds
         wait_time = 100 
-        print ("S:5")
+        
         if queue_position:
             if queue_position > 0:
                 # calculate wait time
@@ -360,7 +361,7 @@ def check_create_session(request, *args, **kwargs):
         #if idle_limit_seconds > idle_seconds and sitesession.status == 1:
         #booking = utils.get_session_booking(request.session)
         #request.session['sitequeuesession'] = "ThisisaQueueSession"
-        print ("S:6")
+       
     except Exception as e:
         print ("EXCEPTION ERROR")
         print (e)
