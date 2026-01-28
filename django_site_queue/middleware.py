@@ -14,20 +14,27 @@ class CacheControl(object):
 
        if request.path == '/':
             response['Cache-Control'] = 'public, max-age=60'
+            response['Surrogate-Control'] = 'public, max-age=60'
        elif request.path[:5] == '/api/':
-            response['Cache-Control'] = 'private, no-store'
+            response['Cache-Control'] = 'private, no-store'            
        elif request.path[:8] == '/static/':
             response['Cache-Control'] = 'public, max-age=300'
+            response['Surrogate-Control'] = 'public, max-age=300'
        elif request.path[:7] == '/media/':
             response['Cache-Control'] = 'public, max-age=3600'
-       elif request.path[:17] == '/site-queue/view/':
+            response['Surrogate-Control'] = 'public, max-age=3600'
+       elif request.path[:17] == '/site-queue/view/':            
             response['Cache-Control'] = 'public, max-age=60'
+            response['Surrogate-Control'] = 'public, max-age=60'
        elif request.path[:31] == '/site-queue/service-restricted/':
             response['Cache-Control'] = 'public, max-age=3600'
+            response['Surrogate-Control'] = 'public, max-age=3600'
        elif request.path[:26] == '/site-queue/max-threshold/':
             response['Cache-Control'] = 'public, max-age=3600'
+            response['Surrogate-Control'] = 'public, max-age=3600'
        elif request.path[:25] == '/site-queue/waiting-room/':
-            response['Cache-Control'] = 'public, max-age=3600'            
+            response['Cache-Control'] = 'public, max-age=3600'   
+            response['Surrogate-Control'] = 'public, max-age=3600'         
        else:
             pass
 
