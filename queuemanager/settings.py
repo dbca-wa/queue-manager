@@ -45,7 +45,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 INSTALLED_APPS = [
     
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -63,6 +63,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django_site_queue.custom_sessionmiddleware.DisableSessionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -70,13 +71,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_site_queue.middleware.CacheControl',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'wagov_utils.components.middleware.no_signal_login_middleware.JSONAuthMiddleware',
     'wagov_utils.components.json_auth.auth2_sso_middleware.SSOLoginMiddleware',
+    'django_site_queue.middleware.CacheControl',
     # 'django_site_queue.ipblock_middleware.IPMonitor',
 ]
-
+SILENCED_SYSTEM_CHECKS = ["admin.E410"]
 
 
 AUTHENTICATION_BACKENDS = (
