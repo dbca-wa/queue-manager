@@ -179,12 +179,10 @@ def check_create_session(request, *args, **kwargs):
         
         session_file_id =  None
         session_count = 0
-        if sitequeuesession is not None:       
-            print (sitequeuesession)    
+        if sitequeuesession is not None:          
             session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession) 
-            print ('FOUND')
-            print (session_file_id)   
-            session_count = 1        
+            if session_file_id is not None:
+                session_count = 1        
             # if session_file_id is None:
             #     time.sleep(2)
             #     session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)
@@ -196,9 +194,11 @@ def check_create_session(request, *args, **kwargs):
         
         
         if session_file_id is not None:    
-            session_data = jsondb.get_queue_session(session_file_id)
+            session_data = jsondb.get_queue_session(session_file_id)            
             if session_data is None:
-                refresh_page = True  
+                refresh_page = True   
+                response = HttpResponse(json.dumps({"status_code": 500,"message": "Error opening session data file"}), content_type='application/json', status=500)
+                return response               
             else:
                 now_dt = datetime.now().astimezone(PLUS_8)
                 expiry_dt = datetime.strptime(session_data["expiry"], "%Y-%m-%d %H:%M:%S") 

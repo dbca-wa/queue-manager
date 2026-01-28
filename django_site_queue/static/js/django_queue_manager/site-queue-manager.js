@@ -249,9 +249,9 @@ var sitequeuemanager = {
                     } else {
 
                         if (sitequeuemanager.var.queue_position < 2 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 400);
-                        } else if (sitequeuemanager.var.queue_position < 10 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
+                        } else if (sitequeuemanager.var.queue_position < 10 ) { 
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 2000);
                         } else if (sitequeuemanager.var.queue_position < 20 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
                         } else if (sitequeuemanager.var.queue_position < 50 ) { 
@@ -274,7 +274,7 @@ var sitequeuemanager = {
             },
             error: function (response) {
                 console.log('error connecting to queue system,  will try again soon');
-                setTimeout(function () { sitequeuemanager.check_queue(); }, 30000);
+                setTimeout(function () { sitequeuemanager.check_queue(); }, 20000);
             }
         });
 
