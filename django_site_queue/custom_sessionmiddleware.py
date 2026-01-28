@@ -2,8 +2,6 @@ from django.conf import settings
 
 class DisableSessionMiddleware:
     def __init__(self, get_response):
-        print ("DISABLED")
-        print (get_response)
         self.get_response = get_response
 
     def __call__(self, request):
