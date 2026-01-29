@@ -37,6 +37,22 @@ PLUS_8 = timezone(timedelta(hours=8))
 
 # Improve queue algorithm - more work on queue order
 
+BLOCKED_SCRIPTING = [
+    "curl",
+    "wget",
+    "python-requests",
+    "python",
+    "libwww-perl",
+    "scrapy",
+    "httpclient",
+    "java",
+    "okhttp",
+    "Go-http-client",
+    "axios",
+    "PostmanRuntime"
+]
+
+
 def check_create_session(request, *args, **kwargs):    
     sitequeuesession = None
     sitesession = None
@@ -250,9 +266,10 @@ def check_create_session(request, *args, **kwargs):
                 if script_exempt_key == settings.SCRIPT_EXEMPT_KEY:
                     pass
                 else:
-                    if 'python' in browser_agent:
-                        response = HttpResponse(json.dumps({"status:": 500, 'message': "Agent Forbidden"}), content_type='application/json', status=500)
-                        return response
+                    for blocked_script in BLOCKED_SCRIPTING:
+                        if blocked_script in browser_agent:
+                            response = HttpResponse(json.dumps({"status:": 500, 'message': "Agent Forbidden"}), content_type='application/json', status=500)
+                            return response
             
             session_key = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
             expiry=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
