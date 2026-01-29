@@ -10,7 +10,7 @@ class DisableSessionMiddleware:
 
         # Check if the current path matches the one you want to be "session-less"
         # Example: disable sessions for the /api/status/ path
-        remove_cookies_urls = ['/site-queue/max-threshold/parkstayv2/','/site-queue/service-restricted/','/site-queue/view/','/site-queue/waiting-room/parkstayv2/']
+        remove_cookies_urls = ['/','/site-queue/max-threshold/parkstayv2/','/site-queue/queue-expired/parkstayv2/','/site-queue/service-restricted/parkstayv2/','/site-queue/view/','/site-queue/waiting-room/parkstayv2/']
 
         if request.path in remove_cookies_urls:
             # response.delete_cookie sets the cookie's expiry to the past
