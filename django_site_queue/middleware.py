@@ -31,13 +31,7 @@ class CacheControl(object):
             response['Surrogate-Control'] = 'public, max-age=3600'
        elif request.path[:26] == '/site-queue/max-threshold/':
             response['Cache-Control'] = 'public, max-age=3600'
-            response['Surrogate-Control'] = 'public, max-age=3600'            
-            response['Vary'] = 'Origin' 
-            response.delete_cookie('sessionid')
-            response.headers.pop('Set-Cookie', None)
-            if 'Set-Cookie' in response:
-                print ("deleting cookie")
-                del response['Set-Cookie']            
+            response['Surrogate-Control'] = 'public, max-age=3600'                       
        elif request.path[:25] == '/site-queue/waiting-room/':
             response['Cache-Control'] = 'public, max-age=3600'   
             response['Surrogate-Control'] = 'public, max-age=3600'         
