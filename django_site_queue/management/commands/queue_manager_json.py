@@ -73,8 +73,9 @@ class Command(BaseCommand):
             # stl = 2
             longest_waiting = jsondb.get_longest_waiting(queue_group_name, stl)
             
-            print (datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : "+queue_group_name+" Active Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
-            
+            print ("Queue Log Date: "+datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+" : "+queue_group_name+" Active Sessions ("+str(total_active_session)+") Waiting Sessions ("+str(total_waiting_session)+")")
+            print ("Report,"+ datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+","+queue_group_name+",Active Sessions,"+str(total_active_session)+",Waiting Sessions,"+str(total_waiting_session)+"")
+
             for sitesession_file in longest_waiting:
                 total_active_session = jsondb.get_active_sessions_total(queue_group_name)
                 sitesession = jsondb.get_queue_session(sitesession_file)
