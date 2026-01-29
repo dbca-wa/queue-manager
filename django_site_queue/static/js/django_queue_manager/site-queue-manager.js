@@ -267,7 +267,7 @@ var sitequeuemanager = {
                         } else if (sitequeuemanager.var.queue_position < 1500 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 20000);                    
                         } else {
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 22000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 30000);
                         }
                     }
                 }   

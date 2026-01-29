@@ -528,3 +528,30 @@ def get_waiting_sessions(group_key, start, length, search):
         i += 1
     json_resp = {"data": waiting_sessions, "recordsFiltered": waiting_session_count}
     return json_resp
+
+
+
+def delete_all_sessions(group_key):    
+    directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}/".format(group_key))    
+    files = [f for f in directory.iterdir() if f.is_file()]    
+    files.sort()
+    
+    deletion_count = 0
+    for f in files:
+        if f.is_file():            
+            os.remove(f)
+            print ("Deleting"+str(f))
+            deletion_count = deletion_count + 1
+
+    directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
+    directory_list = os.listdir(directory)
+    for dir in directory_list:
+        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}/".format(group_key,dir))
+        files = [f for f in sub_directory.iterdir() if f.is_file()]
+        files.sort()
+        for f in files:
+            if f.is_file():                  
+                os.remove(f)
+                print ("Deleting"+str(f))
+                deletion_count = deletion_count + 1
+    return deletion_count
