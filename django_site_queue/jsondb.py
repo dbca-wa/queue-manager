@@ -487,20 +487,24 @@ def get_active_sessions(group_key, start, length, search):
             if file_path.exists():
                 # Load JSON file into a variable
                 with file_path.open("r", encoding="utf-8") as f:
-                    data = json.load(f)
+                    try:
+                        data = json.load(f)
 
-                    if len(search) > 0:
-                        if data["session_key"] in search or data["ipaddress"] in search or data["ipaddress"] in search  or data["ipaddress"] in search:
-                            pass
-                        else:
-                            continue
-          
-                    if active_session_count > start and active_session_count <= end:
-                        active_sessions.append(data)
+                        if len(search) > 0:
+                            if data["session_key"] in search or data["ipaddress"] in search or data["ipaddress"] in search  or data["ipaddress"] in search:
+                                pass
+                            else:
+                                continue
+            
+                        if active_session_count > start and active_session_count <= end:
+                            active_sessions.append(data)
 
-                    if active_session_count > end:
-                        break
-                    active_session_count = active_session_count + 1
+                        if active_session_count > end:
+                            break
+                        active_session_count = active_session_count + 1
+                    except Exception as e:
+                        print ("Skipping Active "+str(f)+" due to read issues")
+                        print (e)
     json_resp = {"data": active_sessions, "recordsFiltered": active_session_count}
     return json_resp
 
@@ -521,19 +525,23 @@ def get_waiting_sessions(group_key, start, length, search):
             for f in files:
                 if f.is_file():
                     with f.open("r", encoding="utf-8") as fe:
-                        data = json.load(fe)
-                        if len(search) > 0:
-                            if data["session_key"] in search or data["ipaddress"] in search or data["ipaddress"] in search  or data["ipaddress"] in search:
-                                pass
-                            else:
-                                continue
-            
-                        if waiting_session_count > start and waiting_session_count <= end:
-                            waiting_sessions.append(data)
+                        try:
+                            data = json.load(fe)
+                            if len(search) > 0:
+                                if data["session_key"] in search or data["ipaddress"] in search or data["ipaddress"] in search  or data["ipaddress"] in search:
+                                    pass
+                                else:
+                                    continue
+                
+                            if waiting_session_count > start and waiting_session_count <= end:
+                                waiting_sessions.append(data)
 
-                        if waiting_session_count > end:
-                            break
-                        waiting_session_count = waiting_session_count + 1
+                            if waiting_session_count > end:
+                                break
+                            waiting_session_count = waiting_session_count + 1
+                        except Exception as e:
+                            print ("Skipping Waiting "+str(f)+" due to read issues")
+                            print (e)
         i += 1
     json_resp = {"data": waiting_sessions, "recordsFiltered": waiting_session_count}
     return json_resp
