@@ -60,6 +60,8 @@ def check_create_session(request, *args, **kwargs):
     QUEUE_URL_ENV = settings.QUEUE_URL
     queue_group_name = request.GET['queue_group']
     script_exempt_key = request.GET.get('script_exempt_key',None)
+    ipaddress = request.GET.get('ipaddress',None)
+    
     # queue_group = models.SiteQueueManagerGroup.objects.filter(group_unique_key=request.GET['queue_group']) 
 
     queue_group = jsondb.get_queue_group(queue_group_name)
@@ -274,6 +276,11 @@ def check_create_session(request, *args, **kwargs):
             session_key = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
             expiry=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
             sitesession = {"session_key":session_key,"idle":datetime.now().astimezone(PLUS_8).strftime("%Y-%m-%d %H:%M:%S"), "expiry": expiry,"status": session_status,"ipaddress" : get_client_ip(request), "is_staff": staff_loggedin,"queue_group" : group_unique_key, "browser_agent" : browser_agent}
+            if script_exempt_key == settings.SCRIPT_EXEMPT_KEY:
+                if ipaddress:
+                    if len(ipaddress) > 6:
+                        sitesession["ipaddress"]=ipaddress
+                        sitesession["api_request"]=True
             # sitesession = models.SiteQueueManager.objects.create(session_key=session_key,idle=datetime.now(timezone.utc), expiry=expiry,status=session_status,ipaddress=get_client_ip(request), is_staff=staff_loggedin,queue_group=queue_group[0], browser_agent=browser_agent)
             jsondb.new_queue_session(session_key,sitesession,group_unique_key)
             session_file_id = jsondb.get_session_by_id(queue_group_name,session_key) 
