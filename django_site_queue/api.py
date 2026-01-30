@@ -268,7 +268,7 @@ def check_create_session(request, *args, **kwargs):
                 else:
                     for blocked_script in BLOCKED_SCRIPTING:
                         if blocked_script in browser_agent:
-                            response = HttpResponse(json.dumps({"status:": 500, 'message': "Agent Forbidden"}), content_type='application/json', status=500)
+                            response = HttpResponse(json.dumps({"status:": 500, 'message': "Request Denied"}), content_type='application/json', status=500)
                             return response
             
             session_key = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
