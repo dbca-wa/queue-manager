@@ -6,7 +6,15 @@
 */1 * * * * sleep 45; run-one python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
 
 # Rotate waiting queue
-*/1 * * * * run-one python /app/manage.py waiting_queue_rotate  >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 1 5 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 5 10 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 10 15 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 15 20 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one sleep 30; python /app/manage.py waiting_queue_rotate 1 5 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one sleep 30; python /app/manage.py waiting_queue_rotate 5 10 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one sleep 30; python /app/manage.py waiting_queue_rotate 10 15 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one sleep 30; python /app/manage.py waiting_queue_rotate 15 20 >> /app/logs/waiting_queue_rotate.log 2>&1
+
 
 # Purge idle sessions
 */1 * * * * run-one python /app/manage.py queue_manager_delete_idle_sessions  >> /app/logs/queue_manager_delete_idle_sessions.log 2>&1
