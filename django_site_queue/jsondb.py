@@ -224,9 +224,11 @@ def get_session_by_id(group_key,session_id):
             #print ("FDDD")                                                        
             return (f)    
 
-    directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
-    directory_list = os.listdir(directory)
-    for dir in directory_list:
+    # directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
+    # directory_list = os.listdir(directory)
+    i = 1
+    while i <= settings.DIRECTORY_FOLDER_LIMIT:    
+    # for dir in directory_list:
         sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,dir))
         files = [f for f in sub_directory.iterdir() if f.is_file()]
         # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
@@ -237,7 +239,9 @@ def get_session_by_id(group_key,session_id):
             session_filename_split = session_filename.split("_session_")
             session_id_val = session_filename_split[1]                              
             if session_id_val == session_id+".json":                                                                   
-                return (f)        
+                return (f)   
+        i += 1
+
     return None
 
 def delete_session(group_key,session_id):
@@ -258,15 +262,20 @@ def delete_session(group_key,session_id):
     return status
 
 def get_queue_position_by_id(group_key,session_id):
+
+
+
     if session_id is None:
         return None
-    directory = settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}".format(group_key)
-    directory_list = os.listdir(directory)
-    position_count = 0
-    directory_list = sorted(directory_list, key=int)
-    
-    for dir in directory_list:
-        sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,dir))        
+    # directory = settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}".format(group_key)
+    # directory_list = os.listdir(directory)
+    # position_count = 0
+    # directory_list = sorted(directory_list, key=int)
+
+    i = 1
+    while i <= settings.DIRECTORY_FOLDER_LIMIT:   
+    # for dir in directory_list:
+        sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,i))        
         files = [f for f in sub_directory.iterdir() if f.is_file()]
         # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
         files.sort()
@@ -281,6 +290,7 @@ def get_queue_position_by_id(group_key,session_id):
                 if session_id_val == session_id+".json":
                     print ("FOUND POISTION 2 {}".format(position_count))
                     return position_count  
+        i += 1
     return None                   
         
 
@@ -414,14 +424,17 @@ def get_waiting_session_total(group_key):
 def get_longest_waiting(group_key, stl):
 
     longest_waiting = []
-    directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
+    #directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
     file_count = 0
-    directory_list = os.listdir(directory)
-    directory_list = sorted(directory_list, key=int)
+    # directory_list = os.listdir(directory)
+    # directory_list = sorted(directory_list, key=int)
     # directory_list = sorted(directory_list)
     file_count = 0
-    for dir in directory_list:
-        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,dir))
+    i = 1
+    while i <= settings.DIRECTORY_FOLDER_LIMIT:        
+        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,i))    
+    # for dir in directory_list:
+        # sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,i))
         files = [f for f in sub_directory.iterdir() if f.is_file()]
         # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
         files.sort()
@@ -434,7 +447,8 @@ def get_longest_waiting(group_key, stl):
                 if file_count >= stl:                    
                     break
         if file_count >= stl:            
-            break                
+            break   
+        i += 1             
 
     return longest_waiting
 
