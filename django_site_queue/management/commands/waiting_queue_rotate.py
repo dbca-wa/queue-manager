@@ -15,8 +15,14 @@ PLUS_8 = timezone(timedelta(hours=8))
 class Command(BaseCommand):
     help = 'Clear out any expired temporary bookings that have been abandoned by the user'
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        # Positional arguments
+        parser.add_argument('start', nargs='+', type=int)    
+        parser.add_argument('finish', nargs='+', type=int)    
 
+    def handle(self, *args, **options):
+        start = options['start'][0]   
+        finish = options['finish'][0]   
         sitequeuesession = None
         sitesession = None
 
@@ -28,4 +34,4 @@ class Command(BaseCommand):
         total_waiting_session = 0
         for queue_group in queue_groups:
             queue_group_name = queue_group["group_unique_key"]
-            jsondb.wait_queue_rotate(queue_group_name)
+            jsondb.wait_queue_rotate(queue_group_name, start, finish)

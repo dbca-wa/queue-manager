@@ -207,6 +207,68 @@ def new_queue_session(session_key,data, group_key):
     
     return session_file
 
+def save_ip_new_session_log(session_key,data, group_key):
+    pass    
+    # epoch_ms = int(time.time() * 1000)
+    # epoch_ms_str = str(epoch_ms)  
+    # os.makedirs(settings.QUEUE_STORE_DB+"/ip_session_log/{}".format(group_key), exist_ok=True)  
+    # if data["status"] == "Active":        
+    #     directory = settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key)
+    #     session_file = directory+"/"+epoch_ms_str+"_session_"+session_key+".json"        
+    # else:
+    #     directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
+    #     directory_list = os.listdir(directory)
+    #     directory_session_limit = settings.DIRECTORY_SESSION_LIMIT
+    #     session_file = None
+    #     i = settings.DIRECTORY_FOLDER_LIMIT
+        
+    #     while i != 0:                           
+    #         sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))            
+    #         if os.path.isdir(sub_directory):
+    #             pass
+    #         else:
+    #             os.mkdir(sub_directory)            
+                      
+    #         files = [f for f in sub_directory.iterdir() if f.is_file()]            
+    #         file_count = len(files)
+            
+    #         if file_count == 0:
+    #             insert_sub_directory = i
+
+    #         if file_count < directory_session_limit and file_count != 0:
+    #             insert_sub_directory = i
+    #             break
+
+    #         if file_count >= directory_session_limit:
+    #             insert_sub_directory = i + 1
+    #             break
+
+    #         # if file_count < directory_session_limit:                    
+    #         #     session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
+    #                 # break
+                
+            
+    #             #session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
+    #             # break
+    #         i -= 1        
+
+
+    #     sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_sessions/waiting/{}/{}".format(group_key,insert_sub_directory))
+    #     session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
+    
+    # if session_file:       
+    #     try:                  
+    #         json_text = json.dumps(data, ensure_ascii=False, indent=2)
+    #         with open(session_file, "w") as f:
+    #             f.write(json_text)
+    #     except Exception as e:
+    #         print ("Error Saving File:"+session_file)
+    #         print (e)
+    #         return None 
+    
+    # return session_file
+
+
 def get_session_by_id(group_key,session_id):    
     
     directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key))    
@@ -407,21 +469,28 @@ def delete_waiting_expiry_idle_sessions(group_key):
                     print (e)
         i += 1                                  
 
-def get_active_sessions_total(group_key):    
-    os.makedirs(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key), exist_ok=True)
+def get_active_sessions_total(group_key):        
     directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key))
-    file_count = sum(1 for f in directory.iterdir() if f.is_file())
+    file_count = 0    
+    for f in directory.iterdir():        
+        if ".lock" not in str(f):
+            if str(f).endswith('.json'):
+                file_count = file_count + 1    
     return file_count
 
 
-def get_waiting_session_total(group_key):
-    os.makedirs(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key), exist_ok=True)
-    directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
+def get_waiting_session_total(group_key):          
     file_count = 0
-    for root, dirs, files in os.walk(directory):
-        file_count += len(files)
-    return file_count
-
+    i = 1
+    while i <= settings.DIRECTORY_FOLDER_LIMIT:       
+        sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,str(i)))        
+        if os.path.isdir(sub_directory):
+            for f in sub_directory.iterdir():                
+                if ".lock" not in str(f):
+                    if str(f).endswith('.json'):
+                        file_count = file_count + 1
+        i += 1 
+    return file_count             
 
 def get_longest_waiting(group_key, stl):
 
@@ -455,38 +524,38 @@ def get_longest_waiting(group_key, stl):
     return longest_waiting
 
 
-def wait_queue_rotate(group_key):        
+def wait_queue_rotate(group_key,start, finish):        
     directory_session_limit = settings.DIRECTORY_SESSION_LIMIT    
     i = 1
     previous_file_count = directory_session_limit
-    while i <= settings.DIRECTORY_FOLDER_LIMIT:
-        
-        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
-        if os.path.isdir(sub_directory):            
-            files = [f for f in sub_directory.iterdir() if f.is_file()]     
-            # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
-            files.sort()       
-            file_count = len(files)
-            if i > 1:
-                waiting_room_space = directory_session_limit - previous_file_count
-                if waiting_room_space > 0:
-                    files.sort(key=lambda f: f.stat().st_mtime, reverse=False) 
-                    for f in files:
-                        if f.is_file():          
-                            session_filename = os.path.basename(f)  
-                            previous_path = Path(str(previous_sub_directory)+"/"+session_filename)
-                            
-                            
-                            try: 
-                                shutil.copyfile(f, previous_path)
-                                os.remove(f)
-                                print ("Removing file "+str(f))
-                            except Exception as e:
-                                print ("Error removing "+str(f))
-                                print (e)
+    while i <= settings.DIRECTORY_FOLDER_LIMIT:        
+        if i >= start and i <= finish: 
+            sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
+            if os.path.isdir(sub_directory):            
+                files = [f for f in sub_directory.iterdir() if f.is_file()]     
+                # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
+                files.sort()       
+                file_count = len(files)
+                if i > 1:
+                    waiting_room_space = directory_session_limit - previous_file_count
+                    if waiting_room_space > 0:
+                        files.sort(key=lambda f: f.stat().st_mtime, reverse=False) 
+                        for f in files:
+                            if f.is_file():          
+                                session_filename = os.path.basename(f)  
+                                previous_path = Path(str(previous_sub_directory)+"/"+session_filename)
+                                
+                                
+                                try: 
+                                    shutil.copyfile(f, previous_path)
+                                    os.remove(f)
+                                    print ("Removing file "+str(f))
+                                except Exception as e:
+                                    print ("Error removing "+str(f))
+                                    print (e)
 
-            previous_sub_directory = sub_directory  
-            previous_file_count = file_count
+                previous_sub_directory = sub_directory  
+                previous_file_count = file_count
 
         i += 1
 
