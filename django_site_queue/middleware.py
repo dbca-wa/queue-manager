@@ -11,7 +11,8 @@ class CacheControl(object):
 
     def __call__(self, request):
        response= self.get_response(request)
-
+       print ("ST")
+       print (request.path)
        if request.path == '/':
             response['Cache-Control'] = 'public, max-age=60'
             response['Surrogate-Control'] = 'public, max-age=60'
@@ -30,11 +31,11 @@ class CacheControl(object):
             response['Cache-Control'] = 'public, max-age=3600'
             response['Surrogate-Control'] = 'public, max-age=3600'
        elif request.path[:26] == '/site-queue/max-threshold/':
-            response['Cache-Control'] = 'public, max-age=3600'
-            response['Surrogate-Control'] = 'public, max-age=3600'                       
+            response['Cache-Control'] = 'public, max-age=86400'
+            response['Surrogate-Control'] = 'public, max-age=86400'                       
        elif request.path[:25] == '/site-queue/waiting-room/':
-            response['Cache-Control'] = 'public, max-age=3600'   
-            response['Surrogate-Control'] = 'public, max-age=3600'         
+            response['Cache-Control'] = 'public, max-age=86400'   
+            response['Surrogate-Control'] = 'public, max-age=86400'         
        else:
             pass
             #response['Cache-Control'] = 'private, no-store'
