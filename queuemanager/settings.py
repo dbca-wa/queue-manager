@@ -193,3 +193,4 @@ JSON_AUTH_STORE_DB = decouple.config('JSON_AUTH_STORE_DB', default='./db/json/')
 SESSION_EXPIRY_SSO = 3600
 
 ENABLE_DJANGO_LOGIN=decouple.config("ENABLE_DJANGO_LOGIN", default=False, cast=bool)
+WHITENOISE_MAX_AGE = 86400
