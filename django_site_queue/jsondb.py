@@ -229,18 +229,19 @@ def get_session_by_id(group_key,session_id):
     i = 1
     while i <= settings.DIRECTORY_FOLDER_LIMIT:          
     # for dir in directory_list:
+            
         sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
-        print (sub_directory)
-        files = [f for f in sub_directory.iterdir() if f.is_file()]
-        # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
-        files.sort()
-        for f in files:
-            #if f.is_file():  
-            session_filename = os.path.basename(f)
-            session_filename_split = session_filename.split("_session_")
-            session_id_val = session_filename_split[1]                              
-            if session_id_val == session_id+".json":                                                                        
-                return (f)   
+        if os.path.isdir(sub_directory):
+            files = [f for f in sub_directory.iterdir() if f.is_file()]
+            # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
+            files.sort()
+            for f in files:
+                #if f.is_file():  
+                session_filename = os.path.basename(f)
+                session_filename_split = session_filename.split("_session_")
+                session_id_val = session_filename_split[1]                              
+                if session_id_val == session_id+".json":                                                                        
+                    return (f)   
         i += 1    
     return None
 
