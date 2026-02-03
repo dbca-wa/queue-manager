@@ -59,7 +59,7 @@ var sitequeuemanager = {
                 sitequeuemanager.var.queue_inactivity_url = response['queue_inactivity_url'];
                 sitequeuemanager.var.active_session_url = response['url'];
                 sitequeuemanager.var.queue_status = response['status']
-
+                
 
                 if (response.status != "Active") {
                     if (response['queue_position'] > sitequeuemanager.var.max_queue_session_limit) {

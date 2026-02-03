@@ -161,7 +161,7 @@ def new_queue_session(session_key,data, group_key):
         i = settings.DIRECTORY_FOLDER_LIMIT
         
         while i != 0:                           
-            sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_sessions/waiting/{}/{}".format(group_key,i))            
+            sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))            
             if os.path.isdir(sub_directory):
                 pass
             else:
@@ -227,9 +227,10 @@ def get_session_by_id(group_key,session_id):
     # directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
     # directory_list = os.listdir(directory)
     i = 1
-    while i <= settings.DIRECTORY_FOLDER_LIMIT:    
+    while i <= settings.DIRECTORY_FOLDER_LIMIT:          
     # for dir in directory_list:
-        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,dir))
+        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
+        print (sub_directory)
         files = [f for f in sub_directory.iterdir() if f.is_file()]
         # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
         files.sort()
@@ -238,10 +239,9 @@ def get_session_by_id(group_key,session_id):
             session_filename = os.path.basename(f)
             session_filename_split = session_filename.split("_session_")
             session_id_val = session_filename_split[1]                              
-            if session_id_val == session_id+".json":                                                                   
+            if session_id_val == session_id+".json":                                                                        
                 return (f)   
-        i += 1
-
+        i += 1    
     return None
 
 def delete_session(group_key,session_id):
@@ -268,14 +268,14 @@ def get_queue_position_by_id(group_key,session_id):
     if session_id is None:
         return None
     # directory = settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}".format(group_key)
-    # directory_list = os.listdir(directory)
-    # position_count = 0
+    # directory_list = os.listdir(directory)    
     # directory_list = sorted(directory_list, key=int)
+    position_count = 0
 
     i = 1
     while i <= settings.DIRECTORY_FOLDER_LIMIT:   
     # for dir in directory_list:
-        sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,i))        
+        sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,str(i)))        
         files = [f for f in sub_directory.iterdir() if f.is_file()]
         # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
         files.sort()
@@ -366,7 +366,7 @@ def delete_waiting_expiry_idle_sessions(group_key):
     previous_file_count = directory_session_limit
     while i <= settings.DIRECTORY_FOLDER_LIMIT:
         
-        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,i))
+        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
         print ("Checking Directory: {}".format(sub_directory))
         if os.path.isdir(sub_directory):            
             files = [f for f in sub_directory.iterdir() if f.is_file()]     
@@ -432,7 +432,7 @@ def get_longest_waiting(group_key, stl):
     file_count = 0
     i = 1
     while i <= settings.DIRECTORY_FOLDER_LIMIT:        
-        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,i))    
+        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))    
     # for dir in directory_list:
         # sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,i))
         files = [f for f in sub_directory.iterdir() if f.is_file()]
@@ -459,7 +459,7 @@ def wait_queue_rotate(group_key):
     previous_file_count = directory_session_limit
     while i <= settings.DIRECTORY_FOLDER_LIMIT:
         
-        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,i))
+        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
         if os.path.isdir(sub_directory):            
             files = [f for f in sub_directory.iterdir() if f.is_file()]     
             # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
@@ -532,7 +532,7 @@ def get_waiting_sessions(group_key, start, length, search):
     i = 1
     previous_file_count = directory_session_limit
     while i <= settings.DIRECTORY_FOLDER_LIMIT:
-        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,i))
+        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
         # print ("Checking Directory: {}".format(sub_directory))
         if os.path.isdir(sub_directory):            
             files = [f for f in sub_directory.iterdir() if f.is_file()]     
