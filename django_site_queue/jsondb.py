@@ -17,11 +17,12 @@ def get_queue_groups():
     if os.path.isdir(sub_directory):            
         files = [f for f in sub_directory.iterdir() if f.is_file()]     
         for f in files:
-            if f.is_file():
-                with f.open("r", encoding="utf-8") as fe:
-                    data = json.load(fe)        
-                    if "group_unique_key" in data:
-                        queue_groups.append(data)
+            if str(f).endswith('.json'):
+                if f.is_file():
+                    with f.open("r", encoding="utf-8") as fe:
+                        data = json.load(fe)        
+                        if "group_unique_key" in data:
+                            queue_groups.append(data)
     return queue_groups
 
 def get_queue_group(group_key):    
