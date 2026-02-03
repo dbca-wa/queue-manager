@@ -151,7 +151,7 @@ def check_create_session(request, *args, **kwargs):
     queue_position = 1000
     session_count = 0
     staff_loggedin = False
-    print ("HERE 1")
+
     session_key = '' 
     try:
         
@@ -183,7 +183,7 @@ def check_create_session(request, *args, **kwargs):
              if request.user.is_staff is True:
                    pass
                    #staff_loggedin = True
-        print ("HERE 2")
+
         total_active_session = jsondb.get_active_sessions_total(queue_group_name)
         total_waiting_session_obj = jsondb.get_queue_waiting_total_cached(queue_group_name)
         if total_waiting_session_obj:
@@ -210,7 +210,7 @@ def check_create_session(request, *args, **kwargs):
             #     print (session_file_id)
             #     session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)
         
-        print ("HERE 3")
+
         if session_file_id is not None:    
             session_data = jsondb.get_queue_session(session_file_id)            
             if session_data is None:
@@ -225,7 +225,7 @@ def check_create_session(request, *args, **kwargs):
                     print ("SESSION EXPIRED")
         
                 session_count = 1
-        print ("HERE 4")
+
         # sitequeuesession = None
         if sitequeuesession is None or session_count == 0:
 
@@ -281,13 +281,13 @@ def check_create_session(request, *args, **kwargs):
                     if len(ipaddress) > 6:
                         sitesession["ipaddress"]=ipaddress
                         sitesession["api_request"]=True
-            print ("here 5")
+
             # sitesession = models.SiteQueueManager.objects.create(session_key=session_key,idle=datetime.now(timezone.utc), expiry=expiry,status=session_status,ipaddress=get_client_ip(request), is_staff=staff_loggedin,queue_group=queue_group[0], browser_agent=browser_agent)
             jsondb.new_queue_session(session_key,sitesession,group_unique_key)
             session_file_id = jsondb.get_session_by_id(queue_group_name,session_key) 
             if session_file_id is not None:                
                 sitesession = jsondb.get_queue_session(session_file_id)            
-            print ("HERE 6")
+
             memory_session['sitequeuesession'] = session_key
             memory_session['sitequeuesession_ipaddress'] = get_client_ip(request) 
             memory_session['sitequeuesession_created'] = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
@@ -343,9 +343,9 @@ def check_create_session(request, *args, **kwargs):
                 # sitesession.save()
             else:
                 raise ValidationError("Error no session Found")
-        print ("HERE 7  ")       
+      
         queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)        
-        print ("HERE 8")
+
         #queue_position =0
         # if models.SiteQueueManager.objects.filter(session_key=session_key).count() > 0:
         #      sqm =  models.SiteQueueManager.objects.filter(session_key=session_key)[0]
