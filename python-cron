@@ -5,6 +5,9 @@
 */1 * * * * sleep 30; run-one python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
 */1 * * * * sleep 45; run-one python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
 
+# Rotate waiting queue
+*/1 * * * * run-one python /app/manage.py waiting_queue_rotate  >> /app/logs/waiting_queue_rotate.log 2>&1
+
 # Purge idle sessions
 */1 * * * * run-one python /app/manage.py queue_manager_delete_idle_sessions  >> /app/logs/queue_manager_delete_idle_sessions.log 2>&1
 
