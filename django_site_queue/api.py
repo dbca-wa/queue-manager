@@ -151,8 +151,8 @@ def check_create_session(request, *args, **kwargs):
     queue_position = 1000
     session_count = 0
     staff_loggedin = False
-
     session_key = '' 
+    
     try:
         
         if 'session_key' in request.GET:
@@ -197,8 +197,9 @@ def check_create_session(request, *args, **kwargs):
         
         session_file_id =  None
         session_count = 0
-        if sitequeuesession is not None:          
-            session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession) 
+        print (str(sitequeuesession)+": Step 1"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
+        if sitequeuesession is not None:                    
+            session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)             
             if session_file_id is not None:
                 session_count = 1        
             # if session_file_id is None:
@@ -210,7 +211,7 @@ def check_create_session(request, *args, **kwargs):
             #     print (session_file_id)
             #     session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)
         
-
+        print (str(sitequeuesession)+": Step 2"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
         if session_file_id is not None:    
             session_data = jsondb.get_queue_session(session_file_id)            
             if session_data is None:
@@ -225,10 +226,10 @@ def check_create_session(request, *args, **kwargs):
                     print ("SESSION EXPIRED")
         
                 session_count = 1
-
+        print (str(sitequeuesession)+": Step 3"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
         # sitequeuesession = None
         if sitequeuesession is None or session_count == 0:
-
+            print (str(sitequeuesession)+": Step 4"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
             if total_waiting_session >= max_queue_session_limit:
                 print ("QUEUE FULL Redirecting {} : {}".format(sitequeuesession,session_count, ))
                 queue_position = max_queue_session_limit + 1
@@ -294,15 +295,15 @@ def check_create_session(request, *args, **kwargs):
             memory_session['sitequeuesession_getcreated'] = 'no'
             request.COOKIES['sitequeuesession'] = session_key
             memory_session['sitequeuesession_agent'] = request.META['HTTP_USER_AGENT']
-
+            print (str(sitequeuesession)+": Step 5"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
         else:
-
+            print (str(sitequeuesession)+": Step 6"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
             session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession)            
-
+            print (str(sitequeuesession)+": Step 7"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
             if session_file_id is not None:                
-
+                print (str(sitequeuesession)+": Step 8"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
                 sitesession = jsondb.get_queue_session(session_file_id)
-
+                print (str(sitequeuesession)+": Step 9"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
             # if models.SiteQueueManager.objects.filter(session_key=sitequeuesession).count() > 0:
                 #  sitesession_query = models.SiteQueueManager.objects.filter(session_key=sitequeuesession,queue_group=queue_group[0])
                 #  sitesession = sitesession_query[0]
@@ -337,14 +338,17 @@ def check_create_session(request, *args, **kwargs):
                 sitesession['idle']=(datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
                 if sitesession["status"] == "Waiting":
                     sitesession["expiry"]=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
-                    
+                print (str(sitequeuesession)+": Step 10"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))   
                 sitesession["ipaddress"]=get_client_ip(request)
                 jsondb.save_queue_session(session_file_id,sitesession)
+                print (str(sitequeuesession)+": Step 11"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
                 # sitesession.save()
             else:
                 raise ValidationError("Error no session Found")
-      
+        
+        print (str(sitequeuesession)+": Step 12"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
         queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)        
+        print (str(sitequeuesession)+": Step 13"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
 
         #queue_position =0
         # if models.SiteQueueManager.objects.filter(session_key=session_key).count() > 0:
@@ -357,7 +361,7 @@ def check_create_session(request, *args, **kwargs):
         idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
         expiry_dt = datetime.strptime(sitesession["expiry"], "%Y-%m-%d %H:%M:%S") 
         expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)        
-
+        print (str(sitequeuesession)+": Step 15"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
         idle_seconds = (now_dt-idle_dt).seconds
         expiry_seconds = (expiry_dt-now_dt).seconds
         wait_time = 100 
@@ -371,7 +375,7 @@ def check_create_session(request, *args, **kwargs):
                     queue_avg_position = int(queue_position) / int(session_total_limit)
                 session_limit_minutes = round(session_limit_seconds / 60)
                 wait_time = round(queue_avg_position * session_limit_minutes)     
- 
+        print (str(sitequeuesession)+": Step 16"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
 
         #if expiry_seconds < 1:
         #      request.session['sitequeuesession'] = None
@@ -391,7 +395,7 @@ def check_create_session(request, *args, **kwargs):
         print ("EXCEPTION ERROR")
         print (e)
         pass
-
+    print (str(sitequeuesession)+": Step 17"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
     if waiting_queue_enabled == False or waiting_queue_enabled == "False":
         if sitesession is None:
             mydict = {'status': "Active", 'idle': None, 'expiry': None}
@@ -401,7 +405,7 @@ def check_create_session(request, *args, **kwargs):
         sitesession["expiry"] = (datetime.now().astimezone(PLUS_8)+timedelta(hours=10)).strftime("%Y-%m-%d %H:%M:%S")
 
 
-       
+    print (str(sitequeuesession)+": Step 18"+datetime.now().strftime("%d.%b %Y %H:%M:%S"))   
         # NEED TO ADD SAVE ACTICATION
     
     CORS_SITES = env('CORS_SITES', None)
