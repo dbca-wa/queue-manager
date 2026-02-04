@@ -210,7 +210,7 @@ def new_queue_session(session_key,data, group_key):
 def save_ip_new_session_log(session_key,ipaddress, group_key):
         
     today = date.today()
-    datetime_string = datetime.now().strftime("%d.%b %Y %H:%M:%S")
+    datetime_string = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Extract the day, month, and year
     day_value = today.day
