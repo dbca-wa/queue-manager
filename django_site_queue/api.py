@@ -228,9 +228,9 @@ def check_create_session(request, *args, **kwargs):
         
                 session_count = 1
         logger.info(str(sitequeuesession)+": Step 3 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
-        # sitequeuesession = None
+        sitequeuesession = None
         if sitequeuesession is None or session_count == 0:
-            print (str(sitequeuesession)+": Step 4 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
+            logger.info(str(sitequeuesession)+": Step 4 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
             if total_waiting_session >= max_queue_session_limit:
                 logger.info("QUEUE FULL Redirecting {} : {}".format(sitequeuesession,session_count, ))
                 queue_position = max_queue_session_limit + 1
@@ -286,6 +286,7 @@ def check_create_session(request, *args, **kwargs):
 
             # sitesession = models.SiteQueueManager.objects.create(session_key=session_key,idle=datetime.now(timezone.utc), expiry=expiry,status=session_status,ipaddress=get_client_ip(request), is_staff=staff_loggedin,queue_group=queue_group[0], browser_agent=browser_agent)
             jsondb.new_queue_session(session_key,sitesession,group_unique_key)
+            jsondb.save_ip_new_session_log(session_key,sitesession["ipaddress"], group_unique_key)
             session_file_id = jsondb.get_session_by_id(queue_group_name,session_key) 
             if session_file_id is not None:                
                 sitesession = jsondb.get_queue_session(session_file_id)            

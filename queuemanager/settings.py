@@ -13,6 +13,7 @@ from pathlib import Path
 import os
 import json
 import decouple
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -194,7 +195,7 @@ SESSION_EXPIRY_SSO = 3600
 
 ENABLE_DJANGO_LOGIN=decouple.config("ENABLE_DJANGO_LOGIN", default=False, cast=bool)
 WHITENOISE_MAX_AGE = 86400
-
+HOSTNAME = socket.gethostname()
 
 # Logging Configuration
 LOGGING = {
@@ -214,7 +215,7 @@ LOGGING = {
         "file": {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "queue.log"),
+            "filename": os.path.join(BASE_DIR, "logs", HOSTNAME+"-queue.log"),
             "formatter": "verbose",
             "maxBytes": 5242880,
         },
