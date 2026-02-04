@@ -194,3 +194,46 @@ SESSION_EXPIRY_SSO = 3600
 
 ENABLE_DJANGO_LOGIN=decouple.config("ENABLE_DJANGO_LOGIN", default=False, cast=bool)
 WHITENOISE_MAX_AGE = 86400
+
+
+# Logging Configuration
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(module)s %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": decouple.config("LOG_CONSOLE_LEVEL", default="INFO"),
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "queue.log"),
+            "formatter": "verbose",
+            "maxBytes": 5242880,
+        },
+    },
+    "loggers": {
+        "": {
+            "handlers": ["file", "console"],
+            "level": decouple.config("LOG_CONSOLE_LEVEL", default="WARNING"),
+            "propagate": True,
+        },
+        "django": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "log": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+       },
+}
