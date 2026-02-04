@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import timedelta, datetime, timezone
+from datetime import timedelta, datetime, timezone, date
 from django.utils import timezone as dj_tz
 from django.conf import settings
 from filelock import FileLock
@@ -207,11 +207,23 @@ def new_queue_session(session_key,data, group_key):
     
     return session_file
 
-def save_ip_new_session_log(session_key,data, group_key):
-    pass    
+def save_ip_new_session_log(session_key,ipaddress, group_key):
+        
+    today = date.today()
+    datetime_string = datetime.now().strftime("%d.%b %Y %H:%M:%S")
+
+    # Extract the day, month, and year
+    day_value = today.day
+    month_value = today.month
+    year_value = today.year
     # epoch_ms = int(time.time() * 1000)
     # epoch_ms_str = str(epoch_ms)  
-    # os.makedirs(settings.QUEUE_STORE_DB+"/ip_session_log/{}".format(group_key), exist_ok=True)  
+    storage_directory = settings.QUEUE_STORE_DB+"/ip_session_log/{}/{}/{}/{}".format(group_key, str(year_value), str(month_value), str(day_value))
+    os.makedirs(storage_directory, exist_ok=True)  
+
+    with open(storage_directory+"/"+ipaddress, 'a') as f:
+        f.write(datetime_string+"-!-"+ipaddress+"-!-"+session_key+"\n")
+
     # if data["status"] == "Active":        
     #     directory = settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key)
     #     session_file = directory+"/"+epoch_ms_str+"_session_"+session_key+".json"        
