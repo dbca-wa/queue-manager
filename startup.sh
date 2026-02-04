@@ -19,6 +19,10 @@ if [ $ENABLE_WEB == "True" ];
 echo "Starting Gunicorn"
 # Start the second process
 
+current_host=$(hostname)
+echo "accesslog = '/app/logs/gunicorn-access-$current_host.log'" >> /app/gunicorn.ini
+echo "errorlog = '/app/logs/gunicorn-error-$current_host.log'"  >> /app/gunicorn.ini
+
 /app/venv/bin/gunicorn queuemanager.wsgi --bind :8080 --config /app/gunicorn.ini
 status=$?
 if [ $status -ne 0 ]; then
