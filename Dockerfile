@@ -46,6 +46,8 @@ COPY --chown=oim:oim python-cron ./
 
 RUN mkdir /app/queuemanager/cache/
 RUN chmod 777 /app/queuemanager/cache/
+RUN mkdir /app/logs
+#RUN chmod 777 /app/queuemanager/cache/
 RUN python manage.py collectstatic --noinput
 
 USER root
