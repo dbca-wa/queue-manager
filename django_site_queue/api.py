@@ -228,7 +228,7 @@ def check_create_session(request, *args, **kwargs):
         
                 session_count = 1
         logger.info(str(sitequeuesession)+": Step 3 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
-        sitequeuesession = None
+        # sitequeuesession = None
         if sitequeuesession is None or session_count == 0:
             logger.info(str(sitequeuesession)+": Step 4 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
             if total_waiting_session >= max_queue_session_limit:
