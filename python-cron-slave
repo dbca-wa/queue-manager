@@ -1,5 +1,4 @@
 # Rotate active session with waiting sessions
-*/1 * * * * sleep 1; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync.log 2>&1
-*/1 * * * * sleep 15; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync.log 2>&1
-*/1 * * * * sleep 30; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync.log 2>&1
-*/1 * * * * sleep 45; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync.log 2>&1
+*/1 * * * * sleep 1; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync_$(hostname).log 2>&1
+*/1 * * * * sleep 20; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync_$(hostname).log 2>&1
+*/1 * * * * sleep 40; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync_$(hostname).log 2>&1
