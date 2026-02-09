@@ -7,6 +7,9 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.1/howto/deployment/wsgi/
 """
 
+from gevent import monkey
+monkey.patch_all()  # Must be the first thing
+
 import os
 import confy
 
