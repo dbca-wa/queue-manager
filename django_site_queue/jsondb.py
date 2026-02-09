@@ -281,9 +281,13 @@ def save_ip_new_session_log(session_key,ipaddress, group_key):
     # return session_file
 
 
-def get_session_by_id(group_key,session_id):    
-    
-    directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key))    
+def get_session_by_id(group_key,session_id, source='tmp'):    
+      
+    source_dir = settings.QUEUE_STORE_DB_TMP
+    if source == 'master':
+        source_dir = settings.QUEUE_STORE_DB
+
+    directory = Path(source_dir+"/queue_sessions/active/{}".format(group_key))    
     files = [f for f in directory.iterdir() if f.is_file()]    
     # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
     files.sort()
@@ -295,8 +299,7 @@ def get_session_by_id(group_key,session_id):
         session_filename_split = session_filename.split("_session_")
         session_id_val = session_filename_split[1]    
         #print ("IDVAL"+session_id_val)        
-        if session_id_val == session_id+".json":  
-            #print ("FDDD")                                                        
+        if session_id_val == session_id+".json":                                                          
             return (f)    
 
     # directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
@@ -305,7 +308,7 @@ def get_session_by_id(group_key,session_id):
     while i <= settings.DIRECTORY_FOLDER_LIMIT:          
     # for dir in directory_list:
             
-        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
+        sub_directory = Path(source_dir+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
         if os.path.isdir(sub_directory):
             files = [f for f in sub_directory.iterdir() if f.is_file()]
             # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
@@ -318,6 +321,9 @@ def get_session_by_id(group_key,session_id):
                 if session_id_val == session_id+".json":                                                                        
                     return (f)   
         i += 1    
+    if source == 'tmp':
+        session_resp = get_session_by_id(group_key,session_id, source='master')
+        return session_resp
     return None
 
 def delete_session(group_key,session_id):
@@ -337,9 +343,12 @@ def delete_session(group_key,session_id):
         status = True
     return status
 
-def get_queue_position_by_id(group_key,session_id):
+def get_queue_position_by_id(group_key,session_id,source='tmp'):
 
-
+    source_dir = settings.QUEUE_STORE_DB_TMP
+    if source == 'master':
+        source_dir = settings.QUEUE_STORE_DB
+        
 
     if session_id is None:
         return None
@@ -351,7 +360,7 @@ def get_queue_position_by_id(group_key,session_id):
     i = 1
     while i <= settings.DIRECTORY_FOLDER_LIMIT:   
     # for dir in directory_list:
-        sub_directory = Path(settings.QUEUE_STORE_DB+"./queue_sessions/waiting/{}/{}".format(group_key,str(i)))        
+        sub_directory = Path(source_dir+"./queue_sessions/waiting/{}/{}".format(group_key,str(i)))        
         files = [f for f in sub_directory.iterdir() if f.is_file()]
         # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
         files.sort()
