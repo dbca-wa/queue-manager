@@ -349,8 +349,7 @@ def check_create_session(request, *args, **kwargs):
                 raise ValidationError("Error no session Found")
         
         logger.info(str(sitequeuesession)+": Step 12 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
-        #queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)        
-        queue_position = 333
+        queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)        
         logger.info(str(sitequeuesession)+": Step 13 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
 
         #queue_position =0
