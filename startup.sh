@@ -14,6 +14,20 @@ fi
 
 fi
 
+if [ $ENABLE_CRON_SLAVE == "True" ]; then
+  mkdir -p /tmp/queue/json
+  run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync.log 2>&1
+  echo "Starting Python Cron Slave"
+  python /bin/scheduler.py /app/python-cron-slave /app/logs/python-cron-slave.log &
+  status=$?
+  if [ $status -ne 0 ]; then
+    echo "Failed to start cron: $status"
+    exit $status
+  fi
+
+fi
+
+
 if [ $ENABLE_WEB == "True" ]; then
 echo "Starting Gunicorn"
 # Start the second process
@@ -33,7 +47,7 @@ echo "Starting Gunicorn"
     echo "Failed to start gunicorn: $status"
     exit $status
   fi
-  
+
 else
    echo "ENABLE_WEB environment vairable not set to True, web server is not starting."
    /bin/bash
