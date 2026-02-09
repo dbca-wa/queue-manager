@@ -43,6 +43,7 @@ RUN touch /app/.env
 COPY --chown=oim:oim queuemanager ./queuemanager
 COPY --chown=oim:oim django_site_queue ./django_site_queue
 COPY --chown=oim:oim python-cron ./
+COPY --chown=oim:oim python-cron-slave ./
 
 RUN mkdir /app/queuemanager/cache/
 RUN chmod 777 /app/queuemanager/cache/
