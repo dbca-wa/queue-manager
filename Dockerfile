@@ -9,7 +9,7 @@ ENV SECRET_KEY="ThisisNotRealKey"
 RUN apt-get clean
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get install --no-install-recommends -y run-one
+RUN apt-get install --no-install-recommends -y run-one rsync
 
 RUN groupadd -g 5000 oim 
 RUN useradd -g 5000 -u 5000 oim -s /bin/bash -d /app
@@ -43,6 +43,7 @@ RUN touch /app/.env
 COPY --chown=oim:oim queuemanager ./queuemanager
 COPY --chown=oim:oim django_site_queue ./django_site_queue
 COPY --chown=oim:oim python-cron ./
+COPY --chown=oim:oim python-cron-slave ./
 
 RUN mkdir /app/queuemanager/cache/
 RUN chmod 777 /app/queuemanager/cache/
