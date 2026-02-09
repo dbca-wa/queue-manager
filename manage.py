@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
+from gevent import monkey
+monkey.patch_all()  # Must be the first thing
+
 import os
 import sys
 import confy
