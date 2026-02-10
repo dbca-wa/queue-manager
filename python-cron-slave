@@ -1,5 +1,14 @@
-# Rotate active session with waiting sessions
+# Sync queue data from network storage to local container
 */1 * * * * sleep 1; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync_$(hostname).log 2>&1
 */1 * * * * sleep 15; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync_$(hostname).log 2>&1
 */1 * * * * sleep 30; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync_$(hostname).log 2>&1
 */1 * * * * sleep 45; run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync_$(hostname).log 2>&1
+
+# Sync queue data from network storage to local container
+*/1 * * * * sleep 1; run-one python /app/manage.py new_session_slave_migrate >> /app/logs/new_session_slave_migrate_$(hostname).log 2>&1
+*/1 * * * * sleep 15; run-one python /app/manage.py new_session_slave_migrate >> /app/logs/new_session_slave_migrate_$(hostname).log 2>&1
+*/1 * * * * sleep 30; run-one python /app/manage.py new_session_slave_migrate >> /app/logs/new_session_slave_migrate_$(hostname).log 2>&1
+*/1 * * * * sleep 45; run-one python /app/manage.py new_session_slave_migrate >> /app/logs/new_session_slave_migrate_$(hostname).log 2>&1
+
+
+
