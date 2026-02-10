@@ -24,7 +24,7 @@
 <script src="{{ DJANGO_SETTINGS.QUEUE_URL }}/static/js/django_queue_manager/site-queue-manager.js?ver={{ GIT_COMMIT_HASH }}"></script>
 <script>
      if (typeof sitequeuemanager !== "undefined") {
-         sitequeuemanager.init('{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}','{{ DJANGO_SETTINGS.QUEUE_URL }}','{{ queue_manager_obj.group_unique_key }}','{{ DJANGO_SETTINGS.QUEUE_URL_HOST}}');
+         sitequeuemanager.init('{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}','{{ DJANGO_SETTINGS.QUEUE_URL }}','{{ DJANGO_SETTINGS.QUEUE_ENDPOINT_URL }}','{{ queue_manager_obj.group_unique_key }}','{{ DJANGO_SETTINGS.QUEUE_URL_HOST}}');
      }
 </script>
 </div>

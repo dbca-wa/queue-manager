@@ -29,6 +29,7 @@ SECRET_KEY = decouple.config('SECRET_KEY', default='')
 DEBUG = decouple.config("DEBUG", default=False, cast=bool)
 QUEUE_URL = decouple.config('QUEUE_URL', default='https://no.queue.url.configured')
 QUEUE_URL_HOST = decouple.config('QUEUE_URL_HOST', default='no.queue.host.url.configured')
+QUEUE_ENDPOINT_URL = decouple.config('QUEUE_ENDPOINT_URL', default='https://no.queue.url.configured')
 QUEUE_DOMAIN = decouple.config('QUEUE_DOMAIN', default='no.queue.domain.configured')
 
 # SECURITY WARNING: don't run with debug turned on in production!

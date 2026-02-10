@@ -4,6 +4,7 @@ var sitequeuemanager = {
         'queue_group': '',
         'running': 'false',
         'url': '',
+        'queue_endpoint_url': '',
         'session_key': '',
         'domain': '',
         'browser_inactivity_time': 0,
@@ -41,7 +42,7 @@ var sitequeuemanager = {
             }
         }
         $.ajax({
-            url: sitequeuemanager.var.url + '/api/check-create-session/?session_key=' + sitequeuemanager.var.session_key + '&queue_group=' + sitequeuemanager.var.queue_group,
+            url: sitequeuemanager.var.queue_endpoint_url + '/api/check-create-session/?session_key=' + sitequeuemanager.var.session_key + '&queue_group=' + sitequeuemanager.var.queue_group,
             type: 'GET',
             data: {},
             cache: false,
@@ -411,10 +412,11 @@ var sitequeuemanager = {
             }
         });
     },
-    init: function (queue_domain, queue_url, queue_group, active_hosts = "") {
+    init: function (queue_domain, queue_url, queue_endpoint_url, queue_group, active_hosts = "") {
         
         sitequeuemanager.var.domain = queue_domain;
         sitequeuemanager.var.url = queue_url;
+        sitequeuemanager.var.queue_endpoint_url = queue_endpoint_url;
         sitequeuemanager.var.queue_group = queue_group;
         current_host = window.location.host;
 
@@ -505,7 +507,7 @@ var sitequeuemanager = {
             scriptTag.src = sitequeuemanager.var.url + '/static/js/django_queue_manager/jquery-3.5.1.js';
             //scriptTag.onload = "sitequeuemanager.check_queue();";
             document.head.appendChild(scriptTag);
-            setTimeout(function () { sitequeuemanager.init(queue_domain, queue_url); }, 200);
+            setTimeout(function () { sitequeuemanager.init(queue_domain, queue_url, queue_endpoint_url); }, 200);
         }
 
 
