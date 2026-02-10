@@ -21,6 +21,7 @@ var sitequeuemanager = {
         'queue_position': 0,
         'queue_status': "Waiting",
         'first_load': true,
+        'new_session_count' : 0
     },
     check_queue: function () {
         sitequeuemanager.var.running = 'true';
@@ -59,6 +60,7 @@ var sitequeuemanager = {
                 sitequeuemanager.var.queue_inactivity_url = response['queue_inactivity_url'];
                 sitequeuemanager.var.active_session_url = response['url'];
                 sitequeuemanager.var.queue_status = response['status']
+                new_session = response["new_session"]
                 
 
                 if (response.status != "Active") {
@@ -154,7 +156,7 @@ var sitequeuemanager = {
                         }
                     }
                 } else {
-
+             
                     if ($("#queue-manager").length == 0) {
                         $('body').hide();
 
@@ -221,7 +223,26 @@ var sitequeuemanager = {
                         }
 
 
+                    } else {
+                        if (sitequeuemanager.var.custom_message.length > 0) {
+                            $("#waitingmessage").html(sitequeuemanager.var.custom_message);
+                        }
+                        if (sitequeuemanager.var.queue_name.length > 0) {
+                            $("#queue-name").html(sitequeuemanager.var.queue_name);
+                        }
+                        if (sitequeuemanager.var.show_queue_position == true) {
+                            // alert('tt')
+                            $('#queue_position_div').show();
+                            $('#div_queue_position').show();
+                            $('#queue_position').html("<BR>Calculating...");
+                            // $("#queue_position").effect("pulsate", {times: 5}, 10000);
+                        } else {
+                            // $('#div_queue_position').hide();
+                        }                        
+
                     }
+
+
                     if (sitequeuemanager.var.queueurl == 'true') {
                     } else {
                         // console.log("InActive Session");
@@ -246,8 +267,11 @@ var sitequeuemanager = {
                     if (sitequeuemanager.var.first_load == true ) { 
                         setTimeout(function () { sitequeuemanager.check_queue(); }, 2000);
                         sitequeuemanager.var.first_load = false 
+                    } else if (new_session == true) {
+                        new_session_timeout = sitequeuemanager.var.new_session_count * 10000
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 20000 + new_session_timeout);
+                        sitequeuemanager.var.new_session_count = sitequeuemanager.var.new_session_count + 1
                     } else {
-
                         if (sitequeuemanager.var.queue_position < 2 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
                         } else if (sitequeuemanager.var.queue_position < 10 ) { 
