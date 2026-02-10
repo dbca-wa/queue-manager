@@ -150,6 +150,32 @@ def get_queue_ping(group_key):
 def new_queue_session(session_key,data, group_key):    
     epoch_ms = int(time.time() * 1000)
     epoch_ms_str = str(epoch_ms)  
+    
+    if data["status"] == "Active":        
+        os.makedirs(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key), exist_ok=True)  
+        directory = settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key)
+        session_file = directory+"/"+epoch_ms_str+"_session_"+session_key+".json"        
+    else:     
+        os.makedirs(settings.QUEUE_STORE_DB_SLAVE_TMP+"/{}/".format(group_key), exist_ok=True)        
+        sub_directory = settings.QUEUE_STORE_DB_SLAVE_TMP+"/{}/".format(group_key)
+        session_file = str(sub_directory)+"/"+epoch_ms_str+"_session_"+session_key+".json"
+    
+    if session_file:       
+        try:                  
+            json_text = json.dumps(data, ensure_ascii=False, indent=2)
+            with open(session_file, "w") as f:
+                f.write(json_text)
+        except Exception as e:
+            print ("Error Saving File:"+session_file)
+            print (e)
+            return None 
+    
+    return session_file
+
+
+def new_queue_session_09022026(session_key,data, group_key):    
+    epoch_ms = int(time.time() * 1000)
+    epoch_ms_str = str(epoch_ms)  
     os.makedirs(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key), exist_ok=True)  
     if data["status"] == "Active":        
         directory = settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key)
@@ -581,8 +607,7 @@ def wait_queue_rotate(group_key,start, finish):
         i += 1
 
 
-def get_active_sessions(group_key, start, length, search):
-        
+def get_active_sessions(group_key, start, length, search):        
     directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key))
     end = start + length
     active_session_count = 1
