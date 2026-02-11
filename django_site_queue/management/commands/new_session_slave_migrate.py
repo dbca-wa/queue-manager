@@ -8,7 +8,7 @@ from django.conf import settings
 import os
 
 class Command(BaseCommand):
-    help = 'Clear out any expired temporary bookings that have been abandoned by the user'
+    help = 'Move new session to central network storage to sync with other slaves'
 
     def handle(self, *args, **options):
 
@@ -16,7 +16,7 @@ class Command(BaseCommand):
         for queue_group in queue_groups:
             group_unique_key = queue_group["group_unique_key"]
             
-            sub_directory = Path(settings.QUEUE_STORE_DB_SLAVE_TMP+"/{}".format(group_unique_key))    
+            sub_directory = Path(settings.QUEUE_STORE_DB_SLAVE_TMP+"/new_session/{}".format(group_unique_key))    
             files = [f for f in sub_directory.iterdir() if f.is_file()]
             # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
             files.sort()

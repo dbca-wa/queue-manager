@@ -192,7 +192,7 @@ DIRECTORY_FOLDER_LIMIT = decouple.config("DIRECTORY_FOLDER_LIMIT", default=20)
 SCRIPT_EXEMPT_KEY = decouple.config('SCRIPT_EXEMPT_KEY', default=None)
 QUEUE_STORE_DB = decouple.config('QUEUE_STORE_DB', default='./db/json/')
 QUEUE_STORE_DB_TMP = decouple.config('QUEUE_STORE_DB', default='/tmp/queue/json/')
-QUEUE_STORE_DB_SLAVE_TMP = decouple.config('QUEUE_STORE_DB_SLAVE_TMP', default='/tmp/queue/new_session/')
+QUEUE_STORE_DB_SLAVE_TMP = decouple.config('QUEUE_STORE_DB_SLAVE_TMP', default='/tmp/queue/slave/')
 
 JSON_AUTH_STORE_DB = decouple.config('JSON_AUTH_STORE_DB', default='./db/json/')
 SESSION_EXPIRY_SSO = 3600
