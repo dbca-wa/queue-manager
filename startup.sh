@@ -15,7 +15,8 @@ fi
 fi
 
 if [ $ENABLE_CRON_SLAVE == "True" ]; then
-  mkdir -p /tmp/queue/json
+  mkdir -p $QUEUE_STORE_DB_TMP
+  mkdir -p $QUEUE_STORE_DB_SLAVE_TMP
   #run-one rsync -av --delete /app/db/json/ /tmp/queue/json/  >> /app/logs/queue_rsync.log 2>&1
   echo "Starting Python Cron Slave"
   python /bin/scheduler.py /app/python-cron-slave /app/logs/python-cron-slave.log &
