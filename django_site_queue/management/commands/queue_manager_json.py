@@ -89,6 +89,7 @@ class Command(BaseCommand):
                             session_status = "Active"
                             sitesession["status"] = session_status
                             sitesession["expiry"] = (datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")                            
+                            sitesession["activated"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
 
                     if sitesession['status'] == "Waiting":
                             sitesession['expiry'] = (datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
@@ -113,8 +114,8 @@ class Command(BaseCommand):
 
                                     active_sitesession_file = "db/json/queue_sessions/active/{}/{}".format(queue_group_name,session_filename)
                                     shutil.copyfile(sitesession_file, active_sitesession_file)  
-                                    time.sleep(.1)
-                                    os.remove(sitesession_file)   
+                                    #time.sleep(.1)
+                                    #os.remove(sitesession_file)   
                                     print ("Removing file "+str(sitesession_file))
                                 try:       
                                     os.remove(LOCK_PATH)
