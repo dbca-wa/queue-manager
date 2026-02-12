@@ -440,13 +440,23 @@ def delete_waiting_expiry_idle_sessions(group_key):
                                 idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
                                 idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)         
                                 idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
+                                activated_idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=60)
                                 if idle_dt < idle_dt_subtract:                                                                   
                                     try:                          
                                         os.remove(f)                                
                                         print ("Idle Session Expired, File Deleted: "+str(f))      
                                     except Exception as y:
                                         print ("Error removing "+str(f))
-                                        print (y)                                
+                                        print (y)   
+                                if "activated" in data:
+                                    if idle_dt < activated_idle_dt_subtract:
+                                        try:                          
+                                            os.remove(f)                                
+                                            print ("Activated Idle Session Expired, File Deleted: "+str(f))      
+                                        except Exception as y:
+                                            print ("Error removing activated idle session "+str(f))
+                                            print (y)                                           
+
                             except Exception as e:
                                 print (e)
                                 try:
