@@ -344,7 +344,9 @@ def check_create_session(request, *args, **kwargs):
                     sitesession["expiry"]=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
                 logger.info(str(sitequeuesession)+": Step 10 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))   
                 sitesession["ipaddress"]=get_client_ip(request)
-                jsondb.save_queue_session(session_file_id,sitesession)
+                # jsondb.save_queue_session(session_file_id,sitesession)                
+                jsondb.save_queue_session_slave(session_file_id,sitesession,group_unique_key)
+
                 logger.info(str(sitequeuesession)+": Step 11 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
                 # sitesession.save()
             else:

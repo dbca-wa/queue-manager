@@ -87,6 +87,27 @@ def save_queue_session(file,data):
 
     return None
 
+def save_queue_session_slave(file,data,group_unique_key):    
+    # Path to the JSON file
+    
+    try:
+        session_filename = os.path.basename(file)
+        print (session_filename)
+        os.makedirs(settings.QUEUE_STORE_DB_SLAVE_TMP+"/update_session/{}/".format(group_unique_key), exist_ok=True)        
+        sub_directory = settings.QUEUE_STORE_DB_SLAVE_TMP+"/update_session/{}/".format(group_unique_key)
+        json_text = json.dumps(data, ensure_ascii=False, indent=2)
+        with open(sub_directory+session_filename, "w") as f:
+            f.write(json_text)
+    except Exception as e:
+        print ("Error Saving File:"+str(file))
+        print (e)
+
+    return None
+
+
+
+
+
 def save_queue_ping(data,group_key):    
     # Path to the JSON file
     os.makedirs(settings.QUEUE_STORE_DB+"/ping_status/", exist_ok=True)
@@ -364,6 +385,15 @@ def delete_active_expiry_idle_sessions(group_key):
                     continue
                 file_path = Path(f)
                 if file_path.exists():
+                    stats = file_path.stat()                    
+                    file_modified_time = datetime.fromtimestamp(stats.st_mtime)
+                    past_time = datetime.now() - timedelta(minutes=30)
+                    if file_modified_time > past_time:
+                        pass                        
+                    else:
+                        print ("File Session Deleted (Idle Past) : "+str(file_path))                        
+                        os.remove(file_path)
+                        continue
                     # Load JSON file into a variable
                     with file_path.open("r", encoding="utf-8") as f:
                         try:

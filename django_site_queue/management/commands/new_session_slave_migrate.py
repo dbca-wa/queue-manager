@@ -22,7 +22,7 @@ class Command(BaseCommand):
             files.sort()
             for f in files:
                 print (f)
-                try: 
+                try:
                     session_filename = os.path.basename(f)  
                     shutil.copyfile(f, settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}/{}".format(group_unique_key,str(settings.DIRECTORY_FOLDER_LIMIT),session_filename))
                     os.remove(f)

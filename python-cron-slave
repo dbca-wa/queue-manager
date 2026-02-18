@@ -4,11 +4,17 @@
 */1 * * * * sleep 30; run-one rsync -av --delete --exclude 'ip_session_log' --exclude 'users' /app/db/json/ $QUEUE_STORE_DB_TMP >> /app/logs/queue_rsync_$(hostname).log 2>&1
 */1 * * * * sleep 45; run-one rsync -av --delete --exclude 'ip_session_log' --exclude 'users' /app/db/json/ $QUEUE_STORE_DB_TMP >> /app/logs/queue_rsync_$(hostname).log 2>&1
 
-# Sync queue data from network storage to local container
+# Sync new queue data from network storage to local container
 */1 * * * * sleep 1; run-one python /app/manage.py new_session_slave_migrate >> /app/logs/new_session_slave_migrate_$(hostname).log 2>&1
 */1 * * * * sleep 15; run-one python /app/manage.py new_session_slave_migrate >> /app/logs/new_session_slave_migrate_$(hostname).log 2>&1
 */1 * * * * sleep 30; run-one python /app/manage.py new_session_slave_migrate >> /app/logs/new_session_slave_migrate_$(hostname).log 2>&1
 */1 * * * * sleep 45; run-one python /app/manage.py new_session_slave_migrate >> /app/logs/new_session_slave_migrate_$(hostname).log 2>&1
+
+# Sync update queue data from network storage to local container
+*/1 * * * * sleep 1; run-one python /app/manage.py update_session_slave_migrate >> /app/logs/update_session_slave_migrate_$(hostname).log 2>&1
+*/1 * * * * sleep 15; run-one python /app/manage.py update_session_slave_migrate >> /app/logs/update_session_slave_migrate_$(hostname).log 2>&1
+*/1 * * * * sleep 30; run-one python /app/manage.py update_session_slave_migrate >> /app/logs/update_session_slave_migrate_$(hostname).log 2>&1
+*/1 * * * * sleep 45; run-one python /app/manage.py update_session_slave_migrate >> /app/logs/update_session_slave_migrate_$(hostname).log 2>&1
 
 # Sync ip session data from local storage to network storage
 */5 * * * * sleep 1; run-one python /app/manage.py ip_session_slave_migrate >> /app/logs/ip_session_slave_migrate_$(hostname).log 2>&1
