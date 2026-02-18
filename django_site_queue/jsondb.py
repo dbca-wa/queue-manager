@@ -88,8 +88,7 @@ def save_queue_session(file,data):
     return None
 
 def save_queue_session_slave(file,data,group_unique_key):    
-    # Path to the JSON file
-    
+    # Path to the JSON file    
     try:
         session_filename = os.path.basename(file)
         print (session_filename)
