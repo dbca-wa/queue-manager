@@ -212,7 +212,7 @@ class WaitingRoom(TemplateView):
             context['queue_manager_exist'] = True
             context['queue_manager_obj'] = queue_manager_obj
             # print (context['queue_manager_obj'])
-            print (template_header_key)
+            
         
             
         context['template_group'] = template_header_key

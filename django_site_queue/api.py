@@ -62,7 +62,8 @@ def check_create_session(request, *args, **kwargs):
     queue_group_name = request.GET['queue_group']
     script_exempt_key = request.GET.get('script_exempt_key',None)
     ipaddress = request.GET.get('ipaddress',None)
-    
+    new_session_count = request.GET.get('new_session_count',None)
+
     # queue_group = models.SiteQueueManagerGroup.objects.filter(group_unique_key=request.GET['queue_group']) 
 
     queue_group = jsondb.get_queue_group(queue_group_name)
@@ -104,6 +105,7 @@ def check_create_session(request, *args, **kwargs):
     more_info_link =''
     queue_inactivity_url =''
     queue_waiting_room_url = ''
+    activated_session_id = None
     if queue_group:
         group_unique_key = queue_group["group_unique_key"]
         queue_inactivity_url = QUEUE_URL_ENV+'/site-queue/queue-expired/'+group_unique_key+'/'
@@ -154,7 +156,7 @@ def check_create_session(request, *args, **kwargs):
     session_count = 0
     staff_loggedin = False
     session_key = '' 
-    
+    activated_session_key = request.COOKIES.get('activatedsessionid',None)
     try:
         
         if 'session_key' in request.GET:
@@ -215,27 +217,62 @@ def check_create_session(request, *args, **kwargs):
         
         logger.info(str(sitequeuesession)+": Step 2 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
         if session_file_id is not None:    
-            session_data = jsondb.get_queue_session(session_file_id)            
+            session_data = jsondb.get_queue_session(session_file_id)  
+            if session_data is not None:
+                if activated_session_key:
+                    if "activated_session_id" in session_data:                    
+                        if activated_session_key == session_data["activated_session_id"]:
+                            pass                   
+                    else:                        
+                        session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession, 'master') 
+                        session_data = jsondb.get_queue_session(session_file_id)                                         
+                        if "activated_session_id" in session_data:                    
+                            if activated_session_key == session_data["activated_session_id"]:
+                                pass                         
+                            else:
+                                response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : True  }), content_type='application/json')
+                                response.delete_cookie('activatedsessionid')
+                                return response       
+                        else:
+                            response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : True  }), content_type='application/json')
+                            response.delete_cookie('activatedsessionid')
+                            return response                                               
+                            
+
             if session_data is None:
                 refresh_page = True   
                 response = HttpResponse(json.dumps({"status_code": 500,"message": "Error opening session data file"}), content_type='application/json', status=500)
                 return response               
             else:
+
+
                 now_dt = datetime.now().astimezone(PLUS_8)
                 expiry_dt = datetime.strptime(session_data["expiry"], "%Y-%m-%d %H:%M:%S") 
                 expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
+
+
                 if expiry_dt < now_dt:
                     logger.info("SESSION EXPIRED")
         
                 session_count = 1
         logger.info(str(sitequeuesession)+": Step 3 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
         # sitequeuesession = None
+
         if sitequeuesession is None or session_count == 0:
             logger.info(str(sitequeuesession)+": Step 4 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
+
+            if new_session_count:
+                if int(new_session_count) < 6:                
+                    if len(session_key) > 6: 
+                        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": WAITING FOR NEW SEASSON SYNC for "+session_key)
+                        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': session_key, 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": True   }), content_type='application/json')
+                        return response                    
+            
+
             if total_waiting_session >= max_queue_session_limit:
                 logger.info("QUEUE FULL Redirecting {} : {}".format(sitequeuesession,session_count, ))
                 queue_position = max_queue_session_limit + 1
-                response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : queue_position ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False  }), content_type='application/json')
+                response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": False   }), content_type='application/json')
                 return response
 
             session_status = "Waiting"
@@ -248,6 +285,7 @@ def check_create_session(request, *args, **kwargs):
             if total_active_session < session_total_limit:
                 if total_waiting_session == 0:
                     session_status = "Active"
+                    activated_session_id = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
 
             if ping_url_current > ping_url_limit:
                   session_status = "Waiting"
@@ -255,6 +293,7 @@ def check_create_session(request, *args, **kwargs):
             #       session_status = 0
             if staff_loggedin is True:
                   session_status = "Active"
+                  activated_session_id = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
             # print ("session_status")
             # print (session_status)
             # print (session_count)
@@ -279,6 +318,9 @@ def check_create_session(request, *args, **kwargs):
             session_key = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
             expiry=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
             sitesession = {"session_key":session_key,"idle":datetime.now().astimezone(PLUS_8).strftime("%Y-%m-%d %H:%M:%S"), "expiry": expiry,"status": session_status,"ipaddress" : get_client_ip(request), "is_staff": staff_loggedin,"queue_group" : group_unique_key, "browser_agent" : browser_agent}
+            if activated_session_id:
+                sitesession['activated_session_id'] = activated_session_id
+
             if script_exempt_key == settings.SCRIPT_EXEMPT_KEY:
                 if ipaddress:
                     if len(ipaddress) > 6:
@@ -371,7 +413,7 @@ def check_create_session(request, *args, **kwargs):
         idle_seconds = (now_dt-idle_dt).seconds
         expiry_seconds = (expiry_dt-now_dt).seconds
         wait_time = 100 
-        
+            
         if queue_position:
             if queue_position > 0:
                 # calculate wait time
@@ -380,7 +422,8 @@ def check_create_session(request, *args, **kwargs):
                 else:                    
                     queue_avg_position = int(queue_position) / int(session_total_limit)
                 session_limit_minutes = round(session_limit_seconds / 60)
-                wait_time = round(queue_avg_position * session_limit_minutes)     
+                wait_time = round(queue_avg_position * session_limit_minutes)  
+  
         logger.info(str(sitequeuesession)+": Step 16 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
 
         #if expiry_seconds < 1:
@@ -401,6 +444,8 @@ def check_create_session(request, *args, **kwargs):
         print ("EXCEPTION ERROR")
         print (e)
         pass
+
+
     logger.info(str(sitequeuesession)+": Step 17 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
     if waiting_queue_enabled == False or waiting_queue_enabled == "False":
         if sitesession is None:
@@ -478,7 +523,10 @@ def check_create_session(request, *args, **kwargs):
         response["Access-Control-Allow-Headers"] = "*"
         response["X-Frame-Options"] = "allow-from *"
 
-        response.set_cookie('sitequeuesession', session_key, max_age=2592000, samesite=None, domain=QUEUE_DOMAIN)
+        response.set_cookie('sitequeuesession', session_key, max_age=3600, samesite=None, domain=QUEUE_DOMAIN)   
+        if sitesession:     
+            if "activated_session_id" in sitesession:            
+                response.set_cookie('activatedsessionid', sitesession["activated_session_id"], max_age=3600, samesite=None, domain=QUEUE_DOMAIN)
         return response
     else:
         #response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'status': models.SiteQueueManager.QUEUE_STATUS[sitesession.status][1],'session_key': session_key, 'queue_position' : queue_position, 'wait_time' : wait_time, 'time_left_enabled': time_left_enabled,'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect,  'waiting_queue_enabled': waiting_queue_enabled, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message, 'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link  }), content_type='application/json')        
@@ -488,7 +536,11 @@ def check_create_session(request, *args, **kwargs):
         response["Access-Control-Max-Age"] = "0"
         response["Access-Control-Allow-Headers"] = "*"
         response["X-Frame-Options"] = "allow-from *"
-        response.set_cookie('sitequeuesession', session_key, max_age=2592000, domain=QUEUE_DOMAIN)
+        response.set_cookie('sitequeuesession', session_key, max_age=3600, domain=QUEUE_DOMAIN)
+        response.set_cookie('testss', '2232sda', max_age=3600, domain=QUEUE_DOMAIN)        
+        if sitesession:
+            if "activated_session_id" in sitesession:            
+                response.set_cookie('activatedsessionid', sitesession["activated_session_id"], max_age=3600, domain=QUEUE_DOMAIN)        
         return response
 
 def get_client_ip(request):

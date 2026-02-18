@@ -88,11 +88,10 @@ def save_queue_session(file,data):
     return None
 
 def save_queue_session_slave(file,data,group_unique_key):    
-    # Path to the JSON file
-    
+    # Path to the JSON file    
     try:
         session_filename = os.path.basename(file)
-        print (session_filename)
+        
         os.makedirs(settings.QUEUE_STORE_DB_SLAVE_TMP+"/update_session/{}/".format(group_unique_key), exist_ok=True)        
         sub_directory = settings.QUEUE_STORE_DB_SLAVE_TMP+"/update_session/{}/".format(group_unique_key)
         json_text = json.dumps(data, ensure_ascii=False, indent=2)
@@ -455,17 +454,18 @@ def delete_waiting_expiry_idle_sessions(group_key):
         print ("Checking Directory: {}".format(sub_directory))
         if os.path.isdir(sub_directory):            
             files = [f for f in sub_directory.iterdir() if f.is_file()]     
-            
+           
             for f in files:
                 try:
                     file_path_lock = Path(str(f)+".lock")
                     if file_path_lock.exists():
                         print ("Lock file exists"+str(file_path_lock))
-                        continue                
+                        continue   
+                    print (f)             
                     if f.is_file():
                         with f.open("r", encoding="utf-8") as fe:
                             try:
-                                data = json.load(fe)
+                                data = json.load(fe)                                
                                 now_dt = datetime.now().astimezone(PLUS_8)
                                 idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
                                 idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)         
@@ -478,8 +478,10 @@ def delete_waiting_expiry_idle_sessions(group_key):
                                     except Exception as y:
                                         print ("Error removing "+str(f))
                                         print (y)   
-                                if "activated" in data:
-                                    if idle_dt < activated_idle_dt_subtract:
+                                
+                                if "activated" in data:                                    
+                                    activated_dt = datetime.strptime(data["activated"], "%Y-%m-%d %H:%M:%S")
+                                    if activated_dt < activated_idle_dt_subtract:                                        
                                         try:                          
                                             os.remove(f)                                
                                             print ("Activated Idle Session Expired, File Deleted: "+str(f))      

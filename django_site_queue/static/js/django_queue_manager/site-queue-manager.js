@@ -42,7 +42,7 @@ var sitequeuemanager = {
             }
         }
         $.ajax({
-            url: sitequeuemanager.var.queue_endpoint_url + '/api/check-create-session/?session_key=' + sitequeuemanager.var.session_key + '&queue_group=' + sitequeuemanager.var.queue_group,
+            url: sitequeuemanager.var.queue_endpoint_url + '/api/check-create-session/?session_key=' + sitequeuemanager.var.session_key + '&queue_group=' + sitequeuemanager.var.queue_group +'&new_session_count='+sitequeuemanager.var.new_session_count,
             type: 'GET',
             data: {},
             cache: false,
@@ -82,7 +82,8 @@ var sitequeuemanager = {
                 var sitequeuesession_cookie = sitequeuemanager.ReadCookie('sitequeuesession');
                 if ((response['session_key'] != sitequeuemanager.var.session_key) || (response['session_key'] != sitequeuesession_cookie)) {
                     sitequeuemanager.createCookie('sitequeuesession', response['session_key'], 30);
-                    sitequeuemanager.var.session_key = response['session_key'];                    
+                    sitequeuemanager.var.session_key = response['session_key'];    
+                    sitequeuemanager.var.new_session_count = 0;                
 
                     url_split = window.location.href.split("?");
                     url_no_params = url_split[0]
@@ -270,8 +271,8 @@ var sitequeuemanager = {
                         sitequeuemanager.var.first_load = false 
                     } else if (new_session == true) {
                         new_session_timeout = sitequeuemanager.var.new_session_count * 10000
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 20000 + new_session_timeout);
                         sitequeuemanager.var.new_session_count = sitequeuemanager.var.new_session_count + 1
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 20000 + new_session_timeout);                        
                     } else {
                         if (sitequeuemanager.var.queue_position < 2 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
