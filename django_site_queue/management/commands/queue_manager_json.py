@@ -10,6 +10,8 @@ from filelock import FileLock
 import shutil
 import os
 import time
+from django.utils.crypto import get_random_string
+
 PLUS_8 = timezone(timedelta(hours=8))
 
 class Command(BaseCommand):
@@ -91,6 +93,7 @@ class Command(BaseCommand):
                             sitesession["status"] = session_status
                             sitesession["expiry"] = (datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")                            
                             sitesession["activated"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
+                            sitesession["activated_session_id"] = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
 
                     if sitesession['status'] == "Waiting":
                             sitesession['expiry'] = (datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")

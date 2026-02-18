@@ -44,7 +44,8 @@ class Command(BaseCommand):
                             print ("Exception open json file")
                             print (e)
                     if len(session_data) > 0:
-                        jsondb.save_queue_session(session_file_id,session_data)
+                        if session_file_id.exists():
+                            jsondb.save_queue_session(session_file_id,session_data)
                     print (session_data)
                     # shutil.copyfile(f, settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}/{}".format(group_unique_key,str(settings.DIRECTORY_FOLDER_LIMIT),session_filename))
                     os.remove(f)
