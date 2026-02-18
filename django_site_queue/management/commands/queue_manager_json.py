@@ -64,6 +64,7 @@ class Command(BaseCommand):
             session_key = ''
             
             jsondb.delete_active_expiry_idle_sessions(queue_group_name)
+            
             # jsondb.wait_queue_rotate(queue_group_name)
             total_active_session = jsondb.get_active_sessions_total(queue_group_name)
             total_waiting_session = jsondb.get_waiting_session_total(queue_group_name)                                                
