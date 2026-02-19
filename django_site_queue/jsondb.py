@@ -39,6 +39,16 @@ def get_queue_group(group_key):
 
     return None
 
+def check_queue_session_deleted(group_unique_key,session_key):
+    session_deleted = False
+    dir1 = session_key[0:2]
+    dir2 = session_key[2:4]      
+    sub_directory = settings.QUEUE_STORE_DB_TMP+"./queue_sessions/deleted/{}/{}/{}".format(group_unique_key, dir1, dir2)
+    if os.path.exists(sub_directory+"/"+session_key+".json") is True:
+        session_deleted = True
+    return session_deleted
+
+    
 def get_queue_session(file):    
     # Path to the JSON file
     
@@ -367,7 +377,16 @@ def get_queue_position_by_id(group_key,session_id,source='tmp'):
                     return position_count  
         i += 1
     return None                   
-        
+
+def move_session_to_deleted(group_unique_key, session_id, json_data):
+    dir1 = session_id[0:2]
+    dir2 = session_id[2:4]
+    os.makedirs(settings.QUEUE_STORE_DB+"./queue_sessions/deleted/{}/{}/{}".format(group_unique_key, dir1, dir2), exist_ok=True)        
+    sub_directory = settings.QUEUE_STORE_DB+"./queue_sessions/deleted/{}/{}/{}".format(group_unique_key, dir1, dir2)
+    json_text = json.dumps(json_data, ensure_ascii=False, indent=2)
+    with open(sub_directory+"/"+session_id+".json", "w") as f:
+        f.write(json_text)    
+
 
 def delete_active_expiry_idle_sessions(group_key):
     queue_group = get_queue_group(group_key)
@@ -382,7 +401,7 @@ def delete_active_expiry_idle_sessions(group_key):
                 if file_path_lock.exists():
                     print ("Lock file exists"+str(file_path_lock))
                     continue
-                file_path = Path(f)
+                file_path = Path(f)                
                 if file_path.exists():
                     stats = file_path.stat()                    
                     file_modified_time = datetime.fromtimestamp(stats.st_mtime)
@@ -395,7 +414,11 @@ def delete_active_expiry_idle_sessions(group_key):
                         continue
                     # Load JSON file into a variable
                     with file_path.open("r", encoding="utf-8") as f:
-                        try:
+                        try:                            
+                            session_filename = os.path.basename(file_path)                            
+                            session_filename_split = session_filename.split("_session_")
+                            session_id_val = session_filename_split[1]
+                            session_id_val = session_id_val.replace(".json","")
                             data = json.load(f)
                             now_dt = datetime.now().astimezone(PLUS_8)
                             idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
@@ -405,8 +428,12 @@ def delete_active_expiry_idle_sessions(group_key):
                             # expiry_dt = expiry_dt.replace(tzinfo=timezone.utc)
                             if expiry_dt < now_dt:
                                 if file_path.exists():  
-                                    try:                          
-                                        os.remove(file_path)                                
+                                    try:
+                                        print (session_id_val)
+                                        data["status"] = "Deleted"
+                                        data["removed_date"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
+                                        move_session_to_deleted(group_key,session_id_val, data)
+                                        os.remove(file_path)                                                                
                                         print ("Session Expired, File Deleted: "+str(file_path)+":"+str(expiry_dt)+":"+str(now_dt))     
                                         
                                     except Exception as y:
@@ -416,7 +443,10 @@ def delete_active_expiry_idle_sessions(group_key):
                             idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
                             if idle_dt < idle_dt_subtract:                                              
                                 if file_path.exists():                            
-                                    try:                          
+                                    try:            
+                                        data["status"] = "Deleted"
+                                        data["removed_date"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")                                               
+                                        move_session_to_deleted(group_key,session_id_val, data)       
                                         os.remove(file_path)                                
                                         print ("Idle Session Expired, File Deleted: "+str(file_path)+":"+str(expiry_dt)+":"+str(now_dt))      
                                     except Exception as y:
@@ -465,6 +495,11 @@ def delete_waiting_expiry_idle_sessions(group_key):
                     if f.is_file():
                         with f.open("r", encoding="utf-8") as fe:
                             try:
+                                session_filename = os.path.basename(f)                            
+                                session_filename_split = session_filename.split("_session_")
+                                session_id_val = session_filename_split[1]
+                                session_id_val = session_id_val.replace(".json","")
+
                                 data = json.load(fe)                                
                                 now_dt = datetime.now().astimezone(PLUS_8)
                                 idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
@@ -472,7 +507,11 @@ def delete_waiting_expiry_idle_sessions(group_key):
                                 idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
                                 activated_idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=60)
                                 if idle_dt < idle_dt_subtract:                                                                   
-                                    try:                          
+                                    try:              
+
+                                        data["status"] = "Deleted"
+                                        data["removed_date"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")            
+                                        move_session_to_deleted(group_key,session_id_val, data)
                                         os.remove(f)                                
                                         print ("Idle Session Expired, File Deleted: "+str(f))      
                                     except Exception as y:
@@ -482,7 +521,10 @@ def delete_waiting_expiry_idle_sessions(group_key):
                                 if "activated" in data:                                    
                                     activated_dt = datetime.strptime(data["activated"], "%Y-%m-%d %H:%M:%S")
                                     if activated_dt < activated_idle_dt_subtract:                                        
-                                        try:                          
+                                        try:     
+                                            data["status"] = "Deleted"
+                                            data["removed_date"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")            
+                                            move_session_to_deleted(group_key,session_id_val, data)                                                                 
                                             os.remove(f)                                
                                             print ("Activated Idle Session Expired, File Deleted: "+str(f))      
                                         except Exception as y:

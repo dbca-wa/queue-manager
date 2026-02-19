@@ -260,13 +260,17 @@ def check_create_session(request, *args, **kwargs):
 
         if sitequeuesession is None or session_count == 0:
             logger.info(str(sitequeuesession)+": Step 4 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
-
+            
             if new_session_count:
                 if int(new_session_count) < 6:                
                     if len(session_key) > 6: 
-                        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": WAITING FOR NEW SEASSON SYNC for "+session_key)
-                        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': session_key, 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": True , "queue_full" : False }), content_type='application/json')
-                        return response        
+                        if jsondb.check_queue_session_deleted(group_unique_key,session_key) is True:
+                            print ('SESSION DELETED')
+                            pass
+                        else:
+                            print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": WAITING FOR NEW SEASSON SYNC for "+session_key)
+                            response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': session_key, 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": True , "queue_full" : False }), content_type='application/json')
+                            return response        
             
             if int(total_waiting_session) >= int(max_queue_session_limit):              
                 logger.info("QUEUE FULL Redirecting {} : {}".format(sitequeuesession,session_count, ))
@@ -327,6 +331,7 @@ def check_create_session(request, *args, **kwargs):
                         sitesession["api_request"]=True
 
             # sitesession = models.SiteQueueManager.objects.create(session_key=session_key,idle=datetime.now(timezone.utc), expiry=expiry,status=session_status,ipaddress=get_client_ip(request), is_staff=staff_loggedin,queue_group=queue_group[0], browser_agent=browser_agent)
+            sitesession['created']=(datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
             jsondb.new_queue_session(session_key,sitesession,group_unique_key)
             new_session = True            
             jsondb.save_ip_new_session_log(session_key,sitesession["ipaddress"], group_unique_key)
@@ -380,6 +385,7 @@ def check_create_session(request, *args, **kwargs):
                  ##       sitesession.status = session_status
                  ##       sitesession.expiry = datetime.now(timezone.utc)+timedelta(seconds=session_limit_seconds)
                  ##       sitesession.is_staff=staff_loggedin
+                
                 sitesession['idle']=(datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
                 if sitesession["status"] == "Waiting":
                     sitesession["expiry"]=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
