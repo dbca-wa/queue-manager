@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 # from django_site_queue import models
 import psutil
 from datetime import timedelta, datetime, timezone
+from django.conf import settings
 import requests
 from django_site_queue import  jsondb
 from django.utils import timezone as dj_tz
@@ -11,6 +12,7 @@ import shutil
 import os
 import time
 from django.utils.crypto import get_random_string
+from  pathlib import Path
 
 PLUS_8 = timezone(timedelta(hours=8))
 
@@ -80,7 +82,7 @@ class Command(BaseCommand):
             print ("Report,"+ datetime.now().strftime("%A, %d %b %Y %H:%M:%S")+","+queue_group_name+",Active Sessions,"+str(total_active_session)+",Waiting Sessions,"+str(total_waiting_session)+"")
 
             for sitesession_file in longest_waiting:
-                total_active_session = jsondb.get_active_sessions_total(queue_group_name)
+                total_active_session = jsondb.get_active_sessions_total(queue_group_name)                
                 sitesession = jsondb.get_queue_session(sitesession_file)
                 if sitesession is not None:                           
                     if total_active_session < session_total_limit and sitesession['status'] != "Active":                    
@@ -103,7 +105,7 @@ class Command(BaseCommand):
                             sitesession['expiry']= (datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
                             sitesession['is_staff']=staff_loggedin
                                                 
-                    sitesession['idle']=(datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
+                    # sitesession['idle']=(datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
                     jsondb.save_queue_session(sitesession_file,sitesession)
                     sitesession = jsondb.get_queue_session(sitesession_file)
                     print (sitesession_file)
@@ -114,10 +116,14 @@ class Command(BaseCommand):
                                 LOCK_PATH = str(sitesession_file)+".lock" 
                                 lock = FileLock(LOCK_PATH)
                                 with lock:
-                                    session_filename = os.path.basename(sitesession_file)
+                                    session_filename = os.path.basename(sitesession_file)                                    
+                                    active_sitesession_file = str(settings.QUEUE_STORE_DB)+"queue_sessions/active/{}/{}".format(queue_group_name,session_filename)
 
-                                    active_sitesession_file = "db/json/queue_sessions/active/{}/{}".format(queue_group_name,session_filename)
-                                    shutil.copyfile(sitesession_file, active_sitesession_file)  
+                                    if os.path.exists(active_sitesession_file) is True:                                     
+                                        pass
+                                    else:
+                                        
+                                        shutil.copyfile(sitesession_file, active_sitesession_file)  
                                     #time.sleep(.1)
                                     #os.remove(sitesession_file)   
                                     print ("Removing file "+str(sitesession_file))
