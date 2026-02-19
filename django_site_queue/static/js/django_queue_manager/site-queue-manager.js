@@ -65,6 +65,11 @@ var sitequeuemanager = {
                 
 
                 if (response.status != "Active") {
+                    if (response["queue_full"] == true) {
+                        console.log("QUEUE MAX REDIRECT")
+                        window.location = sitequeuemanager.var.max_queue_url_redirect;                        
+                    }
+
                     if (response['queue_position'] > sitequeuemanager.var.max_queue_session_limit) {
                         console.log("QUEUE MAX REDIRECT")
                         window.location = sitequeuemanager.var.max_queue_url_redirect;

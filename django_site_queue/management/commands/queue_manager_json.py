@@ -15,7 +15,7 @@ from django.utils.crypto import get_random_string
 PLUS_8 = timezone(timedelta(hours=8))
 
 class Command(BaseCommand):
-    help = 'Clear out any expired temporary bookings that have been abandoned by the user'
+    help = 'The purpose of this script is to manage the queue and progress session through the queue and remove session that should no longer be needed'
 
     def handle(self, *args, **options):
 
