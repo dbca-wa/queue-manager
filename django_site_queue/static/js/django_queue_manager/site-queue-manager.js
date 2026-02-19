@@ -22,7 +22,8 @@ var sitequeuemanager = {
         'queue_position': 0,
         'queue_status': "Waiting",
         'first_load': true,
-        'new_session_count' : 0
+        'new_session_count' : 0,
+        'queue_position_epoch': 0
     },
     check_queue: function () {
         sitequeuemanager.var.running = 'true';
@@ -61,6 +62,7 @@ var sitequeuemanager = {
                 sitequeuemanager.var.queue_inactivity_url = response['queue_inactivity_url'];
                 sitequeuemanager.var.active_session_url = response['url'];
                 sitequeuemanager.var.queue_status = response['status']
+                queue_position_epoch = response['queue_position_epoch']
                 new_session = response["new_session"]
                 
 
@@ -179,7 +181,11 @@ var sitequeuemanager = {
                                 $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 1096; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");                    
                                 if (response['queue_position'] > 0) {
                                     $('#queue_position_div').show();
-                                    $('#queue_position').html(response['queue_position']);
+                                    if (queue_position_epoch > sitequeuemanager.var.queue_position_epoch) {
+                                        $('#queue_position').html(response['queue_position']);
+                                        sitequeuemanager.var.queue_position_epoch = queue_position_epoch
+                                    }
+
                                     $('#wait_time').html(response['wait_time'] + ' minute/s');
                                     if (sitequeuemanager.var.custom_message.length > 0) {
                                         $("#waitingmessage").html(sitequeuemanager.var.custom_message);
