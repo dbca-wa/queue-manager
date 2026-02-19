@@ -598,6 +598,36 @@ def get_longest_waiting(group_key, stl):
 
     return longest_waiting
 
+def set_wait_queue_position(group_key):        
+    
+    directory_session_limit = settings.DIRECTORY_SESSION_LIMIT    
+    i = 1
+    previous_file_count = directory_session_limit
+    position_start = 1 
+    while i <= settings.DIRECTORY_FOLDER_LIMIT:                        
+        sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}".format(group_key,str(i)))
+        if os.path.isdir(sub_directory):            
+            files = [f for f in sub_directory.iterdir() if f.is_file()]     
+            # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
+            files.sort()       
+            file_count = len(files)
+            if file_count > 0:                
+                # files.sort(key=lambda f: f.stat().st_mtime, reverse=False) 
+                for f in files:
+                    if f.is_file():   
+                        if str(f).endswith('.json'):
+                            try:                        
+                                sitesession = get_queue_session(f)    
+                                sitesession['queue_position'] = position_start                                
+                                sitesession['queue_position_epoch'] = int(time.time() * 1000)
+                                save_queue_session(f,sitesession)
+                                print (str(f) + "with position "+str(position_start))
+                                position_start = position_start + 1
+                            except Exception as e:
+                                print ("EXCEPTION Error Updating Queue Position")
+                                print (e)
+                                                
+        i += 1
 
 def wait_queue_rotate(group_key,start, finish):        
     directory_session_limit = settings.DIRECTORY_SESSION_LIMIT    
@@ -614,7 +644,7 @@ def wait_queue_rotate(group_key,start, finish):
                 if i > 1:
                     waiting_room_space = directory_session_limit - previous_file_count
                     if waiting_room_space > 0:
-                        files.sort(key=lambda f: f.stat().st_mtime, reverse=False) 
+                        # files.sort(key=lambda f: f.stat().st_mtime, reverse=False) 
                         for f in files:
                             if f.is_file():          
                                 session_filename = os.path.basename(f)  
