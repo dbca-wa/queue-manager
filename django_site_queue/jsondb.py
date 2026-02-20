@@ -178,7 +178,7 @@ def get_queue_ping(group_key):
 
 
 def new_queue_session(session_key,data, group_key):    
-    epoch_ms = int(time.time() * 1000)
+    epoch_ms = int(time.time() * 1000000000)
     epoch_ms_str = str(epoch_ms)  
     
     if data["status"] == "Active":        
@@ -204,7 +204,7 @@ def new_queue_session(session_key,data, group_key):
 
 
 def new_queue_session_09022026(session_key,data, group_key):    
-    epoch_ms = int(time.time() * 1000)
+    epoch_ms = int(time.time() * 1000000000)
     epoch_ms_str = str(epoch_ms)  
     os.makedirs(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key), exist_ok=True)  
     if data["status"] == "Active":        

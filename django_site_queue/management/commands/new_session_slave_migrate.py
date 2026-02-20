@@ -6,6 +6,7 @@ from pathlib import Path
 from django_site_queue import jsondb
 from django.conf import settings
 import os
+import time
 
 class Command(BaseCommand):
     help = 'Move new session to central network storage to sync with other slaves'
@@ -23,8 +24,14 @@ class Command(BaseCommand):
             for f in files:
                 print (f)
                 try:
-                    session_filename = os.path.basename(f)  
-                    shutil.copyfile(f, settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}/{}".format(group_unique_key,str(settings.DIRECTORY_FOLDER_LIMIT),session_filename))
+                    session_filename = os.path.basename(f)
+                    session_filename_split = session_filename.split("_session_")
+                    session_id_val = session_filename_split[1]                    
+                    
+                    epoch_ms = int(time.time() * 1000000000)
+                    epoch_ms_str = str(epoch_ms)              
+                    new_session_filename = epoch_ms_str+"_session_"+session_id_val
+                    shutil.copyfile(f, settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}/{}".format(group_unique_key,str(settings.DIRECTORY_FOLDER_LIMIT),new_session_filename))
                     os.remove(f)
                     print ("Removing file "+str(f))
                 except Exception as e:
