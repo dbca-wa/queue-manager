@@ -591,6 +591,15 @@ def delete_waiting_expiry_idle_sessions(group_key):
                     print (e)
         i += 1                                  
 
+def get_new_session_slave_total(group_key):        
+    directory = Path(settings.QUEUE_STORE_DB_SLAVE_TMP+"/new_session/{}".format(group_key))
+    file_count = 0    
+    for f in directory.iterdir():        
+        if ".lock" not in str(f):
+            if str(f).endswith('.json'):
+                file_count = file_count + 1    
+    return file_count
+
 def get_active_sessions_total(group_key):        
     directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key))
     file_count = 0    
