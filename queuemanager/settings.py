@@ -186,8 +186,8 @@ AUTH_DB_FREE = True
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 SESSION_FILE_PATH = decouple.config('SESSION_FILE_PATH', default='./session_store/')
-DIRECTORY_SESSION_LIMIT = decouple.config("DIRECTORY_SESSION_LIMIT", default=200)
-DIRECTORY_FOLDER_LIMIT = decouple.config("DIRECTORY_FOLDER_LIMIT", default=20)
+DIRECTORY_SESSION_LIMIT = decouple.config("DIRECTORY_SESSION_LIMIT", default=1000, cast=int)
+DIRECTORY_FOLDER_LIMIT = decouple.config("DIRECTORY_FOLDER_LIMIT", default=5, cast=int)
 
 SCRIPT_EXEMPT_KEY = decouple.config('SCRIPT_EXEMPT_KEY', default=None)
 QUEUE_STORE_DB = decouple.config('QUEUE_STORE_DB', default='./db/json/')

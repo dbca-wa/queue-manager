@@ -1,4 +1,3 @@
-
 # Rotate active session with waiting sessions
 */1 * * * * sleep 1; run-one python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
 */1 * * * * sleep 15; run-one python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
@@ -6,18 +5,13 @@
 */1 * * * * sleep 45; run-one python /app/manage.py queue_manager_json  >> /app/logs/queue_manager.log 2>&1
 
 # Rotate waiting queue
-*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 1 5 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 5 10 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 10 15 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 15 20 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one sleep 20; python /app/manage.py waiting_queue_rotate 1 5 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one sleep 20; python /app/manage.py waiting_queue_rotate 5 10 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one sleep 20; python /app/manage.py waiting_queue_rotate 10 15 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one sleep 20; python /app/manage.py waiting_queue_rotate 15 20 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one sleep 40; python /app/manage.py waiting_queue_rotate 1 5 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one sleep 40; python /app/manage.py waiting_queue_rotate 5 10 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one sleep 40; python /app/manage.py waiting_queue_rotate 10 15 >> /app/logs/waiting_queue_rotate.log 2>&1
-*/1 * * * * run-one sleep 40; python /app/manage.py waiting_queue_rotate 15 20 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 1 2 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one python /app/manage.py waiting_queue_rotate 3 5 >> ./logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one sleep 20; python /app/manage.py waiting_queue_rotate 1 2 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one sleep 20; python /app/manage.py waiting_queue_rotate 2 5 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one sleep 40; python /app/manage.py waiting_queue_rotate 1 2 >> /app/logs/waiting_queue_rotate.log 2>&1
+*/1 * * * * run-one sleep 40; python  /app/manage.py waiting_queue_rotate 2 5 >> /app/logs/waiting_queue_rotate.log 2>&1
+
 
 # Set queue position
 */1 * * * * run-one python /app/manage.py set_queue_positions  >> /app/logs/set_queue_positions.log 2>&1
