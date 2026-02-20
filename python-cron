@@ -35,6 +35,9 @@
 
 # Update Waiting Sessions
 */1 * * * * run-one python /app/manage.py update_waiting_queue_total  >> /app/logs/update_waiting_queue_total.log 2>&1
+*/1 * * * * run-one sleep 15; python /app/manage.py update_waiting_queue_total  >> /app/logs/update_waiting_queue_total.log 2>&1
+*/1 * * * * run-one sleep 30; python /app/manage.py update_waiting_queue_total  >> /app/logs/update_waiting_queue_total.log 2>&1
+*/1 * * * * run-one sleep 45; python /app/manage.py update_waiting_queue_total  >> /app/logs/update_waiting_queue_total.log 2>&1
 
 # Run django crons
 */5 * * * * python3 /app/manage.py runcrons  >> /app/logs/runcrons.log 2>&1
