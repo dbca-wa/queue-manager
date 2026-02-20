@@ -836,8 +836,12 @@ def delete_all_sessions(group_key):
         files = [f for f in sub_directory.iterdir() if f.is_file()]
         files.sort()
         for f in files:
-            if f.is_file():                  
-                os.remove(f)
-                print ("Deleting"+str(f))
-                deletion_count = deletion_count + 1
+            if f.is_file(): 
+                try:                 
+                    os.remove(f)
+                    print ("Deleting : "+str(f))
+                    deletion_count = deletion_count + 1
+                except Exception as e:
+                    print ("Error deleting {}".format(str(f)))
+                    print (e)
     return deletion_count
