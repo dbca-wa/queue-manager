@@ -134,6 +134,7 @@ def check_create_session(request, *args, **kwargs):
         browser_inactivity_enabled = queue_group["browser_inactivity_enabled"]
         queue_name = queue_group["queue_name"]
         more_info_link = queue_group["more_info_link"]
+        max_queue_session_limit_slave = queue_group["max_queue_session_limit_slave"]
 
         ping_url_current = 0
         try:
@@ -192,6 +193,8 @@ def check_create_session(request, *args, **kwargs):
 
         total_active_session = jsondb.get_active_sessions_total(queue_group_name)
         total_waiting_session_obj = jsondb.get_queue_waiting_total_cached(queue_group_name)
+        total_newsession_queue_slave = jsondb.get_new_session_slave_total(queue_group_name)
+
         if total_waiting_session_obj:
             if "total_waiting_session" in total_waiting_session_obj:
                 total_waiting_session = total_waiting_session_obj["total_waiting_session"]
@@ -273,9 +276,9 @@ def check_create_session(request, *args, **kwargs):
                             print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": WAITING FOR NEW SEASSON SYNC for "+session_key)
                             response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': session_key, 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": True , "queue_full" : False, "queue_position_epoch":queue_position_epoch }), content_type='application/json')
                             return response        
-            
-            if int(total_waiting_session) >= int(max_queue_session_limit):              
-                logger.info("QUEUE FULL Redirecting {} : {}".format(sitequeuesession,session_count, ))
+
+            if int(total_waiting_session) >= int(max_queue_session_limit) or int(total_newsession_queue_slave) >= int(max_queue_session_limit_slave):              
+                logger.info("QUEUE FULL Redirecting {} : {} : {}".format(sitequeuesession,session_count, total_newsession_queue_slave ))
                 queue_position = max_queue_session_limit + 1
                 response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": False , "queue_full" : True, "queue_position_epoch":queue_position_epoch  }), content_type='application/json')
                 return response
