@@ -687,8 +687,12 @@ def set_wait_queue_position(group_key):
                                         os.remove(LOCK_PATH)
                                     except Exception as k:
                                         print ("Error Removing "+str(LOCK_PATH))
-                                        print (k)                                                                                                
-                                    save_queue_session(f,sitesession)
+                                        print (k)         
+                                    try:                                                                                       
+                                        save_queue_session(f,sitesession)
+                                    except Exception as e:
+                                        print ("Error saving position")
+                                        print (e)
                                     print (str(f) + "with position "+str(position_start))
                                     position_start = position_start + 1                            
                                      
