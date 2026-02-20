@@ -663,14 +663,25 @@ def set_wait_queue_position(group_key):
                 for f in files:
                     if f.is_file():   
                         if str(f).endswith('.json'):
-                            try:                        
-                                sitesession = get_queue_session(f)    
-                                sitesession['queue_position'] = position_start                                
-                                sitesession['queue_position_epoch'] = int(time.time() * 1000)
+                            try: 
+                                LOCK_PATH = str(f)+".lock" 
+                                lock = FileLock(LOCK_PATH)
+                               
+                                with lock:                                                     
+                                    sitesession = get_queue_session(f)    
+                                    sitesession['queue_position'] = position_start                                
+                                    sitesession['queue_position_epoch'] = int(time.time() * 1000)
+                                try:       
+                                    os.remove(LOCK_PATH)
+                                except Exception as k:
+                                    print ("Error Removing "+str(LOCK_PATH))
+                                    print (k)                                                                                                
                                 save_queue_session(f,sitesession)
                                 print (str(f) + "with position "+str(position_start))
-                                position_start = position_start + 1
+                                position_start = position_start + 1                            
+                                     
                             except Exception as e:
+                                position_start = position_start + 1
                                 print ("EXCEPTION Error Updating Queue Position")
                                 print (e)
                                                 
@@ -699,9 +710,18 @@ def wait_queue_rotate(group_key,start, finish):
                                 
                                 
                                 try: 
-                                    shutil.copyfile(f, previous_path)
-                                    os.remove(f)
-                                    print ("Removing file "+str(f))
+                                    LOCK_PATH = str(f)+".lock" 
+                                    lock = FileLock(LOCK_PATH)
+                                    with lock:                                    
+                                        shutil.copyfile(f, previous_path)
+                                        os.remove(f)
+                                        print ("Removing file "+str(f))
+                                    try:       
+                                        os.remove(LOCK_PATH)
+                                    except Exception as k:
+                                        print ("Error Removing "+str(LOCK_PATH))
+                                        print (k)                                        
+                                    
                                 except Exception as e:
                                     print ("Error removing "+str(f))
                                     print (e)
