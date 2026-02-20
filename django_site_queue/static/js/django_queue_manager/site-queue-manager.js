@@ -281,9 +281,9 @@ var sitequeuemanager = {
                         setTimeout(function () { sitequeuemanager.check_queue(); }, 2000);
                         sitequeuemanager.var.first_load = false 
                     } else if (new_session == true) {
-                        new_session_timeout = sitequeuemanager.var.new_session_count * 10000
+                        new_session_timeout = sitequeuemanager.var.new_session_count * 5000
                         sitequeuemanager.var.new_session_count = sitequeuemanager.var.new_session_count + 1
-                        setTimeout(function () { sitequeuemanager.check_queue(); }, 20000 + new_session_timeout);                        
+                        setTimeout(function () { sitequeuemanager.check_queue(); }, 10000 + new_session_timeout);                        
                     } else {
                         if (sitequeuemanager.var.queue_position < 2 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
