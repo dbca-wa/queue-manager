@@ -461,6 +461,7 @@ def check_create_session(request, *args, **kwargs):
         print ("EXCEPTION ERROR")
         print (e)
         pass
+        queue_position = None
 
 
     logger.info(str(sitequeuesession)+": Step 17 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
