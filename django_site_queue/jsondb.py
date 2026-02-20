@@ -591,8 +591,10 @@ def delete_waiting_expiry_idle_sessions(group_key):
                     print (e)
         i += 1                                  
 
-def get_new_session_slave_total(group_key):        
+def get_new_session_slave_total(group_key):     
+    
     directory = Path(settings.QUEUE_STORE_DB_SLAVE_TMP+"/new_session/{}".format(group_key))
+    os.makedirs(directory, exist_ok=True)   
     file_count = 0    
     for f in directory.iterdir():        
         if ".lock" not in str(f):
