@@ -22,6 +22,9 @@
 # Set queue position
 */1 * * * * run-one python /app/manage.py set_queue_positions  >> /app/logs/set_queue_positions.log 2>&1
 
+# Clean Recently Deleted
+*/5 * * * * run-one python /app/manage.py clean_recently_deleted  >> /app/logs/clean_recently_deleted.log 2>&1
+
 # Purge idle sessions
 */1 * * * * run-one python /app/manage.py queue_manager_delete_idle_sessions  >> /app/logs/queue_manager_delete_idle_sessions.log 2>&1
 

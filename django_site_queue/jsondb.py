@@ -39,15 +39,24 @@ def get_queue_group(group_key):
 
     return None
 
-def check_queue_session_deleted(group_unique_key,session_key):
+# def check_queue_session_deleted(group_unique_key,session_key):
+#     session_deleted = False
+#     now = datetime.now()
+#     year = now.year
+#     month = now.month
+#     day = now.day
+
+#     sub_directory = settings.QUEUE_STORE_DB_TMP+"./queue_sessions/deleted/{}/{}/{}/{}".format(group_unique_key, year, month, day)
+#     if os.path.exists(sub_directory+"/"+session_key+".json") is True:
+#         session_deleted = True
+#     return session_deleted
+
+def check_queue_session_deleted_recently(group_unique_key,session_key):
     session_deleted = False
-    dir1 = session_key[0:2]
-    dir2 = session_key[2:4]      
-    sub_directory = settings.QUEUE_STORE_DB_TMP+"./queue_sessions/deleted/{}/{}/{}".format(group_unique_key, dir1, dir2)
+    sub_directory = settings.QUEUE_STORE_DB_TMP+"./queue_sessions/deleted_recently/{}".format(group_unique_key)
     if os.path.exists(sub_directory+"/"+session_key+".json") is True:
         session_deleted = True
     return session_deleted
-
     
 def get_queue_session(file):    
     # Path to the JSON file
@@ -378,14 +387,52 @@ def get_queue_position_by_id(group_key,session_id,source='tmp'):
         i += 1
     return None                   
 
+def clean_recently_deleted(group_unique_key):
+    sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_sessions/deleted_recently/{}".format(group_unique_key))            
+    if os.path.isdir(sub_directory):
+        pass
+    else:
+        os.mkdir(sub_directory)            
+                
+    for f in sub_directory.iterdir():        
+        if ".lock" not in str(f):
+            if str(f).endswith('.json'):                    
+                file_mtime = os.path.getmtime(f)
+                now = time.time()          
+                age_in_seconds = now - file_mtime
+                if age_in_seconds > 7200:
+                    try:
+                        os.remove(f)                                                                                                                    
+                        print ("Removing File {}".format(str(f)))
+                    except Exception as y:
+                        print ("Error removing "+str(f))
+                        print (y)                    
+
+
+
 def move_session_to_deleted(group_unique_key, session_id, json_data):
     dir1 = session_id[0:2]
     dir2 = session_id[2:4]
-    os.makedirs(settings.QUEUE_STORE_DB+"./queue_sessions/deleted/{}/{}/{}".format(group_unique_key, dir1, dir2), exist_ok=True)        
-    sub_directory = settings.QUEUE_STORE_DB+"./queue_sessions/deleted/{}/{}/{}".format(group_unique_key, dir1, dir2)
+
+    now = datetime.now()
+    year = now.year
+    month = now.month
+    day = now.day
+
+    os.makedirs(settings.QUEUE_STORE_DB+"./queue_sessions/deleted/{}/{}/{}/{}".format(group_unique_key, year, month, day), exist_ok=True)        
+    sub_directory = settings.QUEUE_STORE_DB+"./queue_sessions/deleted/{}/{}/{}/{}".format(group_unique_key, year, month, day)
     json_text = json.dumps(json_data, ensure_ascii=False, indent=2)
     with open(sub_directory+"/"+session_id+".json", "w") as f:
-        f.write(json_text)    
+        f.write(json_text)
+
+    os.makedirs(settings.QUEUE_STORE_DB+"./queue_sessions/deleted_recently/{}".format(group_unique_key), exist_ok=True)
+    sub_directory = settings.QUEUE_STORE_DB+"./queue_sessions/deleted_recently/{}".format(group_unique_key)
+
+    with open(sub_directory+"/"+session_id+".json", "w") as f:
+        f.write(json_text)
+
+          
+
 
 
 def delete_active_expiry_idle_sessions(group_key):
