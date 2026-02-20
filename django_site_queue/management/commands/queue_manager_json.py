@@ -113,25 +113,26 @@ class Command(BaseCommand):
                         if sitesession["status"]  == "Active":
                             print ("Migrate to Active folder")
                             try:
-                                LOCK_PATH = str(sitesession_file)+".lock" 
-                                lock = FileLock(LOCK_PATH)
-                                with lock:
-                                    session_filename = os.path.basename(sitesession_file)                                    
-                                    active_sitesession_file = str(settings.QUEUE_STORE_DB)+"queue_sessions/active/{}/{}".format(queue_group_name,session_filename)
+                                if ".lock" not in str(sitesession_file):
+                                    LOCK_PATH = str(sitesession_file)+".lock" 
+                                    lock = FileLock(LOCK_PATH)                                
+                                    with lock:
+                                        session_filename = os.path.basename(sitesession_file)                                    
+                                        active_sitesession_file = str(settings.QUEUE_STORE_DB)+"queue_sessions/active/{}/{}".format(queue_group_name,session_filename)
 
-                                    if os.path.exists(active_sitesession_file) is True:                                     
-                                        pass
-                                    else:
-                                        
-                                        shutil.copyfile(sitesession_file, active_sitesession_file)  
-                                    #time.sleep(.1)
-                                    #os.remove(sitesession_file)   
-                                    print ("Removing file "+str(sitesession_file))
-                                try:       
-                                    os.remove(LOCK_PATH)
-                                except Exception as k:
-                                    print ("Error Removing "+str(LOCK_PATH))
-                                    print (k)
+                                        if os.path.exists(active_sitesession_file) is True:                                     
+                                            pass
+                                        else:
+                                            
+                                            shutil.copyfile(sitesession_file, active_sitesession_file)  
+                                        #time.sleep(.1)
+                                        #os.remove(sitesession_file)   
+                                        print ("Removing file "+str(sitesession_file))
+                                    try:       
+                                        os.remove(LOCK_PATH)
+                                    except Exception as k:
+                                        print ("Error Removing "+str(LOCK_PATH))
+                                        print (k)
 
                             except Exception as e:
                                 print ("Error Saving File:"+str(sitesession_file))
