@@ -156,7 +156,7 @@ def save_queue_waiting_total(data,group_key):
 
 def get_queue_waiting_total_cached(group_key):    
     # Path to the JSON file
-    file = Path(settings.QUEUE_STORE_DB+"/waiting_total/{}.json".format(group_key))    
+    file = Path(settings.QUEUE_STORE_DB_TMP+"/waiting_total/{}.json".format(group_key))    
     try:        
         file_path = file
         if os.path.exists(file_path):
