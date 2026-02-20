@@ -824,10 +824,14 @@ def delete_all_sessions(group_key):
     
     deletion_count = 0
     for f in files:
-        if f.is_file():            
-            os.remove(f)
-            print ("Deleting"+str(f))
-            deletion_count = deletion_count + 1
+        if f.is_file(): 
+            try:             
+                os.remove(f)
+                print ("Deleting "+str(f))
+                deletion_count = deletion_count + 1
+            except Exception as e:
+                print ("Error deleting {}".format(str(f)))
+                print (e)               
 
     directory = settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}".format(group_key)
     directory_list = os.listdir(directory)

@@ -267,8 +267,8 @@ def check_create_session(request, *args, **kwargs):
             logger.info(str(sitequeuesession)+": Step 4 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
             
             if new_session_count:
-                if int(new_session_count) < 6:                
-                    if len(session_key) > 6: 
+                if int(new_session_count) < 4:                
+                    if len(session_key) > 7: 
                         if jsondb.check_queue_session_deleted_recently(group_unique_key,session_key) is True:
                             print ('SESSION DELETED')
                             pass
