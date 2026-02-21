@@ -20,6 +20,60 @@
         </p>
     </div>
 </div>
+
+<script>
+
+
+
+    var queue_expired = {
+        ReadCookie: function (name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            ca = ca.reverse();
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        },
+
+
+        deleteCookie: function (name, path, domain) {
+    
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" +
+                            (domain ? "; domain=" + domain : "") +
+                            (path ? "; path=" + path : "");
+        },
+
+        expire: function() {
+            var sessionid = queue_expired.ReadCookie('sitequeuesession');
+            if (sessionid != null) {
+                if (sessionid.length > 5) {
+                    $.ajax({
+                        url: '{{ DJANGO_SETTINGS.QUEUE_ENDPOINT_URL }}' + '/api/expire-session/?session_key='+sessionid+ '&queue_group=' + '{{ queue_manager_obj.group_unique_key }}',
+                        type: 'GET',
+                        data: {},
+                        cache: false,
+                        success: function (htmlresponse) {
+                            console.log("Queue Expiration Success");    
+                            queue_expired.deleteCookie("sitequeuesession","/",'{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}');
+                        },
+                        error: function() { 
+                            console.log("Queue Expiration Error");
+
+                        }
+                    });
+
+                }
+            }
+
+        }
+
+
+    }
+
+</script>
 <br>
 <br>
 {% endblock %}
