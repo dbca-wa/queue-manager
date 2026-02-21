@@ -625,6 +625,22 @@ def get_waiting_session_total(group_key):
         i += 1 
     return file_count             
 
+def get_active_session_list(group_key):
+    active_sessions = []
+
+    sub_directory = Path(settings.QUEUE_STORE_DB+"/queue_sessions/active/{}".format(group_key))    
+    files = [f for f in sub_directory.iterdir() if f.is_file()]
+    # files.sort(key=lambda f: f.stat().st_mtime, reverse=False)
+    files.sort()
+    for f in files:
+        if f.is_file():  
+            if ".lock" in str(f):
+                continue                
+            active_sessions.append(f)
+    
+
+    return active_sessions
+
 def get_longest_waiting(group_key, stl):
 
     longest_waiting = []

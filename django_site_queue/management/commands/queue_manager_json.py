@@ -136,4 +136,19 @@ class Command(BaseCommand):
 
                             except Exception as e:
                                 print ("Error Saving File:"+str(sitesession_file))
-                                print (e)                                
+                                print (e)   
+
+            active_sessions = jsondb.get_active_session_list(queue_group_name)
+            for as_file in active_sessions:
+
+                try:                                                 
+                    sitesession_active = jsondb.get_queue_session(as_file)
+                    if sitesession_active['status'] != "Active":                        
+                        sitesession_active['status'] = "Active"
+                        sitesession_active["activated"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")                
+                        sitesession_active["activated_session_id"] = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')            
+                        jsondb.save_queue_session(as_file,sitesession_active)
+                except Exception as e:
+                    print ("Error Saving File:"+str(as_file))
+                    print (e)                           
+
