@@ -111,9 +111,12 @@ var sitequeuemanager = {
                         if (response['expiry_seconds'] > 60) {
                             var expiry_min = response['expiry_seconds'] / 60;
                             timelimit = parseInt(expiry_min) + " min";
-                        } else {
+                        } else if (response['expiry_seconds'] > 0) {
                             $('#queue-time-left').fadeOut(2000); $('#queue-time-left').fadeIn(2000);
                             timelimit = "<1min";
+                        } else {
+                            window.location=sitequeuemanager.var.url+"/site-queue/queue-expired/"+sitequeuemanager.var.queue_group+"/";
+                            ///
                         }
                         if ($("#queue-timer").length == 0) {
                             $('html').prepend("<div id='queue-timer' style='cursor: pointer; right: 0px; position: fixed; z-index: 1099;'><div align='right'><div style='border: 1px solid #484747; padding: 12px 10px 10px 10px; width: 90px; height: 90px; margin-top: 3px; margin-left: 15px; margin-right:  15px;  border-radius: 5px; font-size:16px; background: rgb(0 0 0 / 80%); color: #FFF;' >Time Left<br><div id='queue-time-left' style='font-size: 19px; padding-top: 10px; text-align: center;'>N/A</div></div></div></div>");
