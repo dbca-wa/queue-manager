@@ -428,7 +428,10 @@ def check_create_session(request, *args, **kwargs):
         expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)        
         logger.info(str(sitequeuesession)+": Step 15 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
         idle_seconds = (now_dt-idle_dt).seconds
-        expiry_seconds = (expiry_dt-now_dt).seconds
+        if expiry_dt >= now_dt:
+            expiry_seconds = (expiry_dt-now_dt).seconds
+        else:
+            expiry_seconds = -120
         wait_time = 100 
             
         if queue_position:
