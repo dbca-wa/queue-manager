@@ -1,8 +1,20 @@
 {% extends "webtemplate_dbca/base_b5_auth_session.html" %}
 
-        {% block extra_css %}
-         <link rel="icon" type="image/x-icon" href="/static/img/django_queue_manager/favicon.ico">
-        {% endblock %}
+{% block header_js %}
+    <script src="/static/common_addons/node_modules/jquery/dist/jquery.js?ver={{ GIT_COMMIT_HASH }}"></script>
+    <script src="/static/common_addons/node_modules/moment/min/moment.min.js?ver={{ GIT_COMMIT_HASH }}"></script>
+{% endblock %}
+
+{% block header_css %}
+    <link rel="stylesheet" type="text/css" href="/static/common_addons/node_modules/bootstrap/dist/css/bootstrap.css?ver={{ GIT_COMMIT_HASH }}" />
+    <link rel="stylesheet" type="text/css" href="/static/common_addons/node_modules/bootstrap-icons/font/bootstrap-icons.css?ver={{ GIT_COMMIT_HASH }}"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/dbca_b5.css?ver={{ GIT_COMMIT_HASH }}"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/base_bs5_common.css?ver={{ GIT_COMMIT_HASH }}"/>    
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="icon" type="image/x-icon" href="/static/img/django_queue_manager/favicon.ico">
+{% endblock %}
 
 {% block extra_js %}
 
