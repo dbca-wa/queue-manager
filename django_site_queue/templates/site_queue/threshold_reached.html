@@ -22,4 +22,19 @@
     </p>   
 </div>
 </div>
+
+<script>
+    var queue_expired = {
+        deleteCookie: function (name, path, domain) {
+    
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" +
+                            (domain ? "; domain=" + domain : "") +
+                            (path ? "; path=" + path : "");
+        },       
+    }
+    queue_expired.deleteCookie("sitequeuesession","/",'{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}');
+    queue_expired.deleteCookie("activatedsessionid","/",'{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}');
+    
+</script>
+
 {% endblock %}

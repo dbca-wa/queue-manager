@@ -55,6 +55,7 @@
                         success: function (htmlresponse) {
                             console.log("Queue Expiration Success");    
                             queue_expired.deleteCookie("sitequeuesession","/",'{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}');
+                            queue_expired.deleteCookie("activatedsessionid","/",'{{ DJANGO_SETTINGS.QUEUE_DOMAIN }}');
                         },
                         error: function() { 
                             console.log("Queue Expiration Error");
