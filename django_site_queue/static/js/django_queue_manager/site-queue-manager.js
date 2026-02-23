@@ -62,6 +62,8 @@ var sitequeuemanager = {
                 sitequeuemanager.var.queue_inactivity_url = response['queue_inactivity_url'];
                 sitequeuemanager.var.active_session_url = response['url'];
                 sitequeuemanager.var.queue_status = response['status']
+                activated_session_id = response["activated_session_id"]
+
                 queue_position_epoch = response['queue_position_epoch']
                 new_session = response["new_session"]
                 
@@ -106,6 +108,10 @@ var sitequeuemanager = {
 
                 if (response.status == "Active") {
                     // show session timer box on active session
+                    if (activated_session_id != null) {
+                        sitequeuemanager.createCookie('activatedsessionid', activated_session_id, 2);
+                    }
+                    
                     if (sitequeuemanager.var.time_left_enabled == true) {
                         var timelimit = 'N/A';
                         if (response['expiry_seconds'] > 60) {
