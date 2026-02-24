@@ -405,11 +405,13 @@ def check_create_session(request, *args, **kwargs):
                 raise ValidationError("Error no session Found")
         
         logger.info(str(sitequeuesession)+": Step 12 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
-
-        if "queue_position" in sitesession:            
+        queue_position_obj = jsondb.get_queue_position(session_key, group_unique_key)
+        
+        if queue_position_obj is not None:
+        # if "queue_position" in sitesession:            
             has_queue_position = True
-            queue_position = sitesession['queue_position']
-            queue_position_epoch = sitesession['queue_position_epoch']
+            queue_position = queue_position_obj['queue_position']
+            queue_position_epoch = queue_position_obj['queue_position_epoch']
         if has_queue_position is False:
             queue_position = None
         # queue_position = jsondb.get_queue_position_by_id(queue_group_name,sitequeuesession)        
