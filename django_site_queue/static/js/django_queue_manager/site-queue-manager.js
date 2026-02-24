@@ -19,7 +19,7 @@ var sitequeuemanager = {
         'more_info_link': '',
         'max_queue_session_limit': '100000',
         'max_queue_url_redirect': '/',
-        'queue_position': 0,
+        'queue_position': 200,
         'queue_status': "Waiting",
         'first_load': true,
         'new_session_count' : 0,
