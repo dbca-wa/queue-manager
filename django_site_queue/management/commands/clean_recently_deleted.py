@@ -15,5 +15,7 @@ class Command(BaseCommand):
         for queue_group in queue_groups:       
             group_unique_key = queue_group["group_unique_key"]         
             deleted_sessions = jsondb.clean_recently_deleted(group_unique_key)
+            expired_queue_positons = jsondb.clean_queue_position_sessions(group_unique_key)
+            idle_queue_positons = jsondb.clean_queue_idle_sessions(group_unique_key)
             print ("Deleted Sessions {}".format(str(deleted_sessions)))
             print ("Finished deleting Queue Sessions")

@@ -25,6 +25,7 @@ class Command(BaseCommand):
             for f in files:
                 print (f)
                 try: 
+                    idle_data = {}
                     session_filename = os.path.basename(f)  
                     print (session_filename)
                     session_filename_split = session_filename.split("_session_")
@@ -39,17 +40,23 @@ class Command(BaseCommand):
                     with f.open("r", encoding="utf-8") as f2:
                         try: 
                             session_data = json.load(f2)
-                            session_data['idle'] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
+                            # session_data['idle'] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
                         except Exception as e:
                             print ("Exception open json file")
                             print (e)
                     if len(session_data) > 0:
-                        if session_file_id.exists():
-                            jsondb.save_queue_session(session_file_id,session_data)
-                    print (session_data)
+                        if f.exists():
+                            session_filename = os.path.basename(f)
+                            session_filename_split = session_filename.split("_session_")
+                            session_id_val = session_filename_split[1]     
+                            session_id_val = session_id_val.replace(".json","")   
+                            idle_data["idle"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
+                            jsondb.save_session_idle(session_id_val,idle_data,group_unique_key)                    
                     # shutil.copyfile(f, settings.QUEUE_STORE_DB+"/queue_sessions/waiting/{}/{}/{}".format(group_unique_key,str(settings.DIRECTORY_FOLDER_LIMIT),session_filename))
                     os.remove(f)
                     print ("Removing file "+str(f))
+                    
+                    
                 except Exception as e:
                     print ("Error removing "+str(f))
                     print (e)                

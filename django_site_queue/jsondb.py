@@ -165,6 +165,45 @@ def save_queue_position(session_key,data,group_key):
     return None
 
 
+def get_session_idle(session_key, group_key, source="tmp" ):  
+
+    source_dir = settings.QUEUE_STORE_DB_TMP
+    if source == 'master':
+        source_dir = settings.QUEUE_STORE_DB      
+    # Path to the JSON file     
+    data = None
+    try:        
+        file_path = Path(source_dir+"/queue_idle/{}/{}.json".format(group_key,session_key))
+        if file_path.exists():                                    
+            with file_path.open("r", encoding="utf-8") as f:
+                try: 
+                    data = json.load(f)
+                    
+                except Exception as e:
+                    print ("ERROR Opening {}".format(file_path))
+                    print (e)
+                    return None
+            return data
+    except Exception as e:
+        print (e)
+
+    return None
+
+def save_session_idle(session_key,data,group_key):    
+    # Path to the JSON file
+    os.makedirs(settings.QUEUE_STORE_DB+"/queue_idle/{}".format(group_key), exist_ok=True)
+    try:      
+
+        file = settings.QUEUE_STORE_DB+"/queue_idle/{}/{}.json".format(group_key,session_key)        
+        json_text = json.dumps(data, ensure_ascii=False, indent=2)
+        with open(file, "w") as f:
+            f.write(json_text)
+    except Exception as e:
+        print ("Error Saving File:"+str(file))
+        print (e)
+    return None
+
+
 def save_queue_ping(data,group_key):    
     # Path to the JSON file
     os.makedirs(settings.QUEUE_STORE_DB+"/ping_status/", exist_ok=True)
@@ -448,8 +487,49 @@ def clean_recently_deleted(group_unique_key):
                         print ("Removing File {}".format(str(f)))
                     except Exception as y:
                         print ("Error removing "+str(f))
+                        print (y)      
+
+def clean_queue_position_sessions(group_unique_key):
+    sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_position/{}".format(group_unique_key))            
+    if os.path.isdir(sub_directory):
+        pass
+    else:
+        os.mkdir(sub_directory)            
+                
+    for f in sub_directory.iterdir():        
+        if ".lock" not in str(f):
+            if str(f).endswith('.txt'):                    
+                file_mtime = os.path.getmtime(f)
+                now = time.time()          
+                age_in_seconds = now - file_mtime
+                if age_in_seconds > 900:
+                    try:
+                        os.remove(f)                                                                                                                    
+                        print ("Removing File {}".format(str(f)))
+                    except Exception as y:
+                        print ("Error removing "+str(f))
                         print (y)                    
 
+def clean_queue_idle_sessions(group_unique_key):
+    sub_directory = Path(str(settings.QUEUE_STORE_DB)+"/queue_idle/{}".format(group_unique_key))            
+    if os.path.isdir(sub_directory):
+        pass
+    else:
+        os.mkdir(sub_directory)            
+                
+    for f in sub_directory.iterdir():        
+        if ".lock" not in str(f):
+            if str(f).endswith('.json'):                    
+                file_mtime = os.path.getmtime(f)
+                now = time.time()          
+                age_in_seconds = now - file_mtime
+                if age_in_seconds > 900:
+                    try:
+                        os.remove(f)                                                                                                                    
+                        print ("Removing File {}".format(str(f)))
+                    except Exception as y:
+                        print ("Error removing "+str(f))
+                        print (y) 
 
 
 def move_session_to_deleted(group_unique_key, session_id, json_data):
@@ -509,8 +589,9 @@ def delete_active_expiry_idle_sessions(group_key):
                             session_id_val = session_filename_split[1]
                             session_id_val = session_id_val.replace(".json","")
                             data = json.load(f)
+                            idle_data = get_session_idle(session_id_val, group_key, "master" ) 
                             now_dt = datetime.now().astimezone(PLUS_8)
-                            idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
+                            idle_dt = datetime.strptime(idle_data["idle"], "%Y-%m-%d %H:%M:%S") 
                             idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
                             expiry_dt = datetime.strptime(data["expiry"], "%Y-%m-%d %H:%M:%S") 
                             expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
@@ -589,9 +670,10 @@ def delete_waiting_expiry_idle_sessions(group_key):
                                 session_id_val = session_filename_split[1]
                                 session_id_val = session_id_val.replace(".json","")
 
-                                data = json.load(fe)                                
+                                data = json.load(fe)                
+                                idle_data = get_session_idle(session_id_val, group_key, "master" )                
                                 now_dt = datetime.now().astimezone(PLUS_8)
-                                idle_dt = datetime.strptime(data["idle"], "%Y-%m-%d %H:%M:%S") 
+                                idle_dt = datetime.strptime(idle_data["idle"], "%Y-%m-%d %H:%M:%S") 
                                 idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)         
                                 idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
                                 activated_idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=60)
