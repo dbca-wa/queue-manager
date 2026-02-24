@@ -227,7 +227,11 @@ def check_create_session(request, *args, **kwargs):
                 if activated_session_key:
                     if "activated_session_id" in session_data:                    
                         if activated_session_key == session_data["activated_session_id"]:
-                            pass                   
+                            pass 
+                        else:
+                            response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : True, "queue_position_epoch":queue_position_epoch  }), content_type='application/json')
+                            response.delete_cookie('activatedsessionid')
+                            return response                
                     else:                        
                         session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession, 'master') 
                         session_data = jsondb.get_queue_session(session_file_id)                                         
@@ -359,6 +363,28 @@ def check_create_session(request, *args, **kwargs):
                 logger.info(str(sitequeuesession)+": Step 8 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
                 sitesession = jsondb.get_queue_session(session_file_id)
                 logger.info(str(sitequeuesession)+": Step 9 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
+
+                if sitesession is not None:
+                    if activated_session_key:
+                        if "activated_session_id" in sitesession:                   
+                            if activated_session_key == session_data["activated_session_id"]:
+                                pass     
+                            else:
+                                response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : True, "queue_position_epoch":queue_position_epoch  }), content_type='application/json')
+                                response.delete_cookie('activatedsessionid')
+                                return response                                            
+                        else:                        
+                            session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession, 'master') 
+
+                            session_data = jsondb.get_queue_session(session_file_id)                                         
+                            if "activated_session_id" in session_data:                    
+                                if activated_session_key == session_data["activated_session_id"]:
+                                    pass                         
+                                else:
+                                    response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': memory_session['sitequeuesession'], 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : True, "queue_position_epoch":queue_position_epoch  }), content_type='application/json')
+                                    response.delete_cookie('activatedsessionid')
+                                    return response  
+
             # if models.SiteQueueManager.objects.filter(session_key=sitequeuesession).count() > 0:
                 #  sitesession_query = models.SiteQueueManager.objects.filter(session_key=sitequeuesession,queue_group=queue_group[0])
                 #  sitesession = sitesession_query[0]
