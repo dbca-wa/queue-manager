@@ -277,7 +277,7 @@ def check_create_session(request, *args, **kwargs):
                             print ('SESSION DELETED')
                             pass
                         else:
-                            print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": WAITING FOR NEW SEASSON SYNC for "+session_key)
+                            print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": WAITING FOR NEW SESSION SYNC for "+session_key)
                             response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': session_key, 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": True , "queue_full" : False, "queue_position_epoch":queue_position_epoch }), content_type='application/json')
                             return response        
 
@@ -449,9 +449,10 @@ def check_create_session(request, *args, **kwargs):
         #      sqm =  models.SiteQueueManager.objects.filter(session_key=session_key)[0]
         #      queue_position = models.SiteQueueManager.objects.filter(id__lte=sqm.id, status=0, expiry__gt=datetime.now(timezone.utc),queue_group=queue_group[0]).order_by('id').count()
 
-        sitesession["idle"] 
+        # sitesession["idle"] 
+        idle_data = jsondb.get_session_idle(session_key, group_unique_key)
         now_dt = datetime.now().astimezone(PLUS_8)
-        idle_dt = datetime.strptime(sitesession["idle"], "%Y-%m-%d %H:%M:%S") 
+        idle_dt = datetime.strptime(idle_data["idle"], "%Y-%m-%d %H:%M:%S") 
         idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
         expiry_dt = datetime.strptime(sitesession["expiry"], "%Y-%m-%d %H:%M:%S") 
         expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)        
