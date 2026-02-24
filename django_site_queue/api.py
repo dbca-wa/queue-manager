@@ -449,21 +449,27 @@ def check_create_session(request, *args, **kwargs):
         #      sqm =  models.SiteQueueManager.objects.filter(session_key=session_key)[0]
         #      queue_position = models.SiteQueueManager.objects.filter(id__lte=sqm.id, status=0, expiry__gt=datetime.now(timezone.utc),queue_group=queue_group[0]).order_by('id').count()
 
-        # sitesession["idle"] 
-        idle_data = jsondb.get_session_idle(session_key, group_unique_key)
-        now_dt = datetime.now().astimezone(PLUS_8)
-        idle_dt = datetime.strptime(idle_data["idle"], "%Y-%m-%d %H:%M:%S") 
-        idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
+        # sitesession["idle"]
+        
+        idle_data = jsondb.get_session_idle(session_key, group_unique_key)        
+        now_dt = datetime.now().astimezone(PLUS_8)        
+        idle_dt = datetime.now().astimezone(PLUS_8)        
+        if idle_data is not None:
+            if "idle" in idle_data:
+                idle_dt = datetime.strptime(idle_data["idle"], "%Y-%m-%d %H:%M:%S")         
+                idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
+        
         expiry_dt = datetime.strptime(sitesession["expiry"], "%Y-%m-%d %H:%M:%S") 
         expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)        
         logger.info(str(sitequeuesession)+": Step 15 "+datetime.now().strftime("%d.%b %Y %H:%M:%S"))
+
         idle_seconds = (now_dt-idle_dt).seconds
         if expiry_dt >= now_dt:
             expiry_seconds = (expiry_dt-now_dt).seconds
         else:
             expiry_seconds = -120
         wait_time = 100 
-            
+
         if queue_position:
             if queue_position > 0:
                 # calculate wait time

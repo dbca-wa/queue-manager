@@ -187,6 +187,10 @@ def get_session_idle(session_key, group_key, source="tmp" ):
     except Exception as e:
         print (e)
 
+    if source == 'tmp':
+        idle_resp = get_session_idle(session_key, group_key, source='master')
+        return idle_resp
+
     return None
 
 def save_session_idle(session_key,data,group_key):    
