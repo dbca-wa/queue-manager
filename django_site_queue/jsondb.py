@@ -123,7 +123,46 @@ def save_queue_session_slave(file,data,group_unique_key):
     return None
 
 
+def get_queue_position(session_key, group_key):    
+    # Path to the JSON file 
+    position_obj = {'queue_position': None, 'queue_position_epoch': None}   
+    try:        
+        file_path = Path(settings.QUEUE_STORE_DB+"/queue_position/{}/{}.txt".format(group_key,session_key))
+        if file_path.exists():
+            # Load JSON file into a variable
+            stat_info = os.stat(file_path)
+            
+            # Access the nanosecond modification time attribute
+            st_mtime_ns = stat_info.st_mtime_ns       
+            position_obj['queue_position_epoch'] =  str(st_mtime_ns)
 
+            with file_path.open("r", encoding="utf-8") as f:
+                try: 
+                    data = f.read()
+                    position_obj['queue_position'] = int(data)
+                except Exception as e:
+                    print ("ERROR Opening {}".format(file_path))
+                    print (e)
+                    return None
+            return position_obj
+    except Exception as e:
+        print (e)
+
+    return None
+
+def save_queue_position(session_key,data,group_key):    
+    # Path to the JSON file
+    os.makedirs(settings.QUEUE_STORE_DB+"/queue_position/{}".format(group_key), exist_ok=True)
+    try:      
+
+        file = settings.QUEUE_STORE_DB+"/queue_position/{}/{}.txt".format(group_key,session_key)        
+        json_text = json.dumps(data, ensure_ascii=False, indent=2)
+        with open(file, "w") as f:
+            f.write(json_text)
+    except Exception as e:
+        print ("Error Saving File:"+str(file))
+        print (e)
+    return None
 
 
 def save_queue_ping(data,group_key):    
@@ -695,20 +734,24 @@ def set_wait_queue_position(group_key):
                         if str(f).endswith('.json'):
                             try:
                                 if ".lock" not in str(f):
-                                    LOCK_PATH = str(f)+".lock" 
-                                    lock = FileLock(LOCK_PATH)
+                                    session_filename = os.path.basename(f)
+                                    session_filename_split = session_filename.split("_session_")
+                                    session_id_val = session_filename_split[1]     
+                                    session_id_val = session_id_val.replace(".json","")                                   
+                                    # LOCK_PATH = str(f)+".lock" 
+                                    # lock = FileLock(LOCK_PATH)
                                     
-                                    with lock:                                                     
-                                        sitesession = get_queue_session(f)    
-                                        sitesession['queue_position'] = position_start                                
-                                        sitesession['queue_position_epoch'] = int(time.time() * 1000)
-                                    try:       
-                                        os.remove(LOCK_PATH)
-                                    except Exception as k:
-                                        print ("Error Removing "+str(LOCK_PATH))
-                                        print (k)         
+                                    # with lock:                                                     
+                                    #     sitesession = get_queue_session(f)    
+                                    #     sitesession['queue_position'] = position_start                                
+                                    #     sitesession['queue_position_epoch'] = int(time.time() * 1000)
+                                    # try:       
+                                    #     os.remove(LOCK_PATH)
+                                    # except Exception as k:
+                                    #     print ("Error Removing "+str(LOCK_PATH))
+                                    #     print (k)         
                                     try:                                                                                       
-                                        save_queue_session(f,sitesession)
+                                        save_queue_position(session_id_val,position_start,group_key)
                                     except Exception as e:
                                         print ("Error saving position")
                                         print (e)
