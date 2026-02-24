@@ -127,7 +127,7 @@ def get_queue_position(session_key, group_key):
     # Path to the JSON file 
     position_obj = {'queue_position': None, 'queue_position_epoch': None}   
     try:        
-        file_path = Path(settings.QUEUE_STORE_DB+"/queue_position/{}/{}.txt".format(group_key,session_key))
+        file_path = Path(settings.QUEUE_STORE_DB_TMP+"/queue_position/{}/{}.txt".format(group_key,session_key))
         if file_path.exists():
             # Load JSON file into a variable
             stat_info = os.stat(file_path)
