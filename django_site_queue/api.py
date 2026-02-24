@@ -344,7 +344,7 @@ def check_create_session(request, *args, **kwargs):
             jsondb.new_queue_session(session_key,sitesession,group_unique_key)
             new_session = True            
             jsondb.save_ip_new_session_log(session_key,sitesession["ipaddress"], group_unique_key)
-            session_file_id = jsondb.get_session_by_id(queue_group_name,session_key) 
+            session_file_id = jsondb.get_session_by_id(queue_group_name,session_key,'master') 
             if session_file_id is not None:                
                 sitesession = jsondb.get_queue_session(session_file_id)            
 
@@ -374,6 +374,7 @@ def check_create_session(request, *args, **kwargs):
                                 response.delete_cookie('activatedsessionid')
                                 return response                                            
                         else:                        
+                            
                             session_file_id = jsondb.get_session_by_id(queue_group_name,sitequeuesession, 'master') 
 
                             session_data = jsondb.get_queue_session(session_file_id)                                         
