@@ -254,9 +254,14 @@ var sitequeuemanager = {
                         }
                         if (sitequeuemanager.var.show_queue_position == true) {
                             // alert('tt')
-                            $('#queue_position_div').show();
-                            $('#div_queue_position').show();
-                            $('#queue_position').html("<BR>Calculating...");
+                            var current_queue_position_display = $('#queue_position').html();
+                            if (isNaN((current_queue_position_display)) == "false" && response['queue_position'] == null) {
+                                
+                            } else {                            
+                                $('#queue_position_div').show();
+                                $('#div_queue_position').show();
+                                $('#queue_position').html("<BR>Calculating...");
+                            }
                             // $("#queue_position").effect("pulsate", {times: 5}, 10000);
                         } else {
                             // $('#div_queue_position').hide();
