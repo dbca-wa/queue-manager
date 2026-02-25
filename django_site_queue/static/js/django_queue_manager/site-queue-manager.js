@@ -236,8 +236,8 @@ var sitequeuemanager = {
                         } else {
                             $('#div_queue_position').hide();
                         }
-                        $('#queue_position').html(sitequeuemanager.var.queue_position);
-                        // $('#queue_position').html(sitequeuemanager.var.queue_position + "<br><span style='font-size: 12px;'>(may advance in big steps)</span> ");
+                        //$('#queue_position').html(sitequeuemanager.var.queue_position);
+                        $('#queue_position').html(sitequeuemanager.var.queue_position + "<br><span style='font-size: 12px;'>(may advance in big steps)</span> ");
                         $('#wait_time').html(response['wait_time'] + ' minute/s');
                         sitequeuemanager.var.browser_inactivity_time = 0;
                         if (sitequeuemanager.var.custom_message.length > 0) {
@@ -269,8 +269,8 @@ var sitequeuemanager = {
                             } else {                            
                                 $('#queue_position_div').show();
                                 $('#div_queue_position').show();
-                                $('#queue_position').html("<BR>Calculating...<br>");
-                                // $('#queue_position').html("<BR>Calculating...<br><span style='font-size: 12px; font-weight:bold;'>(may take several minutes)</span>");
+                                // $('#queue_position').html("<BR>Calculating...<br>");
+                                $('#queue_position').html("<BR>Calculating...<br><span style='font-size: 12px; font-weight:bold;'>(may take several minutes)</span>");
                             }
                             // $("#queue_position").effect("pulsate", {times: 5}, 10000);
                         } else {
