@@ -595,15 +595,14 @@ def delete_active_expiry_idle_sessions(group_key):
                             data = json.load(f)
                             idle_data = get_session_idle(session_id_val, group_key, "master" ) 
 
-                            idle_dt = datetime.now().astimezone(PLUS_8) 
+                            idle_dt_current = datetime.now().astimezone(PLUS_8).strftime("%Y-%m-%d %H:%M:%S")
 
                             if idle_data is not None:
                                 if "idle" in idle_data:
-                                    idle_dt = datetime.strptime(idle_data["idle"], "%Y-%m-%d %H:%M:%S")
-                                    idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
+                                    idle_dt_current = idle_data["idle"]
 
                             now_dt = datetime.now().astimezone(PLUS_8)
-                            idle_dt = datetime.strptime(iidle_dt_current, "%Y-%m-%d %H:%M:%S") 
+                            idle_dt = datetime.strptime(idle_dt_current, "%Y-%m-%d %H:%M:%S")
                             idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
                             expiry_dt = datetime.strptime(data["expiry"], "%Y-%m-%d %H:%M:%S") 
                             expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
