@@ -295,9 +295,15 @@ def check_create_session(request, *args, **kwargs):
             # END --
 
             if total_active_session < session_total_limit:
-                if total_waiting_session == 0:
+                total_a_s = session_total_limit - total_active_session
+                if total_waiting_session == 0 :
                     session_status = "Active"
                     activated_session_id = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+                if total_a_s > 15 and total_waiting_session < 3:
+                    session_status = "Active"
+                    activated_session_id = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+
+
 
             if ping_url_current > ping_url_limit:
                   session_status = "Waiting"
