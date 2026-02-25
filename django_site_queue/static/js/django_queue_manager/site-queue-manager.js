@@ -268,7 +268,8 @@ var sitequeuemanager = {
                             } else {                            
                                 $('#queue_position_div').show();
                                 $('#div_queue_position').show();
-                                $('#queue_position').html("<BR>Calculating...<br><span class='text-warning' style='font-size: 12px;'>(can take several minutes)</span>");
+                                $('#queue_position').html("<BR>Calculating...<br>");
+                                // $('#queue_position').html("<BR>Calculating...<br><span class='text-warning' style='font-size: 12px;'>(can take several minutes)</span>");
                             }
                             // $("#queue_position").effect("pulsate", {times: 5}, 10000);
                         } else {
