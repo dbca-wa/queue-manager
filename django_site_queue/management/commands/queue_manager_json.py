@@ -125,8 +125,8 @@ class Command(BaseCommand):
                                         else:
                                             jsondb.save_queue_session(active_sitesession_file,sitesession)
                                             #shutil.copyfile(sitesession_file, active_sitesession_file)  
-                                        #time.sleep(.1)
-                                        #os.remove(sitesession_file)   
+                                        # time.sleep(.1)
+                                        os.remove(sitesession_file)   
                                         print ("Removing file "+str(sitesession_file))
                                     try:       
                                         os.remove(LOCK_PATH)
