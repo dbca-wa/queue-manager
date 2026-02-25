@@ -23,7 +23,9 @@ var sitequeuemanager = {
         'queue_status': "Waiting",
         'first_load': true,
         'new_session_count' : 0,
-        'queue_position_epoch': 0
+        'queue_position': null,
+        'queue_position_epoch': 0,
+        'queue_position_epoch_new': 0
     },
     check_queue: function () {
         sitequeuemanager.var.running = 'true';
@@ -64,8 +66,15 @@ var sitequeuemanager = {
                 sitequeuemanager.var.queue_status = response['status']
                 activated_session_id = response["activated_session_id"]
 
-                queue_position_epoch = response['queue_position_epoch']
+                sitequeuemanager.var.queue_position_epoch_new = response['queue_position_epoch']
                 new_session = response["new_session"]
+                if (response['queue_position'] != null) {
+                    if (sitequeuemanager.var.queue_position_epoch_new > sitequeuemanager.var.queue_position_epoch) {
+                        sitequeuemanager.var.queue_position = response['queue_position'];
+                        sitequeuemanager.var.queue_position_epoch=sitequeuemanager.var.queue_position_epoch_new;
+                    }
+
+                }
                 
 
                 if (response.status != "Active") {
@@ -188,12 +197,11 @@ var sitequeuemanager = {
                                 var pageheight = $(document).height();
                                 
                                 $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 1096; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");                    
-                                if (response['queue_position'] > 0) {
+                                if (sitequeuemanager.var.queue_position > 0) {
                                     $('#queue_position_div').show();
-                                    if (queue_position_epoch > sitequeuemanager.var.queue_position_epoch) {
-                                        $('#queue_position').html(response['queue_position']);
-                                        sitequeuemanager.var.queue_position_epoch = queue_position_epoch
-                                    }
+
+                                    $('#queue_position').html(sitequeuemanager.var.queue_position);
+
 
                                     $('#wait_time').html(response['wait_time'] + ' minute/s');
                                     if (sitequeuemanager.var.custom_message.length > 0) {
@@ -217,8 +225,8 @@ var sitequeuemanager = {
                         $("#queue-manager").show();                       
                     }
 
-                    if (response['queue_position'] > 0) {
-                        sitequeuemanager.var.queue_position = response['queue_position'];
+                    if (sitequeuemanager.var.queue_position > 0) {
+                        // sitequeuemanager.var.queue_position = response['queue_position'];
 
                         $('#queue_position_div').show();
 
@@ -228,7 +236,7 @@ var sitequeuemanager = {
                         } else {
                             $('#div_queue_position').hide();
                         }
-                        $('#queue_position').html(response['queue_position']);
+                        $('#queue_position').html(sitequeuemanager.var.queue_position);
                         $('#wait_time').html(response['wait_time'] + ' minute/s');
                         sitequeuemanager.var.browser_inactivity_time = 0;
                         if (sitequeuemanager.var.custom_message.length > 0) {
@@ -255,7 +263,7 @@ var sitequeuemanager = {
                         if (sitequeuemanager.var.show_queue_position == true) {
                             // alert('tt')
                             var current_queue_position_display = $('#queue_position').html();
-                            if (isNaN((current_queue_position_display)) == "false" && response['queue_position'] == null) {
+                            if (isNaN((current_queue_position_display)) == "false" && sitequeuemanager.var.queue_position == null) {
                                 
                             } else {                            
                                 $('#queue_position_div').show();
