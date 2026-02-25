@@ -419,16 +419,16 @@ def get_session_by_id(group_key,session_id, source='tmp'):
 def delete_session(group_key,session_id):
     status = None
     try: 
-        session_file = get_session_by_id(group_key,session_id, 'master')
+        session_file_id = get_session_by_id(group_key,session_id, 'master')
         try:            
-            sitesession = jsondb.get_queue_session(session_file_id)
+            sitesession = get_queue_session(session_file_id)
             sitesession["status"] = "Deleted"
             sitesession["removed_date"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
             move_session_to_deleted(group_key,session_id, sitesession)            
-            os.remove(session_file)
-            print ("Removing file "+str(session_file))
+            os.remove(session_file_id)
+            print ("Removing file "+str(session_file_id))
         except Exception as k:
-            print ("Error removing "+str(session_file))
+            print ("Error removing "+str(session_file_id))
             print (k)
         status = True
     except Exception as e:
