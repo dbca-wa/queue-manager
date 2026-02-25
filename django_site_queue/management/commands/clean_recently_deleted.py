@@ -14,6 +14,7 @@ class Command(BaseCommand):
         queue_groups = jsondb.get_queue_groups()
         for queue_group in queue_groups:       
             group_unique_key = queue_group["group_unique_key"]         
+            active_sessions = jsondb.delete_active_expiry_idle_sessions(group_unique_key)
             deleted_sessions = jsondb.clean_recently_deleted(group_unique_key)
             expired_queue_positons = jsondb.clean_queue_position_sessions(group_unique_key)
             idle_queue_positons = jsondb.clean_queue_idle_sessions(group_unique_key)
