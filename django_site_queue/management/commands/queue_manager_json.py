@@ -107,7 +107,12 @@ class Command(BaseCommand):
                                                 
                     # sitesession['idle']=(datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
                     jsondb.save_queue_session(sitesession_file,sitesession)
-                    sitesession = jsondb.get_queue_session(sitesession_file)
+                    try: 
+                        sitesession = jsondb.get_queue_session(sitesession_file)
+                    except Exception as e:
+                        print (e)
+                        continue
+                    
                     print (sitesession_file)
                     if sitesession:
                         if sitesession["status"]  == "Active":
