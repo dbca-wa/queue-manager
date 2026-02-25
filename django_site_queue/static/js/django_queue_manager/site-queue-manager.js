@@ -268,7 +268,7 @@ var sitequeuemanager = {
                             } else {                            
                                 $('#queue_position_div').show();
                                 $('#div_queue_position').show();
-                                $('#queue_position').html("<BR>Calculating...");
+                                $('#queue_position').html("<BR>Calculating...<br><span class='text-warning' style='font-size: 12px;'>(can take several minutes)</span>");
                             }
                             // $("#queue_position").effect("pulsate", {times: 5}, 10000);
                         } else {
@@ -308,9 +308,9 @@ var sitequeuemanager = {
                         setTimeout(function () { sitequeuemanager.check_queue(); }, 10000 + new_session_timeout);                        
                     } else {
                         if (sitequeuemanager.var.queue_position < 2 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 1000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
                         } else if (sitequeuemanager.var.queue_position < 10 ) { 
-                            setTimeout(function () { sitequeuemanager.check_queue(); }, 2000);
+                            setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
                         } else if (sitequeuemanager.var.queue_position < 20 ) { 
                             setTimeout(function () { sitequeuemanager.check_queue(); }, 3000);
                         } else if (sitequeuemanager.var.queue_position < 50 ) { 
