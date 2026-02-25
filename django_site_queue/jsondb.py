@@ -527,7 +527,7 @@ def clean_queue_idle_sessions(group_unique_key):
                 file_mtime = os.path.getmtime(f)
                 now = time.time()          
                 age_in_seconds = now - file_mtime
-                if age_in_seconds > 900:
+                if age_in_seconds > 3600:
                     try:
                         os.remove(f)                                                                                                                    
                         print ("Removing File {}".format(str(f)))
@@ -594,8 +594,16 @@ def delete_active_expiry_idle_sessions(group_key):
                             session_id_val = session_id_val.replace(".json","")
                             data = json.load(f)
                             idle_data = get_session_idle(session_id_val, group_key, "master" ) 
+
+                            idle_dt = datetime.now().astimezone(PLUS_8) 
+
+                            if idle_data is not None:
+                                if "idle" in idle_data:
+                                    idle_dt = datetime.strptime(idle_data["idle"], "%Y-%m-%d %H:%M:%S")
+                                    idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
+
                             now_dt = datetime.now().astimezone(PLUS_8)
-                            idle_dt = datetime.strptime(idle_data["idle"], "%Y-%m-%d %H:%M:%S") 
+                            idle_dt = datetime.strptime(iidle_dt_current, "%Y-%m-%d %H:%M:%S") 
                             idle_dt = dj_tz.make_aware(idle_dt, PLUS_8)
                             expiry_dt = datetime.strptime(data["expiry"], "%Y-%m-%d %H:%M:%S") 
                             expiry_dt = dj_tz.make_aware(expiry_dt, PLUS_8)
@@ -615,17 +623,18 @@ def delete_active_expiry_idle_sessions(group_key):
                                         print (y)
                             
                             idle_dt_subtract = datetime.now().astimezone(PLUS_8)-timedelta(seconds=idle_limit_seconds)
-                            if idle_dt < idle_dt_subtract:                                              
-                                if file_path.exists():                            
-                                    try:            
-                                        data["status"] = "Deleted"
-                                        data["removed_date"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")                                               
-                                        move_session_to_deleted(group_key,session_id_val, data)       
-                                        os.remove(file_path)                                
-                                        print ("Idle Session Expired, File Deleted: "+str(file_path)+":"+str(expiry_dt)+":"+str(now_dt))      
-                                    except Exception as y:
-                                        print ("Error removing "+str(file_path))
-                                        print (y)                   
+                            if idle_dt:
+                                if idle_dt < idle_dt_subtract:                                              
+                                    if file_path.exists():                            
+                                        try:            
+                                            data["status"] = "Deleted"
+                                            data["removed_date"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")                                               
+                                            move_session_to_deleted(group_key,session_id_val, data)       
+                                            os.remove(file_path)                                
+                                            print ("Idle Session Expired, File Deleted: "+str(file_path)+":"+str(expiry_dt)+":"+str(now_dt))      
+                                        except Exception as y:
+                                            print ("Error removing "+str(file_path))
+                                            print (y)                   
                         except Exception as e:
                             print ("DELETE EXCEPTION IDLE EXPIRED")
                             print (e)
