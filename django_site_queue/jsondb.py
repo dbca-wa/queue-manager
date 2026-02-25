@@ -419,7 +419,7 @@ def get_session_by_id(group_key,session_id, source='tmp'):
 def delete_session(group_key,session_id):
     status = None
     try: 
-        session_file = get_session_by_id(group_key,session_id)
+        session_file = get_session_by_id(group_key,session_id, 'master')
         try:            
             sitesession = jsondb.get_queue_session(session_file_id)
             sitesession["status"] = "Deleted"
