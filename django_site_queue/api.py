@@ -343,10 +343,10 @@ def check_create_session(request, *args, **kwargs):
                 else:
                     for blocked_script in BLOCKED_SCRIPTING:
                         if blocked_script in browser_agent:
-                            response = HttpResponse(json.dumps({"status:": 403, 'message': "Request Denied"}), content_type='application/json', status=403)
+                            response = HttpResponse(json.dumps({"status:": "Waiting", 'message': "Request Denied"}), content_type='application/json', status=403)
                             return response
                         if crawleruseragents.is_crawler(browser_agent):
-                            response = HttpResponse(json.dumps({"status:": 403, 'message': "Request Denied"}), content_type='application/json', status=403)
+                            response = HttpResponse(json.dumps({"status:": "Waiting", 'message': "Request Denied"}), content_type='application/json', status=403)
                             return response                          
 
             
