@@ -924,7 +924,10 @@ def get_active_sessions(group_key, start, length, search):
                                 pass
                             else:
                                 continue
-            
+                        data['idle_dt_real'] = ''
+                        idle_obj = get_session_idle(data["session_key"], group_key)            
+                        if "idle" in idle_obj:
+                            data['idle_dt_real'] = idle_obj['idle']
                         if active_session_count > start and active_session_count <= end:
                             active_sessions.append(data)
 
@@ -961,7 +964,10 @@ def get_waiting_sessions(group_key, start, length, search):
                                     pass
                                 else:
                                     continue
-                
+                            data['idle_dt_real'] = ''
+                            idle_obj = get_session_idle(data["session_key"], group_key)            
+                            if "idle" in idle_obj:
+                                data['idle_dt_real'] = idle_obj['idle']
                             if waiting_session_count > start and waiting_session_count <= end:
                                 waiting_sessions.append(data)
 

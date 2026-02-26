@@ -347,16 +347,19 @@ def check_create_session(request, *args, **kwargs):
                     return response                          
 
             if session_status == 'Waiting':
-                if script_exempt_key == settings.SCRIPT_EXEMPT_KEY:
-                    print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": Session Request from API Request No Session "+session_key)
-                    response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': '', 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": True , "queue_full" : False, "queue_position_epoch":queue_position_epoch }), content_type='application/json')
-                    return response    
+                print (script_exempt_key)
+                if script_exempt_key is not None:
+                    if script_exempt_key == settings.SCRIPT_EXEMPT_KEY:
+                        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": Session Request from API Request No Session "+session_key)
+                        response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': '', 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": True , "queue_full" : False, "queue_position_epoch":queue_position_epoch }), content_type='application/json')
+                        return response    
 
             session_key = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
             expiry=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
             sitesession = {"session_key":session_key,"idle":datetime.now().astimezone(PLUS_8).strftime("%Y-%m-%d %H:%M:%S"), "expiry": expiry,"status": session_status,"ipaddress" : get_client_ip(request), "is_staff": staff_loggedin,"queue_group" : group_unique_key, "browser_agent" : browser_agent}
             if activated_session_id:
                 sitesession['activated_session_id'] = activated_session_id
+                sitesession["activated"] = (datetime.now().astimezone(PLUS_8)).strftime("%Y-%m-%d %H:%M:%S")
 
             if script_exempt_key == settings.SCRIPT_EXEMPT_KEY:
                 if ipaddress:
