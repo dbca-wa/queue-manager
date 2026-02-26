@@ -51,7 +51,9 @@ BLOCKED_SCRIPTING = [
     "okhttp",
     "Go-http-client",
     "axios",
-    "PostmanRuntime"
+    "PostmanRuntime",
+    "node",
+    "OpenClaw-Agent"
 ]
 
 
@@ -333,7 +335,7 @@ def check_create_session(request, *args, **kwargs):
             browser_agent = ''
             if 'HTTP_USER_AGENT' in request.META:
                 browser_agent = request.META['HTTP_USER_AGENT']
-                if script_exempt_key == settings.SCRIPT_EXEMPT_KEY:
+                if script_exempt_key == settings.SCRIPT_EXEMPT_KEY and browser_agent == 'Parkstay Booking/2.0':
                     pass
                 else:
                     for blocked_script in BLOCKED_SCRIPTING:
