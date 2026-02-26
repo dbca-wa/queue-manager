@@ -47,12 +47,16 @@
           <thead>
             <tr>
               
-              <th>Browser</th>
+              
               <th>IP Address</th>
               <th>Status</th>
-              <th>Expiry</th>
+              <th>Created</th>
+              <th>Expiry</th>              
+              <th>Activated</th>
               <th>IDLE</th>
               <th>SessionID</th>
+              <th>Activated SessionID</th>
+              <th>Browser</th>
             </tr>
           </thead>
           <tbody><!-- DataTables will populate --></tbody>
@@ -89,7 +93,7 @@
 
         // Default rows per page + menu
         pageLength: 10,                 // default
-        lengthMenu: [5, 10, 25, 50, 100], // allowed options
+        lengthMenu: [5, 10, 25, 50, 100, 1000, 10000],  // allowed options
 
         ajax: {
           url: '/api/active-sessions/', // 🔁 update to your API endpoint
@@ -122,9 +126,7 @@
         },
         columns: [
           
-          {
-            data: 'browser_agent',
-          },
+
           {
             data: 'ipaddress',
           },          
@@ -138,6 +140,8 @@
             //  return data;
             //}
           },
+          {  data: 'created',
+          },
           {
             data: 'expiry',
             //render: function (data, type) {
@@ -148,8 +152,11 @@
             //  return data;
             //}
           },
+
+          {  data: 'activated',
+          },                    
           {
-            data: 'idle',
+            data: 'idle_dt_real',
             //render: function (data, type) {
             //  if (type === 'display' || type === 'filter') {
             //    const d = data ? new Date(data) : null;
@@ -159,6 +166,17 @@
             //}
           },
           { data: 'session_key', width: '80px' },
+          { data: 'activated_session_id', width: '80px' },
+            //render: function (data, type) {
+            //  if (type === 'display' || type === 'filter') {
+            //    const d = data ? new Date(data) : null;
+            //    return d ? d.toLocaleString() : '';
+            //  }
+            //  return data;
+            //}
+          {
+            data: 'browser_agent',
+          }                     
 
         ],
 
