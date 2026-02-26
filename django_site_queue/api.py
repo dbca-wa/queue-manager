@@ -25,6 +25,7 @@ from django.utils import timezone as dj_tz
 import psutil
 import time
 from wagov_utils.components.json_auth.auth_middleware_backend import _JSONAuthStore
+import crawleruseragents
 logger = logging.getLogger('log')
 PLUS_8 = timezone(timedelta(hours=8))
 # NOTE
@@ -328,7 +329,9 @@ def check_create_session(request, *args, **kwargs):
                 if script_exempt_key == settings.SCRIPT_EXEMPT_KEY:
                     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": Session Request from API Request No Session "+session_key)
                     response = HttpResponse(json.dumps({'url':active_session_url, 'queueurl': reverse('site-queue-page'),'session': '', 'idle_seconds':idle_seconds,'expiry': None, 'idle': None,'status': "Waiting",'total_active_session': total_active_session, 'total_waiting_session': total_waiting_session,'expiry_seconds': expiry_seconds,'session_key': session_key, 'queue_position' : None ,'wait_time' : None ,'waiting_queue_enabled': waiting_queue_enabled, 'wq': env('WAITING_QUEUE_ENABLED','False'), 'time_left_enabled': time_left_enabled, 'browser_inactivity_timeout': browser_inactivity_timeout, 'browser_inactivity_redirect': browser_inactivity_redirect, 'browser_inactivity_enabled': browser_inactivity_enabled,'custom_message': custom_message,'queue_name': queue_name, 'more_info_link' : more_info_link, 'show_queue_position': show_queue_position, 'max_queue_session_limit' : max_queue_session_limit, 'max_queue_url_redirect': max_queue_url_redirect,'queue_inactivity_url': queue_inactivity_url, 'queue_waiting_room_url': queue_waiting_room_url, "refresh_page" : False, "new_session": True , "queue_full" : False, "queue_position_epoch":queue_position_epoch }), content_type='application/json')
-                    return response                  
+                    return response      
+                
+                               
             #if session_key:
             #     pass
             #else: 
@@ -340,8 +343,12 @@ def check_create_session(request, *args, **kwargs):
                 else:
                     for blocked_script in BLOCKED_SCRIPTING:
                         if blocked_script in browser_agent:
-                            response = HttpResponse(json.dumps({"status:": 500, 'message': "Request Denied"}), content_type='application/json', status=500)
+                            response = HttpResponse(json.dumps({"status:": 403, 'message': "Request Denied"}), content_type='application/json', status=403)
                             return response
+                        if crawleruseragents.is_crawler(browser_agent):
+                            response = HttpResponse(json.dumps({"status:": 403, 'message': "Request Denied"}), content_type='application/json', status=403)
+                            return response                          
+
             
             session_key = get_random_string(length=60, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
             expiry=(datetime.now().astimezone(PLUS_8)+timedelta(seconds=session_limit_seconds)).strftime("%Y-%m-%d %H:%M:%S")
