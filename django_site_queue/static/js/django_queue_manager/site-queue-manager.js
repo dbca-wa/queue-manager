@@ -199,8 +199,8 @@ var sitequeuemanager = {
                                 $('html').prepend("<div id='queue-manager' style='position: absolute; z-index: 1096; width: 100%; height: " + pageheight + "px'><div style='width: 100%; height: 100%;  background-image: url(" + '"' + sitequeuemanager.var.url + "/static/img/django_queue_manager/bg_tran_black.png" + '"' + "'  >" + htmlresponse + "</div></div>");                    
                                 if (sitequeuemanager.var.queue_position > 0) {
                                     $('#queue_position_div').show();
-                                    $('#queue_position').html(sitequeuemanager.var.queue_position);
-                                    //$('#queue_position').html(sitequeuemanager.var.queue_position + "<br><span style='font-size: 12px; font-weight:bold;'>may advance in big steps</span> ");
+                                    // $('#queue_position').html(sitequeuemanager.var.queue_position);
+                                    $('#queue_position').html(sitequeuemanager.var.queue_position + "<br><span style='font-size: 12px;'>(may advance in big steps)</span> ");
 
 
                                     $('#wait_time').html(response['wait_time'] + ' minute/s');
@@ -270,7 +270,7 @@ var sitequeuemanager = {
                                 $('#queue_position_div').show();
                                 $('#div_queue_position').show();
                                 // $('#queue_position').html("<BR>Calculating...<br>");
-                                $('#queue_position').html("<BR>Calculating...<br><span style='font-size: 12px; font-weight:bold;'>(may take several minutes)</span>");
+                                $('#queue_position').html("<BR>Calculating...<br><span style='font-size: 12px; font-weight:normal;'>(may take several minutes)</span>");
                             }
                             // $("#queue_position").effect("pulsate", {times: 5}, 10000);
                         } else {
