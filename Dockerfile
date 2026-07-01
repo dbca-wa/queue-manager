@@ -1,6 +1,12 @@
 # Prepare the base environment.
+ARG IMAGE_TAG
+ARG IMAGE_NAME
 FROM ghcr.io/dbca-wa/docker-apps-dev:ubuntu_2510_base_python as builder_base_queuemanager
-
+ARG IMAGE_TAG
+ARG IMAGE_NAME
+RUN echo "Building version: $IMAGE_TAG for $IMAGE_NAME"
+ENV CONTAINER_IMAGE_TAG=${IMAGE_TAG}
+ENV CONTAINER_IMAGE_NAME=${IMAGE_NAME}
 MAINTAINER asi@dbca.wa.gov.au
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Australia/Perth
