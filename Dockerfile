@@ -1,6 +1,6 @@
 ARG IMAGE_TAG
 ARG IMAGE_NAME
-FROM ghcr.io/dbca-wa/docker-apps-dev:ubuntu_2510_base_python as builder_base_queuemanager
+FROM ghcr.io/dbca-wa/docker-apps-dev:ubuntu_2604_base_python as builder_base_queuemanager
 ARG IMAGE_TAG
 ARG IMAGE_NAME
 RUN echo "Building version: $IMAGE_TAG for $IMAGE_NAME"
@@ -32,13 +32,15 @@ RUN chmod 755 /startup.sh
 FROM builder_base_queuemanager as python_libs_queuemanager
 WORKDIR /app
 USER oim
-RUN virtualenv /app/venv
+ENV VIRTUAL_ENV=/app/venv
+ENV PATH=$VIRTUAL_ENV/bin:$PATH
+
+RUN python -m venv $VIRTUAL_ENV
 ENV PATH=/app/venv/bin:$PATH
 RUN git config --global --add safe.directory /app
 
 COPY requirements.txt ./
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt 
+RUN uv pip install -r requirements.txt 
 
 # Install the project (ensure that frontend projects have been built prior to this step).
 FROM python_libs_queuemanager
@@ -56,8 +58,11 @@ RUN mkdir /app/logs
 #RUN chmod 777 /app/queuemanager/cache/
 RUN python manage.py collectstatic --noinput
 
+# Cleanup
 USER root
-RUN rm -rf /var/lib/{apt,dpkg,cache,log}/ /tmp/* /var/tmp/*
+RUN wget https://raw.githubusercontent.com/dbca-wa/wagov_utils/refs/heads/main/wagov_utils/bin/package_cleanup_2604.sh -O /tmp/package_cleanup_2604.sh
+RUN chmod 755 /tmp/package_cleanup_2604.sh
+RUN /tmp/package_cleanup_2604.sh
 USER oim
 
 EXPOSE 8080
