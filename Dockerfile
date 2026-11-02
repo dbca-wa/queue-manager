@@ -1,6 +1,6 @@
 ARG IMAGE_TAG
 ARG IMAGE_NAME
-FROM ghcr.io/dbca-wa/docker-apps-dev:ubuntu_2510_base_python as builder_base_queuemanager
+FROM ghcr.io/dbca-wa/docker-apps-dev:ubuntu_2604_base_python as builder_base_queuemanager
 ARG IMAGE_TAG
 ARG IMAGE_NAME
 RUN echo "Building version: $IMAGE_TAG for $IMAGE_NAME"
